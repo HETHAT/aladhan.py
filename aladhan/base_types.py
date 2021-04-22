@@ -55,7 +55,8 @@ class Tune:
 
     @classmethod
     def from_str(cls, s: str) -> "Tune":
-        assert len(args := s.split(",")) == 9, "Not valid string format"
+        args = s.split(",")
+        assert len(args) == 9, "Not valid string format"
         return cls(*map(int, args))
 
     def __str__(self):
