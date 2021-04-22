@@ -56,7 +56,7 @@ setup(
     author="HETHAT",
     author_email="zhethat@gmail.com",
     packages=get_packages("aladhan"),
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=get_requirements(),
     project_urls={
         # "Documentation": "",
