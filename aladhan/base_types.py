@@ -1,10 +1,11 @@
+import pytz
+
 from datetime import datetime, timedelta
-from methods import all_methods, Method, ISNA
 from typing import Dict, Union, List
 from functools import partial
 from beartype import beartype
 
-import pytz
+from .methods import all_methods, Method, ISNA
 
 __all__ = (
     "Data",

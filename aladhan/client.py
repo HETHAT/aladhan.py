@@ -5,9 +5,9 @@ from async_lru import alru_cache
 from beartype import beartype
 from typing import Union, Dict, List, Tuple, Any
 
-from methods import all_methods
-from base_types import *
-from endpoints import EndPoints
+from .methods import all_methods
+from .base_types import *
+from .endpoints import EndPoints
 
 
 class AsyncClient:
@@ -34,18 +34,18 @@ class AsyncClient:
         res = await res.json()
 
         data = res["data"]
-        data["client"] = self
 
         if isinstance(data, str):  # something wrong
             raise Exception(data)
         elif isinstance(data, list):  # it is a month calendar
-            return [Data(**day) for day in data]
-        elif "1" in data:  # it is a year calendar
-            return {
-                month: [Data(**day) for day in days] for month, days in data.items()
-            }
+            return [Data(**day, client=self) for day in data]
+        # it is a dict
 
-        return Data(**data)  # it is just a day timings
+        if "1" in data:  # it is a year calendar
+            return {
+                month: [Data(**day, client=self) for day in days] for month, days in data.items()
+            }
+        return Data(**data, client=self)  # it is just a day timings
 
     @beartype
     async def get_timings(
@@ -156,7 +156,8 @@ class AsyncClient:
             "latitude": str(latitude),
         }
         defaults = defaults or DefaultArgs()
-        params.update(defaults.as_dict + date.as_dict)
+        params.update(defaults.as_dict)
+        params.update(date.as_dict)
         return await self.__get_res(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR"),
             tuple(params.items()),
@@ -178,7 +179,8 @@ class AsyncClient:
         """
         params = {"address": address}
         defaults = defaults or DefaultArgs()
-        params.update(defaults.as_dict + date.as_dict)
+        params.update(defaults.as_dict)
+        params.update(date.as_dict)
         return await self.__get_res(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_ADDRESS"),
             tuple(params.items()),
@@ -207,7 +209,6 @@ class AsyncClient:
         """
         params = {
             "endpoint": "ByCity",
-            "session": self._session,
             "city": city,
             "country": country,
             "state": state,
@@ -215,7 +216,8 @@ class AsyncClient:
         if state is None:
             del params["state"]
         defaults = defaults or DefaultArgs()
-        params.update(defaults.as_dict + date.as_dict)
+        params.update(defaults.as_dict)
+        params.update(date.as_dict)
         return await self.__get_res(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_CITY"),
             tuple(params.items()),

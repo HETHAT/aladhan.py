@@ -18,6 +18,7 @@ __author__ = "HETHAT"
 __version__ = "0.0.1"
 
 
-from client import AsyncClient
-from base_types import *
-from endpoints import EndPoints
+from .client import AsyncClient
+from .base_types import *
+from .endpoints import EndPoints
+from . import methods
