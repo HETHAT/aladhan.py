@@ -1,4 +1,4 @@
-``aladhan.py`` is an asynchronous pythonic wrapper for the Aladhan prayer times API.
+``aladhan.py`` is an asynchronous pythonic wrapper for the `Aladhan prayer times <https://aladhan.com/prayer-times-api>`_ API.
 
 .. image:: https://img.shields.io/pypi/v/aladhan.py?color=blue
     :target: https://pypi.python.org/pypi/aladhan.py
@@ -27,6 +27,8 @@ Install ``aladhan.py`` with pip:
 
     pip install aladhan.py
 
+*You can look into some examples* `here <https://github.com/HETHAT/aladhan.py/tree/main/examples>`_
+
 Contribute
 ----------
 
@@ -43,3 +45,9 @@ License
 -------
 
 The project is licensed under the MIT license.
+
+Links
+------
+
+- `PyPi <https://pypi.python.org/pypi/aladhan.py>`_
+- `Discord support server <https://discord.gg/mXaEuxYRan>`_
