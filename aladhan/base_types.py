@@ -639,7 +639,7 @@ class Timings:
                 ),
                 meta.default_args,
             )
-        ).timings.next_prayer()
+        ).next_prayer()
 
     def __repr__(self):
         return (

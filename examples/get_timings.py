@@ -15,7 +15,7 @@ from aladhan import (
 
 async def main():
     client = AsyncClient()
-    # getting a Data obj of the response
+
     timings: Timings = await client.get_timings(longitude=69, latitude=42)
     # or even specify more
     timings: Timings = await client.get_timings(
