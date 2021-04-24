@@ -11,15 +11,22 @@ from .endpoints import EndPoints
 
 
 class AsyncClient:
-    """Asynchronous al-adhan API client."""
+    """Asynchronous al-adhan API client.
+
+    .. note::
+        You need to initialize this class in a |coroutine_link|_.
+        When you finish using the Client, you need to close the session with :meth:`close`.
+    """
 
     def __init__(self, loop: asyncio.AbstractEventLoop = None):
-        """
-        :param loop: the event loop for ClientSession, default to
-        asyncio.get_event_loop()
-        """
         self.loop = loop or asyncio.get_event_loop()
         self._session = aiohttp.ClientSession(loop=self.loop)
+
+    async def close(self):
+        """|coro|
+        Closes the Client connection.
+        """
+        await self._session.close()
 
     @alru_cache()
     async def __get_res(
@@ -28,8 +35,7 @@ class AsyncClient:
         params: Tuple[
             Union[str, Any], ...
         ],  # using tuple cause dict isn't hashable to cache
-    ) -> Union[Data, List[Data], Dict[str, List[Data]]]:
-        """. - ."""
+    ) -> Union[Timings, List[Timings], Dict[str, List[Timings]]]:
         res = await self._session.get(endpoint, params=dict(params))
         res = await res.json()
 
@@ -38,14 +44,15 @@ class AsyncClient:
         if isinstance(data, str):  # something wrong
             raise Exception(data)
         elif isinstance(data, list):  # it is a month calendar
-            return [Data(**day, client=self) for day in data]
+            return [Data(**day, client=self).timings for day in data]
         # it is a dict
 
         if "1" in data:  # it is a year calendar
             return {
-                month: [Data(**day, client=self) for day in days] for month, days in data.items()
+                month: [Data(**day, client=self).timings for day in days]
+                for month, days in data.items()
             }
-        return Data(**data, client=self)  # it is just a day timings
+        return Data(**data, client=self).timings  # it is just a day timings
 
     @beartype
     async def get_timings(
@@ -55,14 +62,30 @@ class AsyncClient:
         date: TimingsDateArg = None,
         defaults: DefaultArgs = None,
     ):
-        """
-        get prayer times from coordinates (longitude, latitude).
+        """|coro|
 
-        :param longitude: longitude coordinate of the location
-        :param latitude: latitude coordinate of the location
-        :param date: date for the prayer times
-        :param defaults: default params
-        :return: Data object
+        Get prayer times from coordinates (longitude, latitude).
+
+        Parameters
+        -----------
+            longitude: :class:`int` or :class:`float`
+                Longitude coordinate of the location.
+
+            latitude: :class:`int` or :class:`float`
+                Latitude coordinate of the location.
+
+            date: :class:`TimingsDateArg`
+                Date for the prayer times.
+                Default: Current date.
+
+            defaults: :class:`DefaultArgs`
+                Default params.
+                Default: ``DefaultArgs()``
+
+        Returns
+        -------
+            :class:`Timings`
+                Timings obj from the API response.
         """
         params = {
             "longitude": str(longitude),
@@ -81,14 +104,27 @@ class AsyncClient:
         date: TimingsDateArg = None,
         defaults: DefaultArgs = None,
     ):
-        """
-        get prayer times from address.
+        """|coro|
+        Get prayer times from address.
 
-        :param address: an address string.
-        Example: Sultanahmet Mosque, Istanbul, Turkey
-        :param date: date for the prayer times
-        :param defaults: default params
-        :return: Data object
+        Parameters
+        -----------
+            address: :class:`str`
+                An address string.
+                Example: "London, United Kingdom"
+
+            date: :class:`TimingsDateArg`
+                Date for the prayer times.
+                Default: Current date.
+
+            defaults: :class:`DefaultArgs`
+                Default params.
+                Default: ``DefaultArgs()``
+
+        Returns
+        -------
+            :class:`Timings`
+                Timings obj from the API response.
         """
         params = {
             "address": address,
@@ -109,16 +145,35 @@ class AsyncClient:
         date: TimingsDateArg = None,
         defaults: DefaultArgs = None,
     ):
-        """
-        get prayer times from city, country and state.
+        """|coro|
+        Get prayer times from city, country and state.
 
-        :param city: A city name. Example: London
-        :param country: A country name or 2 character alpha ISO 3166 code. Examples: GB or United Kingdom
-        :param state: (Optional) State or province. A state name or abbreviation.
-        Examples: Colorado / CO / Punjab / Bengal
-        :param date: date for the prayer times
-        :param defaults: default params
-        :return: Data object
+        Parameters
+        -----------
+            city: :class:`str`
+                The city name.
+                Example: "London"
+
+            country: :class:`str`
+                The country name or 2 character alpha ISO 3166 code.
+                Example: "GB" or "United Kingdom"
+
+            state: Optional[:class:`str`]
+                State or province. The state name or abbreviation..
+                Example: "Bexley"
+
+            date: :class:`TimingsDateArg`
+                Date for the prayer times.
+                Default: Current date.
+
+            defaults: :class:`DefaultArgs`
+                Default params.
+                Default: ``DefaultArgs()``
+
+        Returns
+        -------
+            :class:`Timings`
+                Timings obj from the API response.
         """
         params = {
             "city": city,
@@ -141,15 +196,29 @@ class AsyncClient:
         date: CalendarDateArg,
         defaults: DefaultArgs = None,
     ):
-        """
-        get all prayer times for a specific calendar month/year from coordinates (longitude, latitudes).
+        """|coro|
 
-        :param longitude: longitude coordinate of the location
-        :param latitude: latitude coordinate of the location
-        :param date: date for the prayer times
-        :param defaults: default params
-        :return: a list of Data object if it was a month calendar and
-        a dict of months and list of Data object if it was a year calendar
+        Get all prayer times for a specific calendar month/year from coordinates (longitude, latitudes).
+
+        Parameters
+        -----------
+            longitude: :class:`int` or :class:`float`
+                Longitude coordinate of the location.
+
+            latitude: :class:`int` or :class:`float`
+                Latitude coordinate of the location.
+
+            date: :class:`CalendarDateArg`
+                Date for the prayer times.
+
+            defaults: :class:`DefaultArgs`
+                Default params.
+                Default: ``DefaultArgs()``
+
+        Returns
+        -------
+            :class:`list` of :class:`Timings` or dict[:class:`str`, :class:`list` of :class:`Timings`]
+                A month calendar if month parameter was given in date argument otherwise a year calendar.
         """
         params = {
             "longitude": str(longitude),
@@ -167,15 +236,27 @@ class AsyncClient:
     async def get_calendar_by_address(
         self, address: str, date: CalendarDateArg, defaults: DefaultArgs = None
     ):
-        """
-        get all prayer times for a specific calendar month/year from address.
+        """|coro|
 
-        :param address: an address string.
-        Example: Sultanahmet Mosque, Istanbul, Turkey
-        :param date: date for the prayer times
-        :param defaults: default params
-        :return: a list of Data object if it was a month calendar and
-        a dict of months and list of Data object if it was a year calendar
+        Get all prayer times for a specific calendar month/year from address.
+
+        Parameters
+        -----------
+            address: :class:`str`
+                An address string.
+                Example: "London, United Kingdom"
+
+            date: :class:`CalendarDateArg`
+                Date for the prayer times.
+
+            defaults: :class:`DefaultArgs`
+                Default params.
+                Default: ``DefaultArgs()``
+
+        Returns
+        -------
+            :class:`list` of :class:`Timings` or dict[:class:`str`, :class:`list` of :class:`Timings`]
+                A month calendar if month parameter was given in date argument otherwise a year calendar.
         """
         params = {"address": address}
         defaults = defaults or DefaultArgs()
@@ -195,20 +276,37 @@ class AsyncClient:
         state: str = None,
         defaults: DefaultArgs = None,
     ):
-        """
-        get all prayer times for a specific calendar month/year from city, country and state.
+        """|coro|
 
-        :param city: A city name. Example: London
-        :param country: A country name or 2 character alpha ISO 3166 code. Examples: GB or United Kingdom
-        :param state: (Optional) State or province. A state name or abbreviation.
-        Examples: Colorado / CO / Punjab / Bengal
-        :param date: date for the prayer times
-        :param defaults: default params
-        :return: a list of Data object if it was a month calendar and
-        a dict of months and list of Data object if it was a year calendar
+        Get all prayer times for a specific calendar month/year from address.
+
+        Parameters
+        -----------
+            city: :class:`str`
+                The city name.
+                Example: "London"
+
+            country: :class:`str`
+                The country name or 2 character alpha ISO 3166 code.
+                Example: "GB" or "United Kingdom"
+
+            state: Optional[:class:`str`]
+                State or province. The state name or abbreviation..
+                Example: "Bexley"
+
+            date: :class:`CalendarDateArg`
+                Date for the prayer times.
+
+            defaults: :class:`DefaultArgs`
+                Default params.
+                Default: ``DefaultArgs()``
+
+        Returns
+        -------
+            :class:`list` of :class:`Timings` or dict[:class:`str`, :class:`list` of :class:`Timings`]
+                A month calendar if month parameter was given in date argument otherwise a year calendar.
         """
         params = {
-            "endpoint": "ByCity",
             "city": city,
             "country": country,
             "state": state,
@@ -225,5 +323,12 @@ class AsyncClient:
 
     @staticmethod
     def get_all_methods():
-        """give all available prayer times calculation method"""
+        """
+        Gives all available prayer times calculation method.
+
+        Returns
+        -------
+            :class:`dict`[:class:`int`, :class:`Method`]
+                A dict of available calculation method from 0 to 15.
+        """
         return all_methods

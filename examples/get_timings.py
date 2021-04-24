@@ -1,17 +1,24 @@
 import asyncio
 
 from aladhan import (
-    AsyncClient, TimingsDateArg, DefaultArgs, methods, Tune,
-    Schools, MidnightModes, LatitudeAdjustmentMethods, Data
+    AsyncClient,
+    TimingsDateArg,
+    DefaultArgs,
+    methods,
+    Tune,
+    Schools,
+    MidnightModes,
+    LatitudeAdjustmentMethods,
+    Timings,
 )
 
 
 async def main():
     client = AsyncClient()
     # getting a Data obj of the response
-    data: Data = await client.get_timings(longitude=69, latitude=42)
+    timings: Timings = await client.get_timings(longitude=69, latitude=42)
     # or even specify more
-    data: Data = await client.get_timings(
+    timings: Timings = await client.get_timings(
         longitude=69,
         latitude=42,
         date=TimingsDateArg(
@@ -26,21 +33,19 @@ async def main():
             school=Schools.SHAFI,
             midnightMode=MidnightModes.JAFARI,
             latitudeAdjustmentMethod=LatitudeAdjustmentMethods.ANGLE_BASED,
-            adjustment=1
-        )
+            adjustment=1,
+        ),
     )
     # or you can get it using address
-    data: Data = await client.get_timings_by_address(address="London")
+    timings: Timings = await client.get_timings_by_address(address="London")
 
     # or using city
-    data: Data = await client.get_timings_by_city(
-        country="United Kingdom",
-        city="London"
+    timings: Timings = await client.get_timings_by_city(
+        country="United Kingdom", city="London"
     )
 
-    timings = data.timings
     for k, v in timings.prayers_only.items():
-        print(f"{k} at {v.time}, {v.remaining()} left")
+        print(f"{k} at {v.time}, {v.remaining} left")
 
 
 asyncio.run(main())

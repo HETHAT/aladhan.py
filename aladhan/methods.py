@@ -1,5 +1,20 @@
-
 class Method:
+    """
+    Represents a Method Calculation obj.
+
+    Attributes
+    ----------
+        name: :class:`str`
+            Method name.
+
+        id: :class:`int`
+            Method id that will be used to get response.
+            Can be only from 0 to 15.
+
+        params: :class:`dict`
+            Method params.
+    """
+
     def __init__(self, name: str, id: int, params: dict):
         self.name = name
         self.id = id
@@ -11,49 +26,70 @@ class Method:
     def __repr__(self):
         return "<Method object>"
 
+    def __hash__(self):
+        return hash((self.name, self.id))
+
 
 JAFARI = Method(
-    "Shia Ithna-Ashari, Leva Institute, Qum",
-    0,
-    {"Fajr": 16, "Isha": 14, "Maghrib": 4, "Midnight": "JAFARI"},
+    name="Shia Ithna-Ashari, Leva Institute, Qum",
+    id=0,
+    params={"Fajr": 16, "Isha": 14, "Maghrib": 4, "Midnight": "JAFARI"},
 )
-KARACHI = Method("University of Islamic Sciences, Karachi", 1, {"Fajr": 18, "Isha": 18})
-ISNA = Method("Islamic Society of North America (ISNA)", 2, {"Fajr": 15, "Isha": 15})
-MWL = Method("Muslim World League", 3, {"Fajr": 18, "Isha": 17})
-MAKKAH = Method("Umm Al-Qura University, Makkah", 4, {"Fajr": 18.5, "Isha": "90 min"})
-EGYPT = Method("Egyptian General Authority of Survey", 5, {"Fajr": 19.5, "Isha": 17.5})
+KARACHI = Method(
+    name="University of Islamic Sciences, Karachi",
+    id=1,
+    params={"Fajr": 18, "Isha": 18},
+)
+ISNA = Method(
+    name="Islamic Society of North America (ISNA)",
+    id=2,
+    params={"Fajr": 15, "Isha": 15},
+)
+MWL = Method(name="Muslim World League", id=3, params={"Fajr": 18, "Isha": 17})
+MAKKAH = Method(
+    name="Umm Al-Qura University, Makkah", id=4, params={"Fajr": 18.5, "Isha": "90 min"}
+)
+EGYPT = Method(
+    name="Egyptian General Authority of Survey",
+    id=5,
+    params={"Fajr": 19.5, "Isha": 17.5},
+)
 # there is no 6 (method 6 is apparently same as 2)
 TEHRAN = Method(
-    "Institute of Geophysics, University of Tehran",
-    7,
-    {"Fajr": 17.7, "Isha": 14, "Maghrib": 4.5, "Midnight": "JAFARI"},
+    name="Institute of Geophysics, University of Tehran",
+    id=7,
+    params={"Fajr": 17.7, "Isha": 14, "Maghrib": 4.5, "Midnight": "JAFARI"},
 )
-GULF = Method("Gulf Region", 8, {"Fajr": 19.5, "Isha": "90 min"})
-KUWAIT = Method("Kuwait", 9, {"Fajr": 18, "Isha": 17.5})
-QATAR = Method("Qatar", 10, {"Fajr": 18, "Isha": "90 min"})
+GULF = Method(name="Gulf Region", id=8, params={"Fajr": 19.5, "Isha": "90 min"})
+KUWAIT = Method(name="Kuwait", id=9, params={"Fajr": 18, "Isha": 17.5})
+QATAR = Method(name="Qatar", id=10, params={"Fajr": 18, "Isha": "90 min"})
 SINGAPORE = Method(
-    "Majlis Ugama Islam Singapura, Singapore", 11, {"Fajr": 20, "Isha": 18}
+    name="Majlis Ugama Islam Singapura, Singapore",
+    id=11,
+    params={"Fajr": 20, "Isha": 18},
 )
-FRANCE = Method("Union Organization Islamic de France", 12, {"Fajr": 12, "Isha": 12})
+FRANCE = Method(
+    name="Union Organization Islamic de France", id=12, params={"Fajr": 12, "Isha": 12}
+)
 TURKEY = Method(
-    "Diyanet \u0130\u015fleri Ba\u015fkanl\u0131\u011f\u0131, Turkey",
-    13,
-    {"Fajr": 18, "Isha": 17},
+    name="Diyanet \u0130\u015fleri Ba\u015fkanl\u0131\u011f\u0131, Turkey",
+    id=13,
+    params={"Fajr": 18, "Isha": 17},
 )
 RUSSIA = Method(
-    "Spiritual Administration of Muslims of Russia",
-    14,
-    {"Fajr": 16, "Isha": 15},
+    name="Spiritual Administration of Muslims of Russia",
+    id=14,
+    params={"Fajr": 16, "Isha": 15},
 )
 MOONSIGHTING = Method(
-    "Moonsighting Committee Worldwide (Moonsighting.com)",
-    15,
-    {"shafaq": "general"},
+    name="Moonsighting Committee Worldwide (Moonsighting.com)",
+    id=15,
+    params={"shafaq": "general"},
 )
 # CUSTOM = Method(
-#     "Custom",
-#     99,
-#     {}
+#     name="Custom",
+#     id=99,
+#     params={}
 # )
 # later
 
