@@ -17,7 +17,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.append(os.path.abspath("extensions"))
-autodoc_mock_imports = ["async_lru", "beartype"]
+autodoc_mock_imports = ["async_lru", "beartype", "pytz", "aiohttp"]
 
 # -- Project information -----------------------------------------------------
 
