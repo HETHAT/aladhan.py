@@ -45,3 +45,4 @@ Links
 
 - `PyPi <https://pypi.python.org/pypi/aladhan.py>`_
 - `Discord support server <https://discord.gg/mXaEuxYRan>`_
+- `Documentation <https://aladhanpy.readthedocs.io/en/latest>`_
