@@ -9,6 +9,9 @@
 .. image:: https://img.shields.io/discord/831992562986123376.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2
     :target: https://discord.gg/mXaEuxYRan
     :alt: Discord support server
+.. image:: https://codecov.io/gh/HETHAT/aladhan.py/branch/main/graph/badge.svg
+    :target: https://codecov.io/gh/HETHAT/aladhan.py
+    :alt: Code coverage
 
 Installation
 ------------
