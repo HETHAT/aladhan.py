@@ -1,13 +1,33 @@
 import asyncio
 import aiohttp
+import platform
 
-from async_lru import alru_cache
 from beartype import beartype
 from typing import Union, Dict, List, Tuple, Any
 
 from .methods import all_methods
 from .base_types import *
 from .endpoints import EndPoints
+
+from functools import wraps
+
+
+#  https://github.com/aio-libs/aiohttp/issues/4324#issuecomment-733884349
+if platform.system() == 'Windows':
+    from asyncio.proactor_events import _ProactorBasePipeTransport  # noqa
+
+    def silence_event_loop_closed(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            try:
+                return func(self, *args, **kwargs)
+            except RuntimeError as e:
+                if str(e) != 'Event loop is closed':
+                    raise
+
+        return wrapper
+
+    _ProactorBasePipeTransport.__del__ = silence_event_loop_closed(_ProactorBasePipeTransport.__del__)
 
 
 class AsyncClient:
@@ -19,16 +39,8 @@ class AsyncClient:
     """
 
     def __init__(self, loop: asyncio.AbstractEventLoop = None):
-        self.loop = loop or asyncio.get_event_loop()
-        self._session = aiohttp.ClientSession(loop=self.loop)
+        self._loop = loop or asyncio.get_event_loop()
 
-    async def close(self):
-        """|coro|
-        Closes the Client connection.
-        """
-        await self._session.close()
-
-    @alru_cache()
     async def __get_res(
         self,
         endpoint: str,
@@ -36,9 +48,9 @@ class AsyncClient:
             Union[str, Any], ...
         ],  # using tuple cause dict isn't hashable to cache
     ) -> Union[Timings, List[Timings], Dict[str, List[Timings]]]:
-        res = await self._session.get(endpoint, params=dict(params))
-        res = await res.json()
-
+        async with aiohttp.ClientSession(loop=self._loop) as session:
+            res = await session.get(endpoint, params=dict(params))
+            res = await res.json()
         data = res["data"]
 
         if isinstance(data, str):  # something wrong
