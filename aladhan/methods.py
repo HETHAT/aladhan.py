@@ -74,11 +74,8 @@ class Method:
         self.id = id
         self.params = params
 
-    def __str__(self):
-        return "<Method name={0.name!r}, id={0.id}, params={0.params}>".format(self)
-
     def __repr__(self):
-        return "<Method object>"
+        return "<Method name={0.name!r}, id={0.id}>".format(self)
 
     def __hash__(self):
         return hash((self.name, self.id))
@@ -101,7 +98,9 @@ ISNA = Method(
 )
 MWL = Method(name="Muslim World League", id=3, params={"Fajr": 18, "Isha": 17})
 MAKKAH = Method(
-    name="Umm Al-Qura University, Makkah", id=4, params={"Fajr": 18.5, "Isha": "90 min"}
+    name="Umm Al-Qura University, Makkah",
+    id=4,
+    params={"Fajr": 18.5, "Isha": "90 min"},
 )
 EGYPT = Method(
     name="Egyptian General Authority of Survey",
@@ -123,7 +122,9 @@ SINGAPORE = Method(
     params={"Fajr": 20, "Isha": 18},
 )
 FRANCE = Method(
-    name="Union Organization Islamic de France", id=12, params={"Fajr": 12, "Isha": 12}
+    name="Union Organization Islamic de France",
+    id=12,
+    params={"Fajr": 12, "Isha": 12},
 )
 TURKEY = Method(
     name="Diyanet \u0130\u015fleri Ba\u015fkanl\u0131\u011f\u0131, Turkey",

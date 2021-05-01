@@ -317,7 +317,9 @@ class DefaultArgs:
             method = method.id
 
         if method not in range(16):
-            raise ValueError("Expected method in 0-15 range" " got {!r}".format(method))
+            raise ValueError(
+                "Expected method in 0-15 range" " got {!r}".format(method)
+            )
         self.method = method
 
         # tune
@@ -330,7 +332,8 @@ class DefaultArgs:
         # school
         if school not in (0, 1):
             raise ValueError(
-                "School argument can only be either 0 or 1" " got {!r}".format(school)
+                "School argument can only be either 0 or 1"
+                " got {!r}".format(school)
             )
         self.school = school
 
@@ -433,7 +436,9 @@ class Meta:
             self.offset,
             getattr(Schools, self.school.upper()),
             getattr(MidnightModes, self.midnightMode.upper()),
-            getattr(LatitudeAdjustmentMethods, self.latitudeAdjustmentMethod.upper())
+            getattr(
+                LatitudeAdjustmentMethods, self.latitudeAdjustmentMethod.upper()
+            )
             # can't get adjustment ...
         )
 
@@ -490,10 +495,8 @@ class DateType:
         self.holidays = holidays
 
     def __repr__(self):
-        return (
-            "<DateType name={0.name!r}, date={0.date!r}, holidays={0.holidays}>".format(
-                self
-            )
+        return "<DateType name={0.name!r}, date={0.date!r}, holidays={0.holidays}>".format(
+            self
         )
 
 
@@ -634,7 +637,9 @@ class Timings:
                 meta.longitude,
                 meta.latitude,
                 TimingsDateArg(
-                    datetime(val.time.year, val.time.month, val.time.day)  # noqa
+                    datetime(
+                        val.time.year, val.time.month, val.time.day  # noqa
+                    )
                     + timedelta(1)
                 ),
                 meta.default_args,
