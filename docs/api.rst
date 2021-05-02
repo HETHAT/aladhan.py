@@ -109,6 +109,7 @@ Latitude Adjustment Methods
 .. autoclass:: LatitudeAdjustmentMethods()
     :members:
     :undoc-members:
+    :member-order: bysource
 
 Midnight Modes
 --------------
@@ -116,6 +117,7 @@ Midnight Modes
 .. autoclass:: MidnightModes()
     :members:
     :undoc-members:
+    :member-order: bysource
 
 Schools
 -------
@@ -123,6 +125,8 @@ Schools
 .. autoclass:: Schools()
     :members:
     :undoc-members:
+    :member-order: bysource
+
 
 Calculation Methods
 -------------------

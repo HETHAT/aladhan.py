@@ -92,10 +92,10 @@ class Tune:
         assert len(args) == 9, "Not valid string format"
         return cls(*map(int, args))
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Tune = {}>".format(self.value)
 
-    def __hash__(self):
+    def __hash__(self):  # pragma: no cover
         return hash(self.value)
 
 
@@ -122,21 +122,31 @@ class Prayer:
 
     Attributes
     ----------
+        timings: :class:`Timings`
+            Original Timings obj. New in v0.1.2
         name: :class:`str`
             Prayer name.
         time: :class:`datetime`
             Prayer's time.
+        time_utc: Optional[:class:`datetime`]
+            Prayer's time in utc, might be None when time doesn't exist
+            because of a daylight savings switch. New in v0.1.2
         str_time: :class:`str`
             Better looking string format for prayer's time.
     """
 
-    def __init__(self, name: str, time: str, date: str = None):
+    def __init__(self, name: str, time: str, timings: "Timings", date: str = None):
+        self.timings = timings
         self.name = name
         if date is None:
             date = datetime.utcnow().strftime("%d-%m-%Y")
         day, month, year = map(int, date.split("-"))
         time = time.split()[0]
         self.time = datetime.strptime(time, "%H:%M").replace(year, month, day)
+        try:
+            self.time_utc = self.time + timings.data.meta.timezone.utcoffset(self.time)
+        except pytz.exceptions.NonExistentTimeError:  # pragma: no cover
+            self.time_utc = None
         self.str_time = self.time.strftime("%H:%M %d-%m-%Y")
 
     @property
@@ -144,10 +154,16 @@ class Prayer:
         """:class:`timedelta`: remaining time for prayer."""
         return self.time - datetime.utcnow()
 
-    def __repr__(self):
+    @property
+    def remaining_utc(self):
+        """Optional[:class:`timedelta`]: remaining time for prayer for utc.
+        New in v0.1.2"""
+        return self.time_utc and self.time_utc - datetime.utcnow()
+
+    def __repr__(self):  # pragma: no cover
         return "<Prayer name={0.name!r}, time=D{0.str_time!r}>".format(self)
 
-    def __hash__(self):
+    def __hash__(self):  # pragma: no cover
         return hash(self.name)
 
 
@@ -193,7 +209,7 @@ class CalendarDateArg:
     ):
         # TODO: check for year limits
         if month:
-            if month not in range(1, 13):
+            if month not in range(1, 13):  # pragma: no cover
                 raise ValueError(
                     "month argument expected to be in range 1-12"
                     " got {}".format(month)
@@ -243,7 +259,7 @@ class TimingsDateArg:
         else:  # it is a str
             try:
                 datetime.strptime(date, "%d-%m-%Y")
-            except ValueError:
+            except ValueError:  # pragma: no cover
                 raise ValueError(
                     "Expected DD-MM-YYYY date format got {!r} ".format(date)
                 )
@@ -316,10 +332,8 @@ class DefaultArgs:
         if isinstance(method, Method):
             method = method.id
 
-        if method not in range(16):
-            raise ValueError(
-                "Expected method in 0-15 range" " got {!r}".format(method)
-            )
+        if method not in range(16):  # pragma: no cover
+            raise ValueError("Expected method in 0-15 range" " got {!r}".format(method))
         self.method = method
 
         # tune
@@ -330,15 +344,14 @@ class DefaultArgs:
         self.tune = tune
 
         # school
-        if school not in (0, 1):
+        if school not in (0, 1):  # pragma: no cover
             raise ValueError(
-                "School argument can only be either 0 or 1"
-                " got {!r}".format(school)
+                "School argument can only be either 0 or 1 got {!r}".format(school)
             )
         self.school = school
 
         # midnight mode
-        if midnightMode not in (0, 1):
+        if midnightMode not in (0, 1):  # pragma: no cover
             raise ValueError(
                 "midnightMode argument can only be either 0 or 1"
                 " got {!r}".format(midnightMode)
@@ -346,7 +359,7 @@ class DefaultArgs:
         self.midnightMode = midnightMode
 
         # lat adj methods
-        if latitudeAdjustmentMethod not in (1, 2, 3):
+        if latitudeAdjustmentMethod not in (1, 2, 3):  # pragma: no cover
             raise ValueError(
                 "latitudeAdjustmentMethod argument can only be either 1, 2 or 3"
                 " got {!r}".format(latitudeAdjustmentMethod)
@@ -421,7 +434,7 @@ class Meta:
         self.school = school
         self.offset = Tune(*offset)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return (
             "<Meta longitude={0.longitude!r}, latitude={0.latitude!r}, "
             "method={0.method!r}, latitudeAdjustmentMethod={0.latitudeAdjustmentMethod!r}, "
@@ -436,9 +449,7 @@ class Meta:
             self.offset,
             getattr(Schools, self.school.upper()),
             getattr(MidnightModes, self.midnightMode.upper()),
-            getattr(
-                LatitudeAdjustmentMethods, self.latitudeAdjustmentMethod.upper()
-            )
+            getattr(LatitudeAdjustmentMethods, self.latitudeAdjustmentMethod.upper())
             # can't get adjustment ...
         )
 
@@ -494,9 +505,11 @@ class DateType:
         self.designation = designation
         self.holidays = holidays
 
-    def __repr__(self):
-        return "<DateType name={0.name!r}, date={0.date!r}, holidays={0.holidays}>".format(
-            self
+    def __repr__(self):  # pragma: no cover
+        return (
+            "<DateType name={0.name!r}, date={0.date!r}, holidays={0.holidays}>".format(
+                self
+            )
         )
 
 
@@ -537,7 +550,7 @@ class Date:
         self.gregorian = DateType("Gregorian", **gregorian)
         self.hijri = DateType("Hijri", **hijri)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return (
             "<Date readable={0.readable!r}, timestamp={0.timestamp!r}, "
             "gregorian={0.gregorian!r}, hijri={0.hijri!r}>".format(self)
@@ -593,7 +606,7 @@ class Timings:
         Midnight: str,
     ):
         self.data = data
-        _Prayer = partial(Prayer, date=data.date.gregorian.date)
+        _Prayer = partial(Prayer, timings=self, date=data.date.gregorian.date)
         self.imsak: Prayer = _Prayer("Imsak", Imsak)
         self.fajr: Prayer = _Prayer("Fajr", Fajr)
         self.sunrise: Prayer = _Prayer("Sunrise", Sunrise)
@@ -637,16 +650,14 @@ class Timings:
                 meta.longitude,
                 meta.latitude,
                 TimingsDateArg(
-                    datetime(
-                        val.time.year, val.time.month, val.time.day  # noqa
-                    )
+                    datetime(val.time.year, val.time.month, val.time.day)  # noqa
                     + timedelta(1)
                 ),
                 meta.default_args,
             )
         ).next_prayer()
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return (
             "<Timings imsak={0.imsak}, fajr={0.fajr}, sunrise={0.sunrise}, "
             "dhuhr={0.dhuhr}, asr={0.asr}, sunset={0.sunset}, maghrib={0.maghrib}, "
@@ -680,5 +691,5 @@ class Data:
         self.timings = Timings(self, **timings)
         self.client = client
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Data object | {0.gregorian.date}>".format(self.date)

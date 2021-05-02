@@ -13,7 +13,7 @@ from functools import wraps
 
 
 #  https://github.com/aio-libs/aiohttp/issues/4324#issuecomment-733884349
-if platform.system() == 'Windows':
+if platform.system() == "Windows":  # pragma: no cover
     from asyncio.proactor_events import _ProactorBasePipeTransport  # noqa
 
     def silence_event_loop_closed(func):
@@ -22,12 +22,14 @@ if platform.system() == 'Windows':
             try:
                 return func(self, *args, **kwargs)
             except RuntimeError as e:
-                if str(e) != 'Event loop is closed':
+                if str(e) != "Event loop is closed":
                     raise
 
         return wrapper
 
-    _ProactorBasePipeTransport.__del__ = silence_event_loop_closed(_ProactorBasePipeTransport.__del__)
+    _ProactorBasePipeTransport.__del__ = silence_event_loop_closed(
+        _ProactorBasePipeTransport.__del__
+    )
 
 
 class AsyncClient:
@@ -35,7 +37,6 @@ class AsyncClient:
 
     .. note::
         You need to initialize this class in a |coroutine_link|_.
-        When you finish using the Client, you need to close the session with :meth:`close`.
     """
 
     def __init__(self, loop: asyncio.AbstractEventLoop = None):
@@ -340,7 +341,7 @@ class AsyncClient:
 
         Returns
         -------
-            :class:`dict`[:class:`int`, :class:`Method`]
+            :class:dict[:class:`int`, :class:`Method`]
                 A dict of available calculation method from 0 to 15.
         """
         return all_methods

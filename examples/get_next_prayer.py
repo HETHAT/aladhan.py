@@ -12,6 +12,7 @@ async def main():
 
     next_prayer = await timings.next_prayer()
     print(next_prayer, "remaining:", next_prayer.remaining)
+    print(next_prayer, "remaining for utc:", next_prayer.remaining_utc)
 
 
 asyncio.run(main())

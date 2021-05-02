@@ -74,10 +74,10 @@ class Method:
         self.id = id
         self.params = params
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Method name={0.name!r}, id={0.id}>".format(self)
 
-    def __hash__(self):
+    def __hash__(self):  # pragma: no cover
         return hash((self.name, self.id))
 
 

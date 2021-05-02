@@ -8,9 +8,7 @@ import datetime
 async def data():
     dt = datetime.datetime.utcnow() - datetime.timedelta(days=1)
     return (
-        await aladhan.AsyncClient().get_timings(
-            34, 4, date=aladhan.TimingsDateArg(dt)
-        )
+        await aladhan.AsyncClient().get_timings(34, 4, date=aladhan.TimingsDateArg(dt))
     ).data
 
 
@@ -32,9 +30,15 @@ def test_meta(data):
 @pytest.mark.asyncio
 async def test_timings(data):
     for prayer in data.timings.prayers_only.values():
-        assert isinstance(prayer, aladhan.Prayer) and isinstance(
-            prayer.remaining, datetime.timedelta
+        assert (
+            isinstance(prayer, aladhan.Prayer)
+            and isinstance(prayer.remaining, datetime.timedelta)
+            and isinstance(prayer.remaining_utc, (datetime.timedelta, None))
         )
 
     np = await data.timings.next_prayer()
     assert isinstance(np, aladhan.Prayer)
+    #  you should not do this
+    assert isinstance(
+        aladhan.Prayer("Test", "11:11", data.timings).remaining, datetime.timedelta
+    )
