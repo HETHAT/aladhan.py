@@ -10,11 +10,11 @@ VersionInfo = NamedTuple(
     "VersionInfo", major=int, minor=int, micro=int, releaselevel=str, serial=int
 )
 
-version_info = VersionInfo(major=0, minor=1, micro=1, releaselevel="", serial=0)
+version_info = VersionInfo(major=0, minor=1, micro=2, releaselevel="", serial=0)
 
 __title__ = "aladhan.py"
 __author__ = "HETHAT"
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 
 from .client import AsyncClient
