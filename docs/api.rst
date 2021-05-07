@@ -79,18 +79,30 @@ Tune
     :members:
     :undoc-members:
 
+Ism
+---
+
+.. autoclass:: Ism()
+    :members:
+
+Qibla
+-----
+
+.. autoclass:: Qibla()
+    :members:
+
 Date Arguments
 --------------
 
 Timings Date Argument
-*********************
+^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: TimingsDateArg()
     :members:
     :undoc-members:
 
 Calendar Date Argument
-**********************
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: CalendarDateArg()
     :members:

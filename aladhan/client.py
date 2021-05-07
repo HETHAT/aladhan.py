@@ -362,6 +362,7 @@ class AsyncClient:
         Returns
         -------
             :class:`Qibla`
+                The qibla.
 
         *New in v0.1.3*
         """
@@ -382,6 +383,7 @@ class AsyncClient:
         Returns
         -------
             :class:`list` of :class:`Ism`
+                A list of asma.
 
         *New in v0.1.3*
         """
@@ -403,6 +405,7 @@ class AsyncClient:
         Returns
         -------
             :class:`list` of :class:`Ism`
+                A list of all asma.
 
         *New in v0.1.3*
         """

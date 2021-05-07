@@ -103,6 +103,22 @@ class Tune:
 
 
 class Qibla:
+    """Represents a Qibla obj.
+
+    Do not create this class yourself. Only get it through a getter.
+
+    Attributes
+    ----------
+        longitude: :class:`float`
+            Longitude coordinate.
+        latitude: :class:`float`
+            Latitude coordinate.
+        direction: :class:`float`
+            Qibla direction.
+
+    *New in v0.1.3*
+    """
+
     def __init__(self, longitude: float, latitude: float, direction: float):
         self.longitude = longitude
         self.latitude = latitude
@@ -118,6 +134,24 @@ class Qibla:
 
 
 class Ism:
+    """Represents an Ism obj.
+
+    Do not create this class yourself. Only get it through a getter.
+
+    Attributes
+    ----------
+        name: :class:`str`
+            The name in arabic.
+        transliteration: :class:`str`
+            The transliteration of the name.
+        number: :class:`int`
+            Ism's number/id.
+        en: :class:`str`
+            The name in english.
+
+    *New in v0.1.3*
+    """
+
     def __init__(self, name: str, transliteration: str, number: int, en: dict):
         self.name = name
         self.transliteration = transliteration
