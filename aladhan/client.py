@@ -3,7 +3,7 @@ import aiohttp
 import platform
 
 from beartype import beartype
-from typing import Union, Dict, List, Tuple, Any
+from typing import Union, Dict, List
 
 from .methods import all_methods
 from .base_types import *
@@ -42,24 +42,24 @@ class AsyncClient:
     def __init__(self, loop: asyncio.AbstractEventLoop = None):
         self._loop = loop or asyncio.get_event_loop()
 
-    async def __get_res(
-        self,
-        endpoint: str,
-        params: Tuple[
-            Union[str, Any], ...
-        ],  # using tuple cause dict isn't hashable to cache
-    ) -> Union[Timings, List[Timings], Dict[str, List[Timings]]]:
+    async def __get_res(self, endpoint: str, params: dict) -> dict:
         async with aiohttp.ClientSession(loop=self._loop) as session:
-            res = await session.get(endpoint, params=dict(params))
+            res = await session.get(endpoint, params=params)
             res = await res.json()
-        data = res["data"]
 
-        if isinstance(data, str):  # something wrong
-            raise Exception(data)
-        elif isinstance(data, list):  # it is a month calendar
+        if res["code"] != 200:  # something wrong
+            raise Exception("{code}, {data}".format(**res))
+        return res
+
+    async def __get_timings(
+        self, endpoint: str, params: dict
+    ) -> Union[Timings, List[Timings], Dict[str, List[Timings]]]:
+
+        data = (await self.__get_res(endpoint, params))["data"]
+
+        if isinstance(data, list):  # it is a month calendar
             return [Data(**day, client=self).timings for day in data]
         # it is a dict
-
         if "1" in data:  # it is a year calendar
             return {
                 month: [Data(**day, client=self).timings for day in days]
@@ -106,8 +106,8 @@ class AsyncClient:
         }
         date, defaults = date or TimingsDateArg(), defaults or DefaultArgs()
         params.update(defaults.as_dict)
-        return await self.__get_res(
-            EndPoints.TIMINGS + "/" + date.date, tuple(params.items())
+        return await self.__get_timings(
+            EndPoints.TIMINGS + "/" + date.date, params
         )
 
     @beartype
@@ -144,9 +144,8 @@ class AsyncClient:
         }
         date, defaults = date or TimingsDateArg(), defaults or DefaultArgs()
         params.update(defaults.as_dict)
-        return await self.__get_res(
-            EndPoints.TIMINGS_BY_ADDRESS + "/" + date.date,
-            tuple(params.items()),
+        return await self.__get_timings(
+            EndPoints.TIMINGS_BY_ADDRESS + "/" + date.date, params
         )
 
     @beartype
@@ -197,8 +196,8 @@ class AsyncClient:
             del params["state"]
         date, defaults = date or TimingsDateArg(), defaults or DefaultArgs()
         params.update(defaults.as_dict)
-        return await self.__get_res(
-            EndPoints.TIMINGS_BY_CITY + "/" + date.date, tuple(params.items())
+        return await self.__get_timings(
+            EndPoints.TIMINGS_BY_CITY + "/" + date.date, params
         )
 
     @beartype
@@ -211,7 +210,8 @@ class AsyncClient:
     ):
         """|coro|
 
-        Get all prayer times for a specific calendar month/year from coordinates (longitude, latitudes).
+        Get all prayer times for a specific calendar month/year from \
+        coordinates (longitude, latitudes).
 
         Parameters
         -----------
@@ -230,8 +230,10 @@ class AsyncClient:
 
         Returns
         -------
-            :class:`list` of :class:`Timings` or dict[:class:`str`, :class:`list` of :class:`Timings`]
-                A month calendar if month parameter was given in date argument otherwise a year calendar.
+            :class:`list` of :class:`Timings` or dict[:class:`str`, \
+            :class:`list` of :class:`Timings`]
+                A month calendar if month parameter was given in date argument \
+                otherwise a year calendar.
         """
         params = {
             "longitude": str(longitude),
@@ -240,9 +242,8 @@ class AsyncClient:
         defaults = defaults or DefaultArgs()
         params.update(defaults.as_dict)
         params.update(date.as_dict)
-        return await self.__get_res(
-            getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR"),
-            tuple(params.items()),
+        return await self.__get_timings(
+            getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR"), params
         )
 
     @beartype
@@ -268,16 +269,18 @@ class AsyncClient:
 
         Returns
         -------
-            :class:`list` of :class:`Timings` or dict[:class:`str`, :class:`list` of :class:`Timings`]
-                A month calendar if month parameter was given in date argument otherwise a year calendar.
+            :class:`list` of :class:`Timings` or dict[:class:`str`, \
+            :class:`list` of :class:`Timings`]
+                A month calendar if month parameter was given in date argument \
+                otherwise a year calendar.
         """
         params = {"address": address}
         defaults = defaults or DefaultArgs()
         params.update(defaults.as_dict)
         params.update(date.as_dict)
-        return await self.__get_res(
+        return await self.__get_timings(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_ADDRESS"),
-            tuple(params.items()),
+            params,
         )
 
     @beartype
@@ -316,8 +319,10 @@ class AsyncClient:
 
         Returns
         -------
-            :class:`list` of :class:`Timings` or dict[:class:`str`, :class:`list` of :class:`Timings`]
-                A month calendar if month parameter was given in date argument otherwise a year calendar.
+            :class:`list` of :class:`Timings` or dict[:class:`str`, \
+            :class:`list` of :class:`Timings`]
+                A month calendar if month parameter was given in date argument \
+                otherwise a year calendar.
         """
         params = {
             "city": city,
@@ -329,9 +334,9 @@ class AsyncClient:
         defaults = defaults or DefaultArgs()
         params.update(defaults.as_dict)
         params.update(date.as_dict)
-        return await self.__get_res(
+        return await self.__get_timings(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_CITY"),
-            tuple(params.items()),
+            params,
         )
 
     @staticmethod
@@ -341,7 +346,64 @@ class AsyncClient:
 
         Returns
         -------
-            :class:dict[:class:`int`, :class:`Method`]
+            dict[:class:`int`, :class:`Method`]
                 A dict of available calculation method from 0 to 15.
         """
         return all_methods
+
+    @beartype
+    async def get_qibla(
+        self, longitude: Union[int, float], latitude: Union[int, float]
+    ):
+        """|coro|
+
+        Get the Qibla direction from a pair of coordinates.
+
+        Returns
+        -------
+            :class:`Qibla`
+
+        *New in v0.1.3*
+        """
+        return Qibla(
+            **(
+                await self.__get_res(
+                    EndPoints.QIBLA + "/{}/{}".format(latitude, longitude), {}
+                )
+            )["data"]
+        )
+
+    @beartype
+    async def get_asma(self, *n: int):
+        """|coro|
+
+        Returns a list of asma from giving numbers.
+
+        Returns
+        -------
+            :class:`list` of :class:`Ism`
+
+        *New in v0.1.3*
+        """
+
+        return [
+            Ism(**d)
+            for d in (
+                await self.__get_res(
+                    EndPoints.ASMA_AL_HUSNA + "/" + ",".join(map(str, n)), {}
+                )
+            )["data"]
+        ]
+
+    async def get_all_asma(self):
+        """|coro|
+
+        Returns all 1-99 asma (allah names).
+
+        Returns
+        -------
+            :class:`list` of :class:`Ism`
+
+        *New in v0.1.3*
+        """
+        return await self.get_asma(*range(1, 100))

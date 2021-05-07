@@ -10,3 +10,5 @@ class EndPoints:
     HIJRI_CALENDAR_BY_ADDRESS = HIJRI_CALENDAR + "ByAddress"
     HIJRI_CALENDAR_BY_CITY = HIJRI_CALENDAR + "ByCity"
     METHODS = BASE + "methods"
+    ASMA_AL_HUSNA = BASE + "asmaAlHusna"
+    QIBLA = BASE + "qibla"

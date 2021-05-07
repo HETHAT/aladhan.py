@@ -8,7 +8,9 @@ import datetime
 async def data():
     dt = datetime.datetime.utcnow() - datetime.timedelta(days=1)
     return (
-        await aladhan.AsyncClient().get_timings(34, 4, date=aladhan.TimingsDateArg(dt))
+        await aladhan.AsyncClient().get_timings(
+            34, 4, date=aladhan.TimingsDateArg(dt)
+        )
     ).data
 
 
@@ -40,5 +42,6 @@ async def test_timings(data):
     assert isinstance(np, aladhan.Prayer)
     #  you should not do this
     assert isinstance(
-        aladhan.Prayer("Test", "11:11", data.timings).remaining, datetime.timedelta
+        aladhan.Prayer("Test", "11:11", data.timings).remaining,
+        datetime.timedelta,
     )

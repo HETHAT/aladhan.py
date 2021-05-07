@@ -21,13 +21,16 @@ __all__ = (
     "TimingsDateArg",
     "CalendarDateArg",
     "DefaultArgs",
+    "Qibla",
+    "Ism",
 )
 
 
 class Tune:
     """
     Represents a Tune obj that is returned from API.
-    Can be used to make an obj that will be used as a tune param in :class:`DefaultArgs`
+    Can be used to make an obj that will be used as a tune param in \
+    :class:`DefaultArgs`
 
     Attributes
     ----------
@@ -99,17 +102,52 @@ class Tune:
         return hash(self.value)
 
 
+class Qibla:
+    def __init__(self, longitude: float, latitude: float, direction: float):
+        self.longitude = longitude
+        self.latitude = latitude
+        self.direction = direction
+
+    def __repr__(self):  # pragma: no cover
+        return "<Qibla longitude={0.longitude} latitude={0.latitude}>".format(
+            self
+        )
+
+    def __hash__(self):  # pragma: no cover
+        return hash((self.longitude, self.latitude, self.direction))
+
+
+class Ism:
+    def __init__(self, name: str, transliteration: str, number: int, en: dict):
+        self.name = name
+        self.transliteration = transliteration
+        self.number = number
+        self.en = en["meaning"]
+
+    def __repr__(self):  # pragma: no cover
+        return "<Ism name={0.name} en={0.en}>".format(self)
+
+    def __hash__(self):  # pragma: no cover
+        return hash(self.name)
+
+
 class Schools:
+    """Available schools"""
+
     STANDARD = SHAFI = 0
     HANAFI = 1
 
 
 class MidnightModes:
+    """Available midnight modes"""
+
     STANDARD = 0
     JAFARI = 1
 
 
 class LatitudeAdjustmentMethods:
+    """Available latitude adjustment methods"""
+
     MIDDLE_OF_THE_NIGHT = 1
     ONE_SEVENTH = 2
     ANGLE_BASED = 3
@@ -123,19 +161,23 @@ class Prayer:
     Attributes
     ----------
         timings: :class:`Timings`
-            Original Timings obj. New in v0.1.2
+            Original Timings obj.
         name: :class:`str`
             Prayer name.
         time: :class:`datetime`
             Prayer's time.
         time_utc: Optional[:class:`datetime`]
             Prayer's time in utc, might be None when time doesn't exist
-            because of a daylight savings switch. New in v0.1.2
+            because of a daylight savings switch.
         str_time: :class:`str`
             Better looking string format for prayer's time.
+
+    *New in v0.1.2: timings, time_utc*
     """
 
-    def __init__(self, name: str, time: str, timings: "Timings", date: str = None):
+    def __init__(
+        self, name: str, time: str, timings: "Timings", date: str = None
+    ):
         self.timings = timings
         self.name = name
         if date is None:
@@ -144,20 +186,27 @@ class Prayer:
         time = time.split()[0]
         self.time = datetime.strptime(time, "%H:%M").replace(year, month, day)
         try:
-            self.time_utc = self.time + timings.data.meta.timezone.utcoffset(self.time)
+            self.time_utc = self.time + timings.data.meta.timezone.utcoffset(
+                self.time
+            )
         except pytz.exceptions.NonExistentTimeError:  # pragma: no cover
             self.time_utc = None
         self.str_time = self.time.strftime("%H:%M %d-%m-%Y")
 
     @property
     def remaining(self):
-        """:class:`timedelta`: remaining time for prayer."""
+        """:class:`timedelta`: remaining time for prayer.
+
+        *New in v0.1.2*
+        """
         return self.time - datetime.utcnow()
 
     @property
     def remaining_utc(self):
         """Optional[:class:`timedelta`]: remaining time for prayer for utc.
-        New in v0.1.2"""
+
+        *New in v0.1.2*
+        """
         return self.time_utc and self.time_utc - datetime.utcnow()
 
     def __repr__(self):  # pragma: no cover
@@ -274,7 +323,8 @@ class DefaultArgs:
     Parameters
     ----------
         method: :class:`Method` or :class:`int`
-            A prayer time calculation method, you can look into all methods from :meth:`AsyncClient.get_all_methods()`.
+            A prayer time calculation method, you can look into all methods \
+            from :meth:`AsyncClient.get_all_methods()`.
             Default: ISNA (Islamic Society of North America).
 
         tune: :class:`Tune`
@@ -286,7 +336,8 @@ class DefaultArgs:
             Default: Shafi
 
         midnightMode: :class:`int`
-            0 for Standard (Mid Sunset to Sunrise), 1 for Jafari (Mid Sunset to Fajr).
+            0 for Standard (Mid Sunset to Sunrise), 1 for Jafari (Mid Sunset \
+            to Fajr).
             Default: Standard
 
         latitudeAdjustmentMethod: :class:`int`
@@ -318,6 +369,8 @@ class DefaultArgs:
         adjustment: :class:`int`
     """
 
+    # TODO: add timezone param
+
     @beartype
     def __init__(
         self,
@@ -333,7 +386,9 @@ class DefaultArgs:
             method = method.id
 
         if method not in range(16):  # pragma: no cover
-            raise ValueError("Expected method in 0-15 range" " got {!r}".format(method))
+            raise ValueError(
+                "Expected method in 0-15 range" " got {!r}".format(method)
+            )
         self.method = method
 
         # tune
@@ -346,7 +401,9 @@ class DefaultArgs:
         # school
         if school not in (0, 1):  # pragma: no cover
             raise ValueError(
-                "School argument can only be either 0 or 1 got {!r}".format(school)
+                "School argument can only be either 0 or 1 got {!r}".format(
+                    school
+                )
             )
         self.school = school
 
@@ -437,8 +494,9 @@ class Meta:
     def __repr__(self):  # pragma: no cover
         return (
             "<Meta longitude={0.longitude!r}, latitude={0.latitude!r}, "
-            "method={0.method!r}, latitudeAdjustmentMethod={0.latitudeAdjustmentMethod!r}, "
-            "midnightMode={0.midnightMode!r}, school={0.school!r}, offset={0.offset!r}>"
+            "method={0.method!r}, latitudeAdjustmentMethod="
+            "{0.latitudeAdjustmentMethod!r}, midnightMode={0.midnightMode!r}, "
+            "school={0.school!r}, offset={0.offset!r}>"
         ).format(self)
 
     @property
@@ -449,7 +507,9 @@ class Meta:
             self.offset,
             getattr(Schools, self.school.upper()),
             getattr(MidnightModes, self.midnightMode.upper()),
-            getattr(LatitudeAdjustmentMethods, self.latitudeAdjustmentMethod.upper())
+            getattr(
+                LatitudeAdjustmentMethods, self.latitudeAdjustmentMethod.upper()
+            )
             # can't get adjustment ...
         )
 
@@ -504,13 +564,6 @@ class DateType:
         self.year = int(year)
         self.designation = designation
         self.holidays = holidays
-
-    def __repr__(self):  # pragma: no cover
-        return (
-            "<DateType name={0.name!r}, date={0.date!r}, holidays={0.holidays}>".format(
-                self
-            )
-        )
 
 
 class Date:
@@ -650,7 +703,9 @@ class Timings:
                 meta.longitude,
                 meta.latitude,
                 TimingsDateArg(
-                    datetime(val.time.year, val.time.month, val.time.day)  # noqa
+                    datetime(
+                        val.time.year, val.time.month, val.time.day  # noqa
+                    )
                     + timedelta(1)
                 ),
                 meta.default_args,
