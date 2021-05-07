@@ -565,6 +565,12 @@ class DateType:
         self.designation = designation
         self.holidays = holidays
 
+    def __repr__(self):  # pragma: no cover
+        return (
+            "<DateType name={0.name!r}, date={0.date!r}, "
+            "holidays={0.holidays}>"
+        ).format(self)
+
 
 class Date:
     """Represents the date that is in returned :class:`Data`
