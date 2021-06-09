@@ -17,7 +17,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.append(os.path.abspath("extensions"))
-autodoc_mock_imports = ["pytz", "aiohttp"]
+autodoc_mock_imports = ["pytz", "aiohttp", "beartype"]
 
 # -- Project information -----------------------------------------------------
 
