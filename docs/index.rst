@@ -5,9 +5,9 @@ aladhan.py is an asynchronous pythonic wrapper for the `Aladhan prayer times <ht
 Getting started
 ---------------
 
-Is this your first time using the framweork? This is the place to get started!
+Is this your first time using the module? This is the place to get started!
 
-- **First steps:** :ref:`intro`
+- **First steps:** :ref:`intro` | :ref:`quickstart`
 - **Examples:** Many examples are available in the :resource:`repository <examples>`.
 
 Getting help
@@ -27,6 +27,7 @@ User Guide
     :maxdepth: 1
 
     user_guide/intro
+    user_guide/quickstart
 
 
 API Reference
@@ -45,10 +46,15 @@ Indices and tables
 * :ref:`search`
 
 .. toctree::
+    :maxdepth: 1
+
+    changelog
+
+
+.. toctree::
     :caption: References
     :hidden:
 
     GitHub Repository <https://github.com/HETHAT/aladhan.py>
-    Examples <https://github.com/HETHAT/aladhan.py/tree/master/examples>
     Issue Tracker <https://github.com/HETHAT/aladhan.py/issues>
-    Discord support server <https://discord.gg/mXaEuxYRan>
+    Discord support server <https://discord.gg/jeBGF8Veud>

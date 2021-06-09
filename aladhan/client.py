@@ -3,7 +3,7 @@ import aiohttp
 import platform
 
 from beartype import beartype
-from typing import Union, Dict, List
+from typing import Union, Dict, List, Optional
 
 from .methods import all_methods
 from .base_types import *
@@ -42,7 +42,7 @@ class AsyncClient:
     def __init__(self, loop: asyncio.AbstractEventLoop = None):
         self._loop = loop or asyncio.get_event_loop()
 
-    async def __get_res(self, endpoint: str, params: dict) -> dict:
+    async def _get_res(self, endpoint: str, params: dict) -> dict:
         async with aiohttp.ClientSession(loop=self._loop) as session:
             res = await session.get(endpoint, params=params)
             res = await res.json()
@@ -51,11 +51,11 @@ class AsyncClient:
             raise Exception("{code}, {data}".format(**res))
         return res
 
-    async def __get_timings(
+    async def _get_timings(
         self, endpoint: str, params: dict
     ) -> Union[Timings, List[Timings], Dict[str, List[Timings]]]:
 
-        data = (await self.__get_res(endpoint, params))["data"]
+        data = (await self._get_res(endpoint, params))["data"]
 
         if isinstance(data, list):  # it is a month calendar
             return [Data(**day, client=self).timings for day in data]
@@ -72,8 +72,8 @@ class AsyncClient:
         self,
         longitude: Union[int, float],
         latitude: Union[int, float],
-        date: TimingsDateArg = None,
-        defaults: DefaultArgs = None,
+        date: Optional[TimingsDateArg] = None,
+        defaults: Optional[DefaultArgs] = None,
     ):
         """|coro|
 
@@ -87,11 +87,11 @@ class AsyncClient:
             latitude: :class:`int` or :class:`float`
                 Latitude coordinate of the location.
 
-            date: :class:`TimingsDateArg`
+            date: Optional[:class:`TimingsDateArg`]
                 Date for the prayer times.
                 Default: Current date.
 
-            defaults: :class:`DefaultArgs`
+            defaults: Optional[:class:`DefaultArgs`]
                 Default params.
                 Default: ``DefaultArgs()``
 
@@ -106,7 +106,7 @@ class AsyncClient:
         }
         date, defaults = date or TimingsDateArg(), defaults or DefaultArgs()
         params.update(defaults.as_dict)
-        return await self.__get_timings(
+        return await self._get_timings(
             EndPoints.TIMINGS + "/" + date.date, params
         )
 
@@ -114,8 +114,8 @@ class AsyncClient:
     async def get_timings_by_address(
         self,
         address: str,
-        date: TimingsDateArg = None,
-        defaults: DefaultArgs = None,
+        date: Optional[TimingsDateArg] = None,
+        defaults: Optional[DefaultArgs] = None,
     ):
         """|coro|
         Get prayer times from address.
@@ -126,11 +126,11 @@ class AsyncClient:
                 An address string.
                 Example: "London, United Kingdom"
 
-            date: :class:`TimingsDateArg`
+            date: Optional[:class:`TimingsDateArg`]
                 Date for the prayer times.
                 Default: Current date.
 
-            defaults: :class:`DefaultArgs`
+            defaults: Optional[:class:`DefaultArgs`]
                 Default params.
                 Default: ``DefaultArgs()``
 
@@ -144,7 +144,7 @@ class AsyncClient:
         }
         date, defaults = date or TimingsDateArg(), defaults or DefaultArgs()
         params.update(defaults.as_dict)
-        return await self.__get_timings(
+        return await self._get_timings(
             EndPoints.TIMINGS_BY_ADDRESS + "/" + date.date, params
         )
 
@@ -153,9 +153,9 @@ class AsyncClient:
         self,
         city: str,
         country: str,
-        state: str = None,
-        date: TimingsDateArg = None,
-        defaults: DefaultArgs = None,
+        state: Optional[str] = None,
+        date: Optional[TimingsDateArg] = None,
+        defaults: Optional[DefaultArgs] = None,
     ):
         """|coro|
         Get prayer times from city, country and state.
@@ -174,11 +174,11 @@ class AsyncClient:
                 State or province. The state name or abbreviation..
                 Example: "Bexley"
 
-            date: :class:`TimingsDateArg`
+            date: Optional[:class:`TimingsDateArg`]
                 Date for the prayer times.
                 Default: Current date.
 
-            defaults: :class:`DefaultArgs`
+            defaults: Optional[:class:`DefaultArgs`]
                 Default params.
                 Default: ``DefaultArgs()``
 
@@ -196,7 +196,7 @@ class AsyncClient:
             del params["state"]
         date, defaults = date or TimingsDateArg(), defaults or DefaultArgs()
         params.update(defaults.as_dict)
-        return await self.__get_timings(
+        return await self._get_timings(
             EndPoints.TIMINGS_BY_CITY + "/" + date.date, params
         )
 
@@ -206,7 +206,7 @@ class AsyncClient:
         longitude: Union[int, float],
         latitude: Union[int, float],
         date: CalendarDateArg,
-        defaults: DefaultArgs = None,
+        defaults: Optional[DefaultArgs] = None,
     ):
         """|coro|
 
@@ -224,7 +224,7 @@ class AsyncClient:
             date: :class:`CalendarDateArg`
                 Date for the prayer times.
 
-            defaults: :class:`DefaultArgs`
+            defaults: Optional[:class:`DefaultArgs`]
                 Default params.
                 Default: ``DefaultArgs()``
 
@@ -242,13 +242,16 @@ class AsyncClient:
         defaults = defaults or DefaultArgs()
         params.update(defaults.as_dict)
         params.update(date.as_dict)
-        return await self.__get_timings(
+        return await self._get_timings(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR"), params
         )
 
     @beartype
     async def get_calendar_by_address(
-        self, address: str, date: CalendarDateArg, defaults: DefaultArgs = None
+        self,
+        address: str,
+        date: CalendarDateArg,
+        defaults: Optional[DefaultArgs] = None,
     ):
         """|coro|
 
@@ -263,7 +266,7 @@ class AsyncClient:
             date: :class:`CalendarDateArg`
                 Date for the prayer times.
 
-            defaults: :class:`DefaultArgs`
+            defaults: Optional[:class:`DefaultArgs`]
                 Default params.
                 Default: ``DefaultArgs()``
 
@@ -278,7 +281,7 @@ class AsyncClient:
         defaults = defaults or DefaultArgs()
         params.update(defaults.as_dict)
         params.update(date.as_dict)
-        return await self.__get_timings(
+        return await self._get_timings(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_ADDRESS"),
             params,
         )
@@ -289,8 +292,8 @@ class AsyncClient:
         city: str,
         country: str,
         date: CalendarDateArg,
-        state: str = None,
-        defaults: DefaultArgs = None,
+        state: Optional[str] = None,
+        defaults: Optional[DefaultArgs] = None,
     ):
         """|coro|
 
@@ -306,14 +309,14 @@ class AsyncClient:
                 The country name or 2 character alpha ISO 3166 code.
                 Example: "GB" or "United Kingdom"
 
+            date: :class:`CalendarDateArg`
+                Date for the prayer times.
+
             state: Optional[:class:`str`]
                 State or province. The state name or abbreviation..
                 Example: "Bexley"
 
-            date: :class:`CalendarDateArg`
-                Date for the prayer times.
-
-            defaults: :class:`DefaultArgs`
+            defaults: Optional[:class:`DefaultArgs`]
                 Default params.
                 Default: ``DefaultArgs()``
 
@@ -334,7 +337,7 @@ class AsyncClient:
         defaults = defaults or DefaultArgs()
         params.update(defaults.as_dict)
         params.update(date.as_dict)
-        return await self.__get_timings(
+        return await self._get_timings(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_CITY"),
             params,
         )
@@ -368,7 +371,7 @@ class AsyncClient:
         """
         return Qibla(
             **(
-                await self.__get_res(
+                await self._get_res(
                     EndPoints.QIBLA + "/{}/{}".format(latitude, longitude), {}
                 )
             )["data"]
@@ -388,10 +391,12 @@ class AsyncClient:
         *New in v0.1.3*
         """
 
+        assert n, "No arguments was passed."
+
         return [
             Ism(**d)
             for d in (
-                await self.__get_res(
+                await self._get_res(
                     EndPoints.ASMA_AL_HUSNA + "/" + ",".join(map(str, n)), {}
                 )
             )["data"]

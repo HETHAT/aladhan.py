@@ -31,12 +31,13 @@ def test_meta(data):
 
 @pytest.mark.asyncio
 async def test_timings(data):
-    for prayer in data.timings.prayers_only.values():
-        assert (
-            isinstance(prayer, aladhan.Prayer)
-            and isinstance(prayer.remaining, datetime.timedelta)
-            and isinstance(prayer.remaining_utc, (datetime.timedelta, None))
-        )
+    for _ in (data.timings.prayers_only, data.timings.as_dict):
+        for prayer in _.values():
+            assert (
+                isinstance(prayer, aladhan.Prayer)
+                and isinstance(prayer.remaining, datetime.timedelta)
+                and isinstance(prayer.remaining_utc, (datetime.timedelta, None))
+            )
 
     np = await data.timings.next_prayer()
     assert isinstance(np, aladhan.Prayer)

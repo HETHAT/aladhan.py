@@ -1,7 +1,7 @@
 import pytz
 
 from datetime import datetime, timedelta
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Optional, Iterable
 from functools import partial
 from beartype import beartype
 
@@ -76,7 +76,9 @@ class Tune:
 
     @property
     def value(self):
-        """:class:`str`: The string value that will be used to get response."""
+        """:class:`str`: The string value that will be used to get response.
+
+        Format: imsak,fajr,sunrise,dhuhr,asr,maghrib,sunset,isha,midnight"""
         return (
             "{0.imsak},{0.fajr},{0.sunrise},{0.dhuhr},{0.asr},"
             "{0.maghrib},{0.sunset},{0.isha},{0.midnight}".format(self)
@@ -198,9 +200,9 @@ class Prayer:
             Original Timings obj.
         name: :class:`str`
             Prayer name.
-        time: :class:`datetime`
+        time: :class:`datetime.datetime`
             Prayer's time.
-        time_utc: Optional[:class:`datetime`]
+        time_utc: Optional[:class:`datetime.datetime`]
             Prayer's time in utc, might be None when time doesn't exist
             because of a daylight savings switch.
         str_time: :class:`str`
@@ -229,7 +231,7 @@ class Prayer:
 
     @property
     def remaining(self):
-        """:class:`timedelta`: remaining time for prayer.
+        """:class:`datetime.timedelta`: remaining time for prayer.
 
         *New in v0.1.2*
         """
@@ -237,7 +239,7 @@ class Prayer:
 
     @property
     def remaining_utc(self):
-        """Optional[:class:`timedelta`]: remaining time for prayer for utc.
+        """Optional[:class:`datetime.timedelta`]: remaining time for prayer for utc.
 
         *New in v0.1.2*
         """
@@ -280,14 +282,14 @@ class CalendarDateArg:
             "true" if month was not given otherwise "false".
 
         hijri: :class:`bool`
-            Whether `year` is a hijri year or not.
+            Whether `year` given is a hijri year or not.
     """
 
     @beartype
     def __init__(
         self,
         year: int,
-        month: int = None,
+        month: Optional[int] = None,
         hijri: bool = False,
     ):
         # TODO: check for year limits
@@ -310,6 +312,9 @@ class CalendarDateArg:
     def as_dict(self):
         return {"year": self.year, "annual": self.annual, "month": self.month}
 
+    def __hash__(self):  # pragma: no cover
+        return hash((self.year, self.annual, self.month))
+
 
 class TimingsDateArg:
     """
@@ -317,7 +322,7 @@ class TimingsDateArg:
 
     Parameters
     ----------
-        date: Optional[:class:`int` or :class:`str` or :class:`datetime`]
+        date: Optional[:class:`int` or :class:`str` or :class:`datetime.datetime`]
             Can be either int representing the UNIX format or a str in
             DD-MM-YYYY format or a datetime obj.
             Default: current date.
@@ -330,7 +335,7 @@ class TimingsDateArg:
     """
 
     @beartype
-    def __init__(self, date: Union[str, int, datetime] = None):
+    def __init__(self, date: Optional[Union[str, int, datetime]] = None):
         if date is None:
             date = datetime.utcnow()
         elif isinstance(date, int):
@@ -349,6 +354,9 @@ class TimingsDateArg:
 
         self.date = date  # noqa
 
+    def __hash__(self):  # pragma: no cover
+        return hash(self.date)
+
 
 class DefaultArgs:
     """
@@ -356,12 +364,12 @@ class DefaultArgs:
 
     Parameters
     ----------
-        method: :class:`Method` or :class:`int`
+        method: :class:`methods.Method` or :class:`int`
             A prayer time calculation method, you can look into all methods \
             from :meth:`AsyncClient.get_all_methods()`.
             Default: ISNA (Islamic Society of North America).
 
-        tune: :class:`Tune`
+        tune: Optional[:class:`Tune`]
             To offset returned timings.
             Default: Tune()
 
@@ -409,7 +417,7 @@ class DefaultArgs:
     def __init__(
         self,
         method: Union[Method, int] = ISNA,
-        tune: Tune = None,
+        tune: Optional[Tune] = None,
         school: int = Schools.SHAFI,
         midnightMode: int = MidnightModes.STANDARD,  # noqa
         latitudeAdjustmentMethod: int = LatitudeAdjustmentMethods.ANGLE_BASED,  # noqa
@@ -470,6 +478,9 @@ class DefaultArgs:
             "adjustment": self.adjustment,
         }
 
+    def __hash__(self):  # pragma: no cover
+        return hash(tuple(self.as_dict.values()))
+
 
 class Meta:
     """Represents the meta that is in returned :class:`Data`
@@ -487,7 +498,7 @@ class Meta:
         latitude: :class:`float`
             Latitude coordinate.
 
-        timezone:  :class:`UTC`
+        timezone:  :class:`pytz.UTC`
             Used timezone to calculate.
 
         method: :class:`Method`
@@ -525,14 +536,6 @@ class Meta:
         self.school = school
         self.offset = Tune(*offset)
 
-    def __repr__(self):  # pragma: no cover
-        return (
-            "<Meta longitude={0.longitude!r}, latitude={0.latitude!r}, "
-            "method={0.method!r}, latitudeAdjustmentMethod="
-            "{0.latitudeAdjustmentMethod!r}, midnightMode={0.midnightMode!r}, "
-            "school={0.school!r}, offset={0.offset!r}>"
-        ).format(self)
-
     @property
     def default_args(self):
         """:class:`DefaultArgs`: returns a default args obj"""
@@ -545,6 +548,29 @@ class Meta:
                 LatitudeAdjustmentMethods, self.latitudeAdjustmentMethod.upper()
             )
             # can't get adjustment ...
+        )
+
+    def __repr__(self):  # pragma: no cover
+        return (
+            "<Meta longitude={0.longitude!r}, latitude={0.latitude!r}, "
+            "method={0.method!r}, latitudeAdjustmentMethod="
+            "{0.latitudeAdjustmentMethod!r}, midnightMode={0.midnightMode!r}, "
+            "school={0.school!r}, offset={0.offset!r}>"
+        ).format(self)
+
+    def __hash__(self):  # pragma: no cover
+        return hash(
+            (
+                self.method,
+                self.longitude,
+                self.latitude,
+                self.timezone,
+                self.method,
+                self.latitudeAdjustmentMethod,
+                self.method,
+                self.school,
+                self.offset,
+            )
         )
 
 
@@ -565,16 +591,22 @@ class DateType:
             Date's format
 
         day: :class:`int`
+            Date's day.
 
         weekday: dict[:class:`str`, :class:`str`]
+            A dict with 2 keys, "en" and "ar" for hijri and only 1 key "en" for gregorian.
 
         month: dict[:class:`str`, :class:`int` or :class:`str`]
+            A dict with 3 keys "number", "en", "ar" for hijri and 2 keys "number", "en" for gregorian.
 
         year: :class:`int`
+            Date's year.
 
         designation: dict[:class:`str`, :class:`str`]
+            A dict with 2 keys, "abbreviated" and "expanded".
 
-        holidays: :class:`list` of :class:`str`
+        holidays: Optional[:class:`list` of :class:`str`]
+            A list of holidays might be empty for hijri, always None for gregorian.
     """
 
     def __init__(
@@ -604,6 +636,9 @@ class DateType:
             "<DateType name={0.name!r}, date={0.date!r}, "
             "holidays={0.holidays}>"
         ).format(self)
+
+    def __hash__(self):  # pragma: no cover
+        return hash((self.name, self.date))
 
 
 class Date:
@@ -649,6 +684,9 @@ class Date:
             "gregorian={0.gregorian!r}, hijri={0.hijri!r}>".format(self)
         )
 
+    def __hash__(self):  # pragma: no cover
+        return hash(self.timestamp)
+
 
 class Timings:
     """Represents the timings that is in returned :class:`Data`
@@ -683,6 +721,8 @@ class Timings:
 
         midnight: :class:`Prayer`
             Midnight time.
+
+    *New in v0.1.4: __iter__*
     """
 
     def __init__(
@@ -711,8 +751,25 @@ class Timings:
         self.midnight: Prayer = _Prayer("Midnight", Midnight)
 
     @property
+    def as_dict(self) -> Dict[str, Prayer]:
+        """dict[:class:`str`, :class:`Prayer`]: A dict of all 5 prayers and the other times
+
+        *New in v0.1.4*"""
+        return {
+            "Imsak": self.imsak,
+            "Fajr": self.fajr,
+            "Sunrise": self.sunrise,
+            "Dhuhr": self.dhuhr,
+            "Asr": self.asr,
+            "Sunset": self.sunset,
+            "Maghrib": self.maghrib,
+            "Isha": self.isha,
+            "Midnight": self.midnight,
+        }
+
+    @property
     def prayers_only(self) -> Dict[str, Prayer]:
-        """dict[:class:`str`, :class:`Prayer`]: A dict of only 5 prayers."""
+        """dict[:class:`str`, :class:`Prayer`]: A dict of the 5 prayers."""
         return {
             "Fajr": self.fajr,
             "Dhuhr": self.dhuhr,
@@ -723,13 +780,13 @@ class Timings:
 
     async def next_prayer(self):
         """
-        Get the next coming prayer.
+        Get the next upcoming prayer.
         Don't use this for old dates.
 
         Returns
         -------
             :class:`Prayer`
-                The coming prayer.
+                The upcoming prayer.
         """
         meta = self.data.meta
         now = datetime.utcnow()
@@ -752,12 +809,18 @@ class Timings:
             )
         ).next_prayer()
 
+    def __iter__(self) -> Iterable[Prayer]:
+        yield from self.as_dict.values()
+
     def __repr__(self):  # pragma: no cover
         return (
             "<Timings imsak={0.imsak}, fajr={0.fajr}, sunrise={0.sunrise}, "
             "dhuhr={0.dhuhr}, asr={0.asr}, sunset={0.sunset}, maghrib={0.maghrib}, "
             "isha={0.isha}, midnight={0.midnight}>"
         ).format(self)
+
+    def __hash__(self):  # pragma: no cover
+        return hash(tuple(self.as_dict.values()))
 
 
 class Data:
@@ -788,3 +851,6 @@ class Data:
 
     def __repr__(self):  # pragma: no cover
         return "<Data object | {0.gregorian.date}>".format(self.date)
+
+    def __hash__(self):  # pragma: no cover
+        return hash((self.meta, self.date))

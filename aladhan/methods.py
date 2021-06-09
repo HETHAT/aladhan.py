@@ -1,51 +1,29 @@
 """
-JAFARI: :class:`Method`
-    0, Shia Ithna-Ashari, Leva Institute, Qum
+Available Methods
+-----------------
 
-KARACHI: :class:`Method`
-    1, University of Islamic Sciences, Karachi
+.. csv-table::
+    :header: "Method", "ID", "Name"
+    :widths: 10, 3, 50
 
-ISNA: :class:`Method`
-    2, Islamic Society of North America (ISNA)
-
-MWL: :class:`Method`
-    3, Muslim World League
-
-MAKKAH: :class:`Method`
-    4, Umm Al-Qura University Makkah
-
-EGYPT: :class:`Method`
-    5, Egyptian General Authority of Survey
+    "JAFARI", 0, "Shia Ithna-Ashari, Leva Institute, Qum"
+    "KARACHI", 1, "University of Islamic Sciences, Karachi"
+    "ISNA", 2, "Islamic Society of North America (ISNA)"
+    "MWL", 3, "Muslim World League"
+    "MAKKAH", 4, "Umm Al-Qura University Makkah"
+    "EGYPT", 5, "Egyptian General Authority of Survey"
+    "TEHRAN", 7, "Institute of Geophysics, University of Tehran"
+    "GULF", 8, "Gulf Region"
+    "KUWAIT", 9, "Kuwait"
+    "QATAR", 10, "Qatar"
+    "SINGAPORE", 11, "Majlis Ugama Islam Singapura, Singapore"
+    "FRANCE", 12, "Union Organization Islamic de France"
+    "TURKEY", 13, "Diyanet \u0130\u015fleri Ba\u015fkanl\u0131\u011f\u0131, Turkey"
+    "RUSSIA", 14, "Spiritual Administration of Muslims of Russia"
+    "MOONSIGHTING", 15, "Moonsighting Committee Worldwide (Moonsighting.com)"
 
 .. note::
     There is no 6 (method 6 is apparently same as 2).
-
-TEHRAN: :class:`Method`
-    7, Institute of Geophysics, University of Tehran
-
-GULF: :class:`Method`
-    8, Gulf Region
-
-KUWAIT: :class:`Method`
-    9, Kuwait
-
-QATAR: :class:`Method`
-    10, Qatar
-
-SINGAPORE: :class:`Method`
-    11, Majlis Ugama Islam Singapura, Singapore
-
-FRANCE: :class:`Method`
-    12, Union Organization Islamic de France
-
-TURKEY: :class:`Method`
-    13, Diyanet \u0130\u015fleri Ba\u015fkanl\u0131\u011f\u0131, Turkey
-
-RUSSIA: :class:`Method`
-    14, Spiritual Administration of Muslims of Russia
-
-MOONSIGHTING: :class:`Method`
-    15, Moonsighting Committee Worldwide (Moonsighting.com)
 
 all_methods: dict[:class:`int`, :class:`Method`]
     A dict of each id and its method.

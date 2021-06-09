@@ -102,4 +102,5 @@ However, for the quick and dirty:
 
             pip install -U aladhan.py
 
-Congratulations. You now have a virtual environment all set up. You can start to code.
+Congratulations. You now have a virtual environment all set up.
+You can start to code, learn more in :doc:`quickstart`.

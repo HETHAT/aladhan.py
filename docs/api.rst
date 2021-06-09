@@ -1,11 +1,11 @@
-.. _api:
-
 .. currentmodule:: aladhan
+
+.. _api:
 
 API Reference
 =============
 
-The following section documents every class and function in the baguette module.
+The following section documents every class and function in the aladhan.py module.
 
 Version Related Info
 --------------------

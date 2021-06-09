@@ -17,7 +17,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.append(os.path.abspath("extensions"))
-autodoc_mock_imports = ["async_lru", "beartype", "pytz", "aiohttp"]
+autodoc_mock_imports = ["pytz", "aiohttp"]
 
 # -- Project information -----------------------------------------------------
 
@@ -70,7 +70,6 @@ intersphinx_mapping = {
 
 rst_prolog = """
 .. |coro| replace:: This function is a |coroutine_link|_.
-.. |maybecoro| replace:: This function *could be a* |coroutine_link|_.
 .. |coroutine_link| replace:: *coroutine*
 .. _coroutine_link: https://docs.python.org/3/library/asyncio-task.html#coroutine
 """
@@ -104,7 +103,7 @@ html_theme_options = {
 html_static_path = ["_static"]
 
 resource_links = {
-    "discord": "https://discord.gg/mXaEuxYRan",
+    "discord": "https://discord.gg/jeBGF8Veud",
     "issues": "https://github.com/HETHAT/aladhan.py/issues",
     "examples": f"https://github.com/HETHAT/aladhan.py/tree/{branch}/examples",
 }
