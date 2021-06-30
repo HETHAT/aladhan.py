@@ -31,8 +31,8 @@ def test_meta(data):
 
 @pytest.mark.asyncio
 async def test_timings(data):
-    for _ in (data.timings.prayers_only, data.timings.as_dict):
-        for prayer in _.values():
+    for _ in (data.timings.prayers_only.values(), data.timings):
+        for prayer in _:
             assert (
                 isinstance(prayer, aladhan.Prayer)
                 and isinstance(prayer.remaining, datetime.timedelta)

@@ -13,6 +13,7 @@ async def client():
     ["args", "kwargs"],
     [
         [(34, 4), {}],
+        [(34.694, 3.5869), {"date": None, "defaults": None}],
         [(34, 4), {"date": aladhan.TimingsDateArg("01-05-2021")}],
         [(34, 4), {"defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1))}],
     ],
@@ -24,58 +25,63 @@ async def test_timings(client, args, kwargs):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
+    ["args", "kwargs"],
     [
-        [("London",), {}, False],
-        [("London",), {"date": aladhan.TimingsDateArg("01-05-2021")}, False],
+        [("London",), {}],
+        [("London",), {"date": aladhan.TimingsDateArg("01-05-2021")}],
         [
             ("London",),
             {"defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1))},
-            False,
         ],
-        [("ThisWillErrorLmaoooooo",), {}, Exception],
     ],
 )
-async def test_timings_by_address(client, args, kwargs, expected):
-    if expected:
-        bonk = False
-        try:
-            await client.get_timings_by_address(*args, **kwargs)
-        except expected:
-            bonk = True
-        assert bonk
-    else:
-        ts = await client.get_timings_by_address(*args, **kwargs)
-        assert isinstance(ts, aladhan.Timings)
+async def test_timings_by_address(client, args, kwargs):
+    ts = await client.get_timings_by_address(*args, **kwargs)
+    assert isinstance(ts, aladhan.Timings)
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     ["args", "kwargs", "expected"],
+    [[("ThisShouldError",), {}, Exception], [("",), {}, Exception]],
+)
+async def error_timings_by_address(args, kwargs, expected):
+    try:
+        await client.get_timings_by_address(*args, **kwargs)
+    except expected:
+        return
+    raise RuntimeError()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ["args", "kwargs"],
     [
-        [("London", "GB"), {}, False],
-        [("London", "GB", "Bexley"), {}, False],
+        [("London", "GB"), {}],
+        [("London", "GB", "Bexley"), {}],
+        [("London", "GB", None, None, None), {}],
         [
             ("London", "GB"),
             {"date": aladhan.TimingsDateArg("01-05-2021")},
-            False,
         ],
         [
             ("London", "GB"),
             {"defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1))},
-            False,
         ],
-        [("", ""), {}, Exception],
     ],
 )
-async def test_timings_by_city(client, args, kwargs, expected):
-    if expected:
-        bonk = False
-        try:
-            await client.get_timings_by_city(*args, **kwargs)
-        except expected:
-            bonk = True
-        assert bonk
-    else:
-        ts = await client.get_timings_by_city(*args, **kwargs)
-        assert isinstance(ts, aladhan.Timings)
+async def test_timings_by_city(client, args, kwargs):
+    ts = await client.get_timings_by_city(*args, **kwargs)
+    assert isinstance(ts, aladhan.Timings)
+
+
+@pytest.mark.parametrize(
+    ["args", "kwargs", "expected"],
+    [[("", ""), {}, Exception], [("Doesn't", "Exist"), {}, Exception]],
+)
+async def error_timings_by_city(args, kwargs, expected):
+    try:
+        await client.get_timings_by_city(*args, **kwargs)
+    except expected:
+        return
+    raise RuntimeError()
