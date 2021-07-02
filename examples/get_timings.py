@@ -47,5 +47,5 @@ async def main():
     for k, v in timings.prayers_only.items():
         print(f"{k} at {v.time}, {v.remaining} left")
 
-
-asyncio.run(main())
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())

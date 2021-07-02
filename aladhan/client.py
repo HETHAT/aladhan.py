@@ -1,6 +1,5 @@
 import asyncio
 import aiohttp
-import platform
 
 from beartype import beartype
 from typing import Union, Dict, List, Optional
@@ -8,28 +7,6 @@ from typing import Union, Dict, List, Optional
 from .methods import all_methods
 from .base_types import *
 from .endpoints import EndPoints
-
-from functools import wraps
-
-
-#  https://github.com/aio-libs/aiohttp/issues/4324#issuecomment-733884349
-if platform.system() == "Windows":  # pragma: no cover
-    from asyncio.proactor_events import _ProactorBasePipeTransport  # noqa
-
-    def silence_event_loop_closed(func):
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            try:
-                return func(self, *args, **kwargs)
-            except RuntimeError as e:
-                if str(e) != "Event loop is closed":
-                    raise
-
-        return wrapper
-
-    _ProactorBasePipeTransport.__del__ = silence_event_loop_closed(
-        _ProactorBasePipeTransport.__del__
-    )
 
 
 class AsyncClient:

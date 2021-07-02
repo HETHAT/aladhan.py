@@ -16,7 +16,8 @@ to define a client in an asynchronous function.
     async def main():
         client = aladhan.AsyncClient()
 
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
 
 Of course this will do nothing but we are going to use the client soon.
 
@@ -39,7 +40,8 @@ a :class:`Timings` object:
         for prayer in timings:
             print(prayer.name, prayer.time)
 
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
 
 Output would be
 
@@ -111,7 +113,8 @@ can use :meth:`AsyncClient.get_calendar`.
         for timings in month_calendar:
             print(timings)
 
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
 
 ``month`` argument for :class:`CalendarDateArg` is optional, and by not providing it
 or passing 0, it will return a *year calendar*, a dict of strings ("1",...,"12")
