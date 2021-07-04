@@ -36,6 +36,7 @@ class Method:
     To make a custom method:
 
     .. code:: py
+
         params = {
             "fajr": ...,  # can be either an `int` or "null"
             "maghrib": ...,
