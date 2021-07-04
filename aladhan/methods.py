@@ -32,7 +32,17 @@ all_methods: dict[:class:`int`, :class:`Method`]
 
 class Method:
     """
-    Represents a Method Calculation obj.
+    Represents a Method Calculation obj. Can be used to create a Custom Method.
+    To make a custom method:
+
+    .. code:: py
+        params = {
+            "fajr": ...,  # can be either an `int` or "null"
+            "maghrib": ...,
+            "isha": ...
+        }
+        # id must be 99. Name param doesn't effect.
+        custom_method = Method("Custom", 99, params=params)
 
     Attributes
     ----------
@@ -119,12 +129,6 @@ MOONSIGHTING = Method(
     id=15,
     params={"shafaq": "general"},
 )
-# CUSTOM = Method(
-#     name="Custom",
-#     id=99,
-#     params={}
-# )
-# later
 
 all_methods = {
     0: JAFARI,
@@ -143,5 +147,4 @@ all_methods = {
     13: TURKEY,
     14: RUSSIA,
     15: MOONSIGHTING,
-    # 99 later
 }

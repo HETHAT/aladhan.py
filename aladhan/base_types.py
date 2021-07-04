@@ -22,6 +22,7 @@ __all__ = (
     "DefaultArgs",
     "Qibla",
     "Ism",
+    "Method",
 )
 
 
@@ -396,6 +397,9 @@ class DefaultArgs:
         method: :class:`int`
             Method id.
 
+        method_params: Optional[dict[str, int or "null"]]
+            Method's parameters. ``None`` if method wasn't custom.
+
         tune: :class:`str`
             Tune Value.
 
@@ -406,6 +410,8 @@ class DefaultArgs:
         latitudeAdjustmentMethod: :class:`int`
 
         adjustment: :class:`int`
+
+    *New in v0.2 method_params*
     """
 
     # TODO: add timezone param
@@ -420,12 +426,27 @@ class DefaultArgs:
         adjustment: int = 0,
     ):
         # method
+        self.method_params = None
         if isinstance(method, Method):
+            if method.id == 99:
+                try:
+                    self.method_params = "{fajr},{maghrib},{isha}".format(
+                        **method.params
+                    )
+                except KeyError as e:
+                    raise KeyError(
+                        f"{e.args[0]!r} is required key in Method's params. "
+                        "https://aladhanpy.readthedocs.io/en/latest/"
+                        "api.html#aladhan.methods.Method for more info"
+                    )
             method = method.id
-
-        if method not in range(16):  # pragma: no cover
+        elif method == 99:
+            raise TypeError(
+                "Pass Method object instead if you want to use custom method"
+            )
+        if method not in range(16) and method != 99:  # pragma: no cover
             raise ValueError(
-                "Expected method in 0-15 range" " got {!r}".format(method)
+                "Expected method in 0-15 range or 99 got {!r}".format(method)
             )
         self.method = method
 
@@ -465,7 +486,7 @@ class DefaultArgs:
 
     @property
     def as_dict(self):
-        return {
+        dct = {
             "method": self.method,
             "tune": self.tune,
             "school": self.school,
@@ -473,6 +494,9 @@ class DefaultArgs:
             "latitudeAdjustmentMethod": self.latitudeAdjustmentMethod,
             "adjustment": self.adjustment,
         }
+        if self.method == 99:
+            dct["methodSettings"] = self.method_params
+        return dct
 
     def __hash__(self):  # pragma: no cover
         return hash(tuple(self.as_dict.values()))
@@ -497,8 +521,8 @@ class Meta:
         timezone:  :class:`pytz.UTC`
             Used timezone to calculate.
 
-        method: :class:`Method`
-            Calculation Method.
+        method: Optional[:class:`Method`]
+            Calculation Method. ``None`` if it was a custom method.
 
         latitudeAdjustmentMethod: :class:`str`
 
@@ -526,7 +550,7 @@ class Meta:
         self.longitude = longitude
         self.latitude = latitude
         self.timezone = pytz.timezone(timezone)
-        self.method = all_methods[method["id"]]
+        self.method = all_methods.get(method.get("id"))
         self.latitudeAdjustmentMethod = latitudeAdjustmentMethod
         self.midnightMode = midnightMode
         self.school = school
@@ -534,9 +558,14 @@ class Meta:
 
     @property
     def default_args(self):
-        """:class:`DefaultArgs`: returns a default args obj"""
-        return DefaultArgs(
-            self.method,
+        """:class:`DefaultArgs`: returns a default args obj
+
+        .. warning::
+            This will set method to ISNA if method was custom, and it will
+            always set adjustment to 0.
+        """
+        return DefaultArgs(  # TODO
+            self.method or 2,
             self.offset,
             getattr(Schools, self.school.upper()),
             getattr(MidnightModes, self.midnightMode.upper()),

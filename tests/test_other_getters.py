@@ -31,3 +31,9 @@ async def test_all_asma(client):
         and isinstance(asma, list)
         and isinstance(asma[0], aladhan.Ism)
     )
+
+
+def test_all_methods(client):
+    methods = client.get_all_methods()
+    for i, x in methods.items():
+        assert isinstance(i, int) and isinstance(x, aladhan.methods.Method)

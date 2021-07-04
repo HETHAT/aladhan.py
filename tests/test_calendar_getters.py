@@ -95,7 +95,7 @@ async def test_calendar_by_address(client, args, kwargs, expected):
         [("ThisShouldError", aladhan.CalendarDateArg(2021, 5)), {}, Exception],
     ],
 )
-async def error_calendar_by_address(client, args, kwargs, expected):
+async def test_error_calendar_by_address(client, args, kwargs, expected):
     try:
         await client.get_calendar_by_address(*args, **kwargs)
     except expected:
@@ -165,7 +165,7 @@ async def test_calendar_by_city(client, args, kwargs, expected):
         [("a", "b", "c"), {"date": aladhan.CalendarDateArg(2021)}, Exception],
     ],
 )
-async def error_calendar_by_city(client, args, kwargs, expected):
+async def test_error_calendar_by_city(client, args, kwargs, expected):
     try:
         await client.get_calendar_by_city(*args, **kwargs)
     except expected:
