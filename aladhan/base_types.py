@@ -3,7 +3,6 @@ import pytz
 from datetime import datetime, timedelta
 from typing import Dict, Union, List, Optional, Iterable
 from functools import partial
-from beartype import beartype
 
 from .methods import all_methods, Method, ISNA
 
@@ -285,7 +284,6 @@ class CalendarDateArg:
             Whether `year` given is a hijri year or not.
     """
 
-    @beartype
     def __init__(
         self,
         year: int,
@@ -334,7 +332,6 @@ class TimingsDateArg:
 
     """
 
-    @beartype
     def __init__(self, date: Optional[Union[str, int, datetime]] = None):
         if date is None:
             date = datetime.utcnow()
@@ -413,7 +410,6 @@ class DefaultArgs:
 
     # TODO: add timezone param
 
-    @beartype
     def __init__(
         self,
         method: Union[Method, int] = ISNA,

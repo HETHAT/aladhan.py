@@ -1,7 +1,6 @@
 import asyncio
 import aiohttp
 
-from beartype import beartype
 from typing import Union, Dict, List, Optional
 
 from .methods import all_methods
@@ -21,8 +20,8 @@ class AsyncClient:
 
     async def _get_res(self, endpoint: str, params: dict) -> dict:
         async with aiohttp.ClientSession(loop=self._loop) as session:
-            res = await session.get(endpoint, params=params)
-            res = await res.json()
+            async with session.get(endpoint, params=params) as res:
+                res = await res.json()
 
         if res["code"] != 200:  # something wrong
             raise Exception("{code}, {data}".format(**res))
@@ -44,7 +43,6 @@ class AsyncClient:
             }
         return Data(**data, client=self).timings  # it is just a day timings
 
-    @beartype
     async def get_timings(
         self,
         longitude: Union[int, float],
@@ -87,7 +85,6 @@ class AsyncClient:
             EndPoints.TIMINGS + "/" + date.date, params
         )
 
-    @beartype
     async def get_timings_by_address(
         self,
         address: str,
@@ -125,7 +122,6 @@ class AsyncClient:
             EndPoints.TIMINGS_BY_ADDRESS + "/" + date.date, params
         )
 
-    @beartype
     async def get_timings_by_city(
         self,
         city: str,
@@ -177,7 +173,6 @@ class AsyncClient:
             EndPoints.TIMINGS_BY_CITY + "/" + date.date, params
         )
 
-    @beartype
     async def get_calendar(
         self,
         longitude: Union[int, float],
@@ -223,7 +218,6 @@ class AsyncClient:
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR"), params
         )
 
-    @beartype
     async def get_calendar_by_address(
         self,
         address: str,
@@ -263,7 +257,6 @@ class AsyncClient:
             params,
         )
 
-    @beartype
     async def get_calendar_by_city(
         self,
         city: str,
@@ -331,7 +324,6 @@ class AsyncClient:
         """
         return all_methods
 
-    @beartype
     async def get_qibla(
         self, longitude: Union[int, float], latitude: Union[int, float]
     ):
@@ -354,7 +346,6 @@ class AsyncClient:
             )["data"]
         )
 
-    @beartype
     async def get_asma(self, *n: int):
         """|coro|
 
