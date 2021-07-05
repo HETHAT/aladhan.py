@@ -24,6 +24,7 @@ __all__ = (
     "Ism",
     "Method",
 )
+# TODO: docs (errors)
 
 
 class Tune:
@@ -291,7 +292,6 @@ class CalendarDateArg:
         month: Optional[int] = None,
         hijri: bool = False,
     ):
-        # TODO: check for year limits
         if month:
             if month not in range(1, 13):  # pragma: no cover
                 raise ValueError(
@@ -380,6 +380,12 @@ class DefaultArgs:
             to Fajr).
             Default: Standard
 
+        timezonestring: Optional[:class:`str`]
+            A valid timezone name as specified on http://php.net/manual/en/
+            timezones.php . Example: Europe/London. Calculated using the
+            co-ordinates provided by default. *This should be used only in
+            getters that uses co-ordinates or it will be ignored.*
+
         latitudeAdjustmentMethod: :class:`int`
             Method for adjusting times higher latitudes.
             For instance, if you are checking timings in the UK or Sweden.
@@ -407,14 +413,14 @@ class DefaultArgs:
 
         midnightMode: :class:`int`
 
+        timezonestring: :class:`str`
+
         latitudeAdjustmentMethod: :class:`int`
 
         adjustment: :class:`int`
 
-    *New in v0.2 method_params*
+    *New in v0.2 method_params, timezonestring*
     """
-
-    # TODO: add timezone param
 
     def __init__(
         self,
@@ -422,6 +428,7 @@ class DefaultArgs:
         tune: Optional[Tune] = None,
         school: int = Schools.SHAFI,
         midnightMode: int = MidnightModes.STANDARD,  # noqa
+        timezonestring: Optional[str] = None,
         latitudeAdjustmentMethod: int = LatitudeAdjustmentMethods.ANGLE_BASED,  # noqa
         adjustment: int = 0,
     ):
@@ -473,7 +480,8 @@ class DefaultArgs:
                 " got {!r}".format(midnightMode)
             )
         self.midnightMode = midnightMode
-
+        # timezone string
+        self.timezonestring = timezonestring
         # lat adj methods
         if latitudeAdjustmentMethod not in (1, 2, 3):  # pragma: no cover
             raise ValueError(
@@ -496,6 +504,8 @@ class DefaultArgs:
         }
         if self.method == 99:
             dct["methodSettings"] = self.method_params
+        if self.timezonestring:
+            dct["timezonestring"] = self.timezonestring
         return dct
 
     def __hash__(self):  # pragma: no cover
@@ -564,11 +574,12 @@ class Meta:
             This will set method to ISNA if method was custom, and it will
             always set adjustment to 0.
         """
-        return DefaultArgs(  # TODO
+        return DefaultArgs(  # TODO: testing
             self.method or 2,
             self.offset,
             getattr(Schools, self.school.upper()),
             getattr(MidnightModes, self.midnightMode.upper()),
+            self.timezone.zone,
             getattr(
                 LatitudeAdjustmentMethods, self.latitudeAdjustmentMethod.upper()
             )
