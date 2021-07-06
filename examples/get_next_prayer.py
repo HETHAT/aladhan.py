@@ -14,6 +14,8 @@ async def main():
     print(next_prayer, "remaining:", next_prayer.remaining)
     print(next_prayer, "remaining for utc:", next_prayer.remaining_utc)
 
+    await client.close()
+
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())

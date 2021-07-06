@@ -5,7 +5,9 @@ import aladhan
 @pytest.mark.asyncio
 @pytest.fixture
 async def client():
-    return aladhan.AsyncClient()
+    client = aladhan.AsyncClient()
+    yield client
+    await client.close()
 
 
 @pytest.mark.asyncio

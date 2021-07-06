@@ -46,6 +46,8 @@ async def main():
         print(timings)
         print()
 
+    await client.close()
+
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())

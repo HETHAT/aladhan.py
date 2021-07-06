@@ -1,4 +1,3 @@
-import asyncio
 import aiohttp
 
 from typing import Union, Dict, List, Optional
@@ -15,13 +14,26 @@ class AsyncClient:
         You need to initialize this class in a |coroutine_link|_.
     """
 
-    def __init__(self, loop: asyncio.AbstractEventLoop = None):
-        self._loop = loop or asyncio.get_event_loop()
+    def __init__(self, session: Optional[aiohttp.ClientSession] = None):
+        self.__session = session or aiohttp.ClientSession()
+
+    def __await__(self):
+        return self.__aenter__().__await__()
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
+        return exc_type is None
+
+    async def close(self):
+        """Closes the connection."""
+        await self.__session.close()
 
     async def _get_res(self, endpoint: str, params: dict) -> dict:
-        async with aiohttp.ClientSession(loop=self._loop) as session:
-            async with session.get(endpoint, params=params) as res:
-                res = await res.json()
+        async with self.__session.get(endpoint, params=params) as res:
+            res = await res.json()
 
         if res["code"] != 200:  # something wrong
             raise Exception("{code}, {data}".format(**res))
