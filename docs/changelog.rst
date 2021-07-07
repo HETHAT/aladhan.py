@@ -3,6 +3,15 @@
 Changelog
 =========
 
+v0.2.0
+------
+
+- Add method ``close`` for ``AsyncClient``
+- Add custom method.
+- Add timezone param for :class:`DefaultArgs`
+- Add async context manager for ``AsyncClient``
+- Remove beartype.
+
 v0.1.4
 ------
 
