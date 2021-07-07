@@ -100,6 +100,7 @@ def test_error_calendar_date(kwargs, expected):
         [dict(school=1), 1],
         [dict(midnightMode=0), 0],
         [dict(midnightMode=1), 1],
+        [dict(timezonestring="Africa/Algiers"), "Africa/Algiers"],
         [dict(latitudeAdjustmentMethod=1), 1],
         [dict(latitudeAdjustmentMethod=2), 2],
         [dict(latitudeAdjustmentMethod=3), 3],
@@ -120,6 +121,7 @@ def test_default_args(kwargs, expected):
         [dict(method=17), ValueError],
         [dict(school=2), ValueError],
         [dict(midnightMode=3), ValueError],
+        [dict(timezonestring="ta7ya ms3d"), ValueError],
         [dict(latitudeAdjustmentMethod=50), ValueError],
     ],
 )

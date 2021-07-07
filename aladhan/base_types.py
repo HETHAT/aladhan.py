@@ -381,8 +381,8 @@ class DefaultArgs:
             Default: Standard
 
         timezonestring: Optional[:class:`str`]
-            A valid timezone name as specified on http://php.net/manual/en/
-            timezones.php . Example: Europe/London. Calculated using the
+            A valid timezone name as specified on https://www.php.net/manual/en/timezones.php
+            Example: Europe/London. Calculated using the
             co-ordinates provided by default. *This should be used only in
             getters that uses co-ordinates or it will be ignored.*
 
@@ -480,8 +480,12 @@ class DefaultArgs:
                 " got {!r}".format(midnightMode)
             )
         self.midnightMode = midnightMode
+
         # timezone string
+        if timezonestring and timezonestring not in pytz.all_timezones_set:
+            raise ValueError("Invalid timezone.")
         self.timezonestring = timezonestring
+
         # lat adj methods
         if latitudeAdjustmentMethod not in (1, 2, 3):  # pragma: no cover
             raise ValueError(
@@ -490,6 +494,7 @@ class DefaultArgs:
             )
         self.latitudeAdjustmentMethod = latitudeAdjustmentMethod
 
+        # adj
         self.adjustment = adjustment
 
     @property
@@ -814,7 +819,7 @@ class Timings:
             "Isha": self.isha,
         }
 
-    async def next_prayer(self):
+    async def next_prayer(self) -> Prayer:
         """
         Get the next upcoming prayer.
         Don't use this for old dates.
