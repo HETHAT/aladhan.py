@@ -9,12 +9,12 @@ from collections import namedtuple
 VersionInfo = namedtuple("VersionInfo", "major minor micro releaselevel serial")
 
 version_info = VersionInfo(
-    major=0, minor=2, micro=0, releaselevel="", serial=0
+    major=0, minor=3, micro=0, releaselevel="alpha", serial=0
 )
 
 __title__ = "aladhan.py"
 __author__ = "HETHAT"
-__version__ = "0.2.0"
+__version__ = "0.3.0a"
 
 
 from .client import AsyncClient

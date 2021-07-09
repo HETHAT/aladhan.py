@@ -38,7 +38,7 @@ class Method:
     .. code:: py
 
         params = {
-            "fajr": ...,  # can be either an `int` or "null"
+            "fajr": ...,  # can be either an `int` or "null", if it was not giving it will be set to "null".
             "maghrib": ...,
             "isha": ...
         }
@@ -53,15 +53,38 @@ class Method:
         id: :class:`int`
             Method id that will be used to get response.
             Can be only from 0 to 15.
-
-        params: :class:`dict`
-            Method params.
     """
 
     def __init__(self, name: str, id: int, params: dict):
         self.name = name
         self.id = id
-        self.params = params
+        self.__params = params
+        lst = []
+        for t in ("fajr", "magrib", "isha"):
+            v = params.get(t, "null")
+            if not isinstance(v, int) and v != "null":
+                raise TypeError(("params '{}' expected to be type of `int` or "
+                                 "\"null\", got `{}`").format(t, type(v).__name__))
+            lst.append(str(v))
+        self.__params_str = ",".join(lst)
+
+    @property
+    def params(self):
+        """
+        Method parameters.
+
+        *Changed in v0.3.0 to a property.*
+        """
+        return self.__params
+
+    @property
+    def params_str(self):
+        """
+        A string in "fajr,maghrib,isha" format.
+
+        *New in v0.3.0*
+        """
+        return self.__params_str
 
     def __repr__(self):  # pragma: no cover
         return "<Method name={0.name!r}, id={0.id}>".format(self)

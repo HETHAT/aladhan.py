@@ -5,6 +5,7 @@ from typing import Union, Dict, List, Optional
 from .methods import all_methods
 from .base_types import *
 from .endpoints import EndPoints
+from .exceptions import HTTPException
 
 
 class AsyncClient:
@@ -16,9 +17,6 @@ class AsyncClient:
 
     def __init__(self, session: Optional[aiohttp.ClientSession] = None):
         self.__session = session or aiohttp.ClientSession()
-
-    def __await__(self):
-        return self.__aenter__().__await__()
 
     async def __aenter__(self):
         return self
@@ -36,7 +34,7 @@ class AsyncClient:
             res = await res.json()
 
         if res["code"] != 200:  # something wrong
-            raise Exception("{code}, {data}".format(**res))
+            raise HTTPException.from_res(res)
         return res
 
     async def _get_timings(

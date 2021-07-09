@@ -1,6 +1,7 @@
 import pytest
 import aladhan
 import datetime
+from aladhan.exceptions import *
 
 
 @pytest.mark.asyncio
@@ -20,6 +21,19 @@ def test_tune(args):
     tune = aladhan.Tune(*args)
     assert isinstance(aladhan.Tune.from_str(tune.value), aladhan.Tune)
 
+
+@pytest.mark.parametrize(
+    ["args", "expected"],
+    [
+        [("", 99, {"isha": ""}), TypeError],
+    ],
+)
+def test_error_method(args, expected):
+    try:
+        aladhan.Method(*args)
+    except expected:
+        return
+    raise RuntimeError()
 
 @pytest.mark.parametrize(
     "arg", [datetime.datetime(2021, 5, 1), 1619827200, "01-05-2021"]
@@ -116,13 +130,16 @@ def test_default_args(kwargs, expected):
 @pytest.mark.parametrize(
     ["kwargs", "expected"],
     [
-        [dict(method=aladhan.Method("", 99, params=dict())), KeyError],
-        [dict(method=99), TypeError],
-        [dict(method=17), ValueError],
-        [dict(school=2), ValueError],
-        [dict(midnightMode=3), ValueError],
-        [dict(timezonestring="ta7ya ms3d"), ValueError],
-        [dict(latitudeAdjustmentMethod=50), ValueError],
+        [dict(tune=aladhan.Tune("hi")), InvalidTune],
+        [dict(tune=aladhan.Tune("0,0")), InvalidTune],
+        [dict(tune=17), InvalidTune],
+        [dict(method=99), InvalidMethod],
+        [dict(method=17), InvalidMethod],
+        [dict(school=2), InvalidSchool],
+        [dict(midnightMode=3), InvalidMidnightMode],
+        [dict(timezonestring="ta7ya ms3d"), InvalidTimezone],
+        [dict(latitudeAdjustmentMethod=50), InvalidLatAdjMethod],
+        [dict(adjustment=""), InvalidAdjustment]
     ],
 )
 def test_error_default_args(kwargs, expected):

@@ -5,6 +5,7 @@ from typing import Dict, Union, List, Optional, Iterable
 from functools import partial
 
 from .methods import all_methods, Method, ISNA
+from .exceptions import *
 
 __all__ = (
     "Data",
@@ -97,6 +98,9 @@ class Tune:
         args = s.split(",")
         assert len(args) == 9, "Not valid string format"
         return cls(*map(int, args))
+
+    def __iter__(self):
+        yield from map(int, self.value.split(","))
 
     def __repr__(self):  # pragma: no cover
         return "<Tune = {}>".format(self.value)
@@ -436,23 +440,15 @@ class DefaultArgs:
         self.method_params = None
         if isinstance(method, Method):
             if method.id == 99:
-                try:
-                    self.method_params = "{fajr},{maghrib},{isha}".format(
-                        **method.params
-                    )
-                except KeyError as e:
-                    raise KeyError(
-                        f"{e.args[0]!r} is required key in Method's params. "
-                        "https://aladhanpy.readthedocs.io/en/latest/"
-                        "api.html#aladhan.methods.Method for more info"
-                    )
+                self.method_params = method.params_str
             method = method.id
         elif method == 99:
-            raise TypeError(
-                "Pass Method object instead if you want to use custom method"
+            raise InvalidMethod(
+                "Pass Method object instead if you want to use custom method."
+                " for more info https://aladhanpy.readthedocs.io/en/latest/api.html#aladhan.methods.Method"
             )
         if method not in range(16) and method != 99:  # pragma: no cover
-            raise ValueError(
+            raise InvalidMethod(
                 "Expected method in 0-15 range or 99 got {!r}".format(method)
             )
         self.method = method
@@ -462,11 +458,19 @@ class DefaultArgs:
             tune = Tune().value
         elif isinstance(tune, Tune):
             tune = tune.value
+            ts = tune.split(",")
+            if len(ts) != 9 or not all(x.isdigit() for x in ts):
+                raise InvalidTune(
+                    "Invalid tune argument was passed. (tune.value = %s)" % tune
+                )
+        else:
+            raise InvalidTune("'tune' argument must be `Tune` object."
+                              " got `%s` instead." % type(tune).__name__)
         self.tune = tune
 
         # school
         if school not in (0, 1):  # pragma: no cover
-            raise ValueError(
+            raise InvalidSchool(
                 "School argument can only be either 0 or 1 got {!r}".format(
                     school
                 )
@@ -475,7 +479,7 @@ class DefaultArgs:
 
         # midnight mode
         if midnightMode not in (0, 1):  # pragma: no cover
-            raise ValueError(
+            raise InvalidMidnightMode(
                 "midnightMode argument can only be either 0 or 1"
                 " got {!r}".format(midnightMode)
             )
@@ -483,18 +487,26 @@ class DefaultArgs:
 
         # timezone string
         if timezonestring and timezonestring not in pytz.all_timezones_set:
-            raise ValueError("Invalid timezone.")
+            raise InvalidTimezone(
+                "Invalid timezone ({!r}).".format(timezonestring)
+                + " https://www.php.net/manual/en/timezones.php for valid timezones."
+            )
         self.timezonestring = timezonestring
 
         # lat adj methods
         if latitudeAdjustmentMethod not in (1, 2, 3):  # pragma: no cover
-            raise ValueError(
+            raise InvalidLatAdjMethod(
                 "latitudeAdjustmentMethod argument can only be either 1, 2 or 3"
                 " got {!r}".format(latitudeAdjustmentMethod)
             )
         self.latitudeAdjustmentMethod = latitudeAdjustmentMethod
 
         # adj
+        if not isinstance(adjustment, int):
+            raise InvalidAdjustment(
+                "Expected adjustment argument to be `int` got"
+                " `{}`".format(type(adjustment).__name__)
+            )
         self.adjustment = adjustment
 
     @property
@@ -569,7 +581,7 @@ class Meta:
         self.latitudeAdjustmentMethod = latitudeAdjustmentMethod
         self.midnightMode = midnightMode
         self.school = school
-        self.offset = Tune(*offset)
+        self.offset = Tune(**offset)
 
     @property
     def default_args(self):
