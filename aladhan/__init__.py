@@ -21,3 +21,4 @@ from .client import AsyncClient
 from .base_types import *
 from . import methods
 from .methods import Method
+from .enums_classes import *

@@ -35,6 +35,7 @@ def test_error_method(args, expected):
         return
     raise RuntimeError()
 
+
 @pytest.mark.parametrize(
     "arg", [datetime.datetime(2021, 5, 1), 1619827200, "01-05-2021"]
 )
@@ -139,7 +140,7 @@ def test_default_args(kwargs, expected):
         [dict(midnightMode=3), InvalidMidnightMode],
         [dict(timezonestring="ta7ya ms3d"), InvalidTimezone],
         [dict(latitudeAdjustmentMethod=50), InvalidLatAdjMethod],
-        [dict(adjustment=""), InvalidAdjustment]
+        [dict(adjustment=""), InvalidAdjustment],
     ],
 )
 def test_error_default_args(kwargs, expected):

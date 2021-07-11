@@ -6,18 +6,16 @@ from functools import partial
 
 from .methods import all_methods, Method, ISNA
 from .exceptions import *
+from .enums_classes import *
 
 __all__ = (
     "Data",
     "Date",
     "DateType",
     "Meta",
-    "LatitudeAdjustmentMethods",
-    "MidnightModes",
     "Timings",
     "Tune",
     "Prayer",
-    "Schools",
     "TimingsDateArg",
     "CalendarDateArg",
     "DefaultArgs",
@@ -170,28 +168,6 @@ class Ism:
 
     def __hash__(self):  # pragma: no cover
         return hash(self.name)
-
-
-class Schools:
-    """Available schools"""
-
-    STANDARD = SHAFI = 0
-    HANAFI = 1
-
-
-class MidnightModes:
-    """Available midnight modes"""
-
-    STANDARD = 0
-    JAFARI = 1
-
-
-class LatitudeAdjustmentMethods:
-    """Available latitude adjustment methods"""
-
-    MIDDLE_OF_THE_NIGHT = 1
-    ONE_SEVENTH = 2
-    ANGLE_BASED = 3
 
 
 class Prayer:
@@ -430,10 +406,14 @@ class DefaultArgs:
         self,
         method: Union[Method, int] = ISNA,
         tune: Optional[Tune] = None,
-        school: int = Schools.SHAFI,
-        midnightMode: int = MidnightModes.STANDARD,  # noqa
+        school: Union[int, Schools] = Schools.SHAFI,
+        midnightMode: Union[  # noqa
+            int, MidnightModes
+        ] = MidnightModes.STANDARD,
         timezonestring: Optional[str] = None,
-        latitudeAdjustmentMethod: int = LatitudeAdjustmentMethods.ANGLE_BASED,  # noqa
+        latitudeAdjustmentMethod: Union[  # noqa
+            int, LatitudeAdjustmentMethods
+        ] = LatitudeAdjustmentMethods.ANGLE_BASED,
         adjustment: int = 0,
     ):
         # method
@@ -464,11 +444,15 @@ class DefaultArgs:
                     "Invalid tune argument was passed. (tune.value = %s)" % tune
                 )
         else:
-            raise InvalidTune("'tune' argument must be `Tune` object."
-                              " got `%s` instead." % type(tune).__name__)
+            raise InvalidTune(
+                "'tune' argument must be `Tune` object."
+                " got `%s` instead." % type(tune).__name__
+            )
         self.tune = tune
 
         # school
+        if isinstance(school, Schools):
+            school = school.value
         if school not in (0, 1):  # pragma: no cover
             raise InvalidSchool(
                 "School argument can only be either 0 or 1 got {!r}".format(
@@ -478,6 +462,8 @@ class DefaultArgs:
         self.school = school
 
         # midnight mode
+        if isinstance(midnightMode, MidnightModes):
+            midnightMode = midnightMode.value
         if midnightMode not in (0, 1):  # pragma: no cover
             raise InvalidMidnightMode(
                 "midnightMode argument can only be either 0 or 1"
@@ -494,6 +480,8 @@ class DefaultArgs:
         self.timezonestring = timezonestring
 
         # lat adj methods
+        if isinstance(latitudeAdjustmentMethod, LatitudeAdjustmentMethods):
+            latitudeAdjustmentMethod = latitudeAdjustmentMethod.value
         if latitudeAdjustmentMethod not in (1, 2, 3):  # pragma: no cover
             raise InvalidLatAdjMethod(
                 "latitudeAdjustmentMethod argument can only be either 1, 2 or 3"

@@ -63,8 +63,12 @@ class Method:
         for t in ("fajr", "magrib", "isha"):
             v = params.get(t, "null")
             if not isinstance(v, int) and v != "null":
-                raise TypeError(("params '{}' expected to be type of `int` or "
-                                 "\"null\", got `{}`").format(t, type(v).__name__))
+                raise TypeError(
+                    (
+                        "params '{}' expected to be type of `int` or "
+                        '"null", got `{}`'
+                    ).format(t, type(v).__name__)
+                )
             lst.append(str(v))
         self.__params_str = ",".join(lst)
 

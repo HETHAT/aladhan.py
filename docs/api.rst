@@ -115,30 +115,13 @@ Default Arguments
     :members:
     :undoc-members:
 
-Latitude Adjustment Methods
----------------------------
+Enums
+-----
 
-.. autoclass:: LatitudeAdjustmentMethods()
+.. automodule:: aladhan.enums_classes
     :members:
     :undoc-members:
     :member-order: bysource
-
-Midnight Modes
---------------
-
-.. autoclass:: MidnightModes()
-    :members:
-    :undoc-members:
-    :member-order: bysource
-
-Schools
--------
-
-.. autoclass:: Schools()
-    :members:
-    :undoc-members:
-    :member-order: bysource
-
 
 Calculation Methods
 -------------------
@@ -146,4 +129,11 @@ Calculation Methods
 .. automodule:: aladhan.methods
     :members:
     :undoc-members:
+    :member-order: bysource
+
+Exceptions
+----------
+
+.. automodule:: aladhan.exceptions
+    :members:
     :member-order: bysource

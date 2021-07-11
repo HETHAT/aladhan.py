@@ -3,13 +3,30 @@ class AladhanException(Exception):
     Base exception class for aladhan.py
 
     Ideally speaking, this could be caught to handle any exceptions thrown from this library.
+
+    Attributes
+    ----------
+
+        message: str
+            Exception's message.
     """
+
     def __init__(self, message: str = ""):
         self.message = message
         super().__init__(message)
 
 
 class HTTPException(AladhanException):
+    """Exception that’s thrown when an HTTP request operation fails.
+
+    Attributes
+    ----------
+        response: dict
+            API's response.
+        code: int
+            Response's code.
+    """
+
     def __init__(self, response, message: str = None):
         self.response = response
         self.code = response.get("code", 0)
@@ -17,8 +34,9 @@ class HTTPException(AladhanException):
 
     @classmethod
     def from_res(cls, res):
-        return {400: BadRequest,
-                500: InternalServerError}.get(res.get("code"), cls)(res)
+        return {400: BadRequest, 500: InternalServerError}.get(
+            res.get("code"), cls
+        )(res)
 
 
 class BadRequest(HTTPException):
@@ -60,5 +78,6 @@ class InvalidLatAdjMethod(InvalidArgument):
 
 class InvalidAdjustment(InvalidArgument):
     """Exception that’s thrown when adjustment argument is invalid."""
+
 
 # todo: docs (errors), client, sync client
