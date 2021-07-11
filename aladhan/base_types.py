@@ -52,6 +52,18 @@ class Tune:
             The tune value for midnight.
     """
 
+    __slots__ = (
+        "imsak",
+        "fajr",
+        "sunrise",
+        "dhuhr",
+        "asr",
+        "maghrib",
+        "sunset",
+        "isha",
+        "midnight",
+    )
+
     def __init__(
         self,
         Imsak: int = 0,
@@ -124,6 +136,8 @@ class Qibla:
     *New in v0.1.3*
     """
 
+    __slots__ = ("longitude", "latitude", "direction")
+
     def __init__(self, longitude: float, latitude: float, direction: float):
         self.longitude = longitude
         self.latitude = latitude
@@ -156,6 +170,8 @@ class Ism:
 
     *New in v0.1.3*
     """
+
+    __slots__ = ("name", "transliteration", "number", "en")
 
     def __init__(self, name: str, transliteration: str, number: int, en: dict):
         self.name = name
@@ -191,6 +207,8 @@ class Prayer:
 
     *New in v0.1.2: timings, time_utc*
     """
+
+    __slots__ = ("timings", "name", "time", "time_utc", "str_time")
 
     def __init__(
         self, name: str, time: str, timings: "Timings", date: str = None
@@ -266,6 +284,8 @@ class CalendarDateArg:
             Whether `year` given is a hijri year or not.
     """
 
+    __slots__ = ("year", "month", "hijri", "annual")
+
     def __init__(
         self,
         year: int,
@@ -312,6 +332,8 @@ class TimingsDateArg:
             A date string in DD-MM-YYYY format.
 
     """
+
+    __slots__ = "date"
 
     def __init__(self, date: Optional[Union[str, int, datetime]] = None):
         if date is None:
@@ -401,6 +423,17 @@ class DefaultArgs:
 
     *New in v0.2 method_params, timezonestring*
     """
+
+    __slots__ = (
+        "method",
+        "method_params",
+        "tune",
+        "school",
+        "midnightMode",
+        "timezonestring",
+        "latitudeAdjustmentMethod",
+        "adjustment",
+    )
 
     def __init__(
         self,
@@ -549,6 +582,18 @@ class Meta:
             Used offset to tune timings.
     """
 
+    __slots__ = (
+        "data",
+        "longitude",
+        "latitude",
+        "timezone",
+        "method",
+        "latitudeAdjustmentMethod",
+        "midnightMode",
+        "school",
+        "offset",
+    )
+
     def __init__(
         self,
         data: "Data",
@@ -650,6 +695,18 @@ class DateType:
             A list of holidays might be empty for hijri, always None for gregorian.
     """
 
+    __slots__ = (
+        "name",
+        "date",
+        "format",
+        "day",
+        "weekday",
+        "month",
+        "year",
+        "designation",
+        "holidays",
+    )
+
     def __init__(
         self,
         name: str,
@@ -704,6 +761,8 @@ class Date:
         hijri:  :class:`DateType`
             Hijri date.
     """
+
+    __slots__ = ("data", "readable", "timestamp", "gregorian", "hijri")
 
     def __init__(
         self,
@@ -765,6 +824,19 @@ class Timings:
 
     *New in v0.1.4: __iter__*
     """
+
+    __slots__ = (
+        "data",
+        "imsak",
+        "fajr",
+        "sunrise",
+        "dhuhr",
+        "asr",
+        "maghrib",
+        "sunset",
+        "isha",
+        "midnight",
+    )
 
     def __init__(
         self,
@@ -883,6 +955,8 @@ class Data:
         client: :class:`AsyncClient`
             Represents the client that the Data were fetched from.
     """
+
+    __slots__ = ("meta", "date", "timings", "client")
 
     def __init__(self, timings: dict, date: dict, meta: dict, client):
         self.meta = Meta(self, **meta)

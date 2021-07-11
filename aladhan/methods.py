@@ -55,6 +55,8 @@ class Method:
             Can be only from 0 to 15.
     """
 
+    __slots__ = ("name", "id", "__params", "__params_str")
+
     def __init__(self, name: str, id: int, params: dict):
         self.name = name
         self.id = id
