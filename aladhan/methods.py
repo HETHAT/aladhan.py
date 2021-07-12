@@ -6,7 +6,7 @@ __all__ = (
     "MWL",
     "MAKKAH",
     "EGYPT",
-    "THERAN",
+    "TEHRAN",
     "GULF",
     "KUWAIT",
     "QATAR",
