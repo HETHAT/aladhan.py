@@ -24,116 +24,200 @@ There are two main ways to query version information about the library.
     A string representation of the version. e.g. ``'1.0.0rc1'``. This is based
     off of :pep:`440`.
 
-Client
-------
+Clients
+-------
+
+Asynchronous Client
++++++++++++++++++++
 
 .. autoclass:: AsyncClient()
     :members:
 
-Data
-----
+Synchronous Client
+++++++++++++++++++
 
-.. autoclass:: Data()
-    :members:
-    :undoc-members:
+Soon ...
+
+Timings Related
+---------------
 
 Timings
--------
++++++++
 
 .. autoclass:: Timings()
     :members:
-    :undoc-members:
-
-Meta
-----
-
-.. autoclass:: Meta()
-    :members:
-    :undoc-members:
-
-Date
-----
-
-.. autoclass:: Date()
-    :members:
-    :undoc-members:
-
-DateType
---------
-
-.. autoclass:: DateType()
-    :members:
-    :undoc-members:
 
 Prayer
-------
+++++++
 
 .. autoclass:: Prayer()
     :members:
-    :undoc-members:
 
 Tune
-----
+++++
 
 .. autoclass:: Tune()
     :members:
-    :undoc-members:
+
+Parameters Related
+------------------
+
+Default Parameters
+++++++++++++++++++
+
+.. autoclass:: DefaultArgs()
+    :members:
+
+
+Timings Date Argument
++++++++++++++++++++++
+
+.. autoclass:: TimingsDateArg()
+    :members:
+
+Calendar Date Argument
+++++++++++++++++++++++
+
+.. autoclass:: CalendarDateArg()
+    :members:
+
+Calculation Methods
++++++++++++++++++++
+
+Method
+******
+
+.. autoclass:: Method()
+    :members:
+
+Available Methods
+*****************
+
+.. csv-table::
+    :header: "Method", "ID", "Name"
+    :widths: 10, 3, 50
+
+    "JAFARI", 0, "Shia Ithna-Ashari, Leva Institute, Qum"
+    "KARACHI", 1, "University of Islamic Sciences, Karachi"
+    "ISNA", 2, "Islamic Society of North America (ISNA)"
+    "MWL", 3, "Muslim World League"
+    "MAKKAH", 4, "Umm Al-Qura University Makkah"
+    "EGYPT", 5, "Egyptian General Authority of Survey"
+    "TEHRAN", 7, "Institute of Geophysics, University of Tehran"
+    "GULF", 8, "Gulf Region"
+    "KUWAIT", 9, "Kuwait"
+    "QATAR", 10, "Qatar"
+    "SINGAPORE", 11, "Majlis Ugama Islam Singapura, Singapore"
+    "FRANCE", 12, "Union Organization Islamic de France"
+    "TURKEY", 13, "Diyanet \u0130\u015fleri Ba\u015fkanl\u0131\u011f\u0131, Turkey"
+    "RUSSIA", 14, "Spiritual Administration of Muslims of Russia"
+    "MOONSIGHTING", 15, "Moonsighting Committee Worldwide (Moonsighting.com)"
+
+.. note::
+    There is no 6 (method 6 is apparently same as 2).
+
+**all_methods**: dict[:class:`int`, :class:`Method`]
+    A dict of each id and its method.
+
+Data Classes
+------------
+
+Data
+++++
+
+.. autoclass:: Data()
+    :members:
+
+Meta
+++++
+
+.. autoclass:: Meta()
+    :members:
+
+Date
+++++
+
+.. autoclass:: Date()
+    :members:
+
+DateType
+++++++++
+
+.. autoclass:: DateType()
+    :members:
+
 
 Ism
----
++++
 
 .. autoclass:: Ism()
     :members:
 
 Qibla
------
++++++
 
 .. autoclass:: Qibla()
     :members:
 
-Date Arguments
---------------
-
-Timings Date Argument
-^^^^^^^^^^^^^^^^^^^^^
-
-.. autoclass:: TimingsDateArg()
-    :members:
-    :undoc-members:
-
-Calendar Date Argument
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. autoclass:: CalendarDateArg()
-    :members:
-    :undoc-members:
-
-Default Arguments
------------------
-
-.. autoclass:: DefaultArgs()
-    :members:
-    :undoc-members:
-
 Enums
 -----
 
-.. automodule:: aladhan.enums_classes
-    :members:
+.. autoclass:: Schools()
     :undoc-members:
     :member-order: bysource
 
-Calculation Methods
--------------------
+.. autoclass:: MidnightModes()
+    :undoc-members:
+    :member-order: bysource
 
-.. automodule:: aladhan.methods
-    :members:
+.. autoclass:: LatitudeAdjustmentMethods()
     :undoc-members:
     :member-order: bysource
 
 Exceptions
 ----------
 
-.. automodule:: aladhan.exceptions
+The following exceptions are thrown by the library.
+
+.. autoexception:: aladhan.exceptions.AladhanException
     :members:
-    :member-order: bysource
+
+.. autoexception:: aladhan.exceptions.HTTPException
+    :members:
+
+.. autoexception:: aladhan.exceptions.BadRequest
+
+.. autoexception:: aladhan.exceptions.InternalServerError
+
+.. autoexception:: aladhan.exceptions.InvalidArgument
+
+.. autoexception:: aladhan.exceptions.InvalidMethod
+
+.. autoexception:: aladhan.exceptions.InvalidTune
+
+.. autoexception:: aladhan.exceptions.InvalidSchool
+
+.. autoexception:: aladhan.exceptions.InvalidMidnightMode
+
+.. autoexception:: aladhan.exceptions.InvalidTimezone
+
+.. autoexception:: aladhan.exceptions.InvalidLatAdjMethod
+
+.. autoexception:: aladhan.exceptions.InvalidAdjustment
+
+Exception Hierarchy
++++++++++++++++++++
+
+    - :exc:`Exception`
+        - :exc:`~aladhan.exceptions.AladhanException`
+            - :exc:`~aladhan.exceptions.HTTPException`
+                - :exc:`~aladhan.exceptions.BadRequest`
+                - :exc:`~aladhan.exceptions.InternalServerError`
+            - :exc:`~aladhan.exceptions.InvalidArgument`
+                - :exc:`~aladhan.exceptions.InvalidMethod`
+                - :exc:`~aladhan.exceptions.InvalidTune`
+                - :exc:`~aladhan.exceptions.InvalidSchool`
+                - :exc:`~aladhan.exceptions.InvalidMidnightMode`
+                - :exc:`~aladhan.exceptions.InvalidTimezone`
+                - :exc:`~aladhan.exceptions.InvalidLatAdjMethod`
+                - :exc:`~aladhan.exceptions.InvalidAdjustment`

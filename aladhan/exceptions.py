@@ -1,3 +1,19 @@
+__all__ = (
+    "AladhanException",
+    "HTTPException",
+    "BadRequest",
+    "InternalServerError",
+    "InvalidArgument",
+    "InvalidMethod",
+    "InvalidTune",
+    "InvalidSchool",
+    "InvalidMidnightMode",
+    "InvalidTimezone",
+    "InvalidLatAdjMethod",
+    "InvalidAdjustment",
+)
+
+
 class AladhanException(Exception):
     """
     Base exception class for aladhan.py
@@ -78,6 +94,3 @@ class InvalidLatAdjMethod(InvalidArgument):
 
 class InvalidAdjustment(InvalidArgument):
     """Exception that’s thrown when adjustment argument is invalid."""
-
-
-# todo: docs (errors), client, sync client

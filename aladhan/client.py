@@ -3,9 +3,17 @@ import aiohttp
 from typing import Union, Dict, List, Optional
 
 from .methods import all_methods
-from .base_types import *
 from .endpoints import EndPoints
 from .exceptions import HTTPException
+from .base_types import (
+    Timings,
+    Data,
+    TimingsDateArg,
+    DefaultArgs,
+    CalendarDateArg,
+    Qibla,
+    Ism,
+)
 
 
 class AsyncClient:
@@ -60,8 +68,7 @@ class AsyncClient:
         date: Optional[TimingsDateArg] = None,
         defaults: Optional[DefaultArgs] = None,
     ):
-        """|coro|
-
+        """
         Get prayer times from coordinates (longitude, latitude).
 
         Parameters
@@ -84,6 +91,13 @@ class AsyncClient:
         -------
             :class:`Timings`
                 Timings obj from the API response.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid parameter was passed.
+
+            :exc:`~aladhan.exceptions.InternalServerError`
         """
         params = {
             "longitude": str(longitude),
@@ -101,7 +115,7 @@ class AsyncClient:
         date: Optional[TimingsDateArg] = None,
         defaults: Optional[DefaultArgs] = None,
     ):
-        """|coro|
+        """
         Get prayer times from address.
 
         Parameters
@@ -122,6 +136,13 @@ class AsyncClient:
         -------
             :class:`Timings`
                 Timings obj from the API response.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid parameter was passed.
+
+            :exc:`~aladhan.exceptions.InternalServerError`
         """
         params = {
             "address": address,
@@ -140,7 +161,7 @@ class AsyncClient:
         date: Optional[TimingsDateArg] = None,
         defaults: Optional[DefaultArgs] = None,
     ):
-        """|coro|
+        """
         Get prayer times from city, country and state.
 
         Parameters
@@ -169,6 +190,13 @@ class AsyncClient:
         -------
             :class:`Timings`
                 Timings obj from the API response.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid parameter was passed.
+
+            :exc:`~aladhan.exceptions.InternalServerError`
         """
         params = {
             "city": city,
@@ -190,8 +218,7 @@ class AsyncClient:
         date: CalendarDateArg,
         defaults: Optional[DefaultArgs] = None,
     ):
-        """|coro|
-
+        """
         Get all prayer times for a specific calendar month/year from \
         coordinates (longitude, latitudes).
 
@@ -216,6 +243,13 @@ class AsyncClient:
             :class:`list` of :class:`Timings`]
                 A month calendar if month parameter was given in date argument \
                 otherwise a year calendar.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid parameter was passed.
+
+            :exc:`~aladhan.exceptions.InternalServerError`
         """
         params = {
             "longitude": str(longitude),
@@ -234,8 +268,7 @@ class AsyncClient:
         date: CalendarDateArg,
         defaults: Optional[DefaultArgs] = None,
     ):
-        """|coro|
-
+        """
         Get all prayer times for a specific calendar month/year from address.
 
         Parameters
@@ -257,6 +290,13 @@ class AsyncClient:
             :class:`list` of :class:`Timings`]
                 A month calendar if month parameter was given in date argument \
                 otherwise a year calendar.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid parameter was passed.
+
+            :exc:`~aladhan.exceptions.InternalServerError`
         """
         params = {"address": address}
         defaults = defaults or DefaultArgs()
@@ -275,8 +315,7 @@ class AsyncClient:
         state: Optional[str] = None,
         defaults: Optional[DefaultArgs] = None,
     ):
-        """|coro|
-
+        """
         Get all prayer times for a specific calendar month/year from address.
 
         Parameters
@@ -306,6 +345,13 @@ class AsyncClient:
             :class:`list` of :class:`Timings`]
                 A month calendar if month parameter was given in date argument \
                 otherwise a year calendar.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid parameter was passed.
+
+            :exc:`~aladhan.exceptions.InternalServerError`
         """
         params = {
             "city": city,
@@ -337,14 +383,20 @@ class AsyncClient:
     async def get_qibla(
         self, longitude: Union[int, float], latitude: Union[int, float]
     ):
-        """|coro|
-
+        """
         Get the Qibla direction from a pair of coordinates.
 
         Returns
         -------
             :class:`Qibla`
                 The qibla.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid parameter was passed.
+
+            :exc:`~aladhan.exceptions.InternalServerError`
 
         *New in v0.1.3*
         """
@@ -357,14 +409,20 @@ class AsyncClient:
         )
 
     async def get_asma(self, *n: int):
-        """|coro|
-
+        """
         Returns a list of asma from giving numbers.
 
         Returns
         -------
             :class:`list` of :class:`Ism`
                 A list of asma.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid parameter was passed.
+
+            :exc:`~aladhan.exceptions.InternalServerError`
 
         *New in v0.1.3*
         """
@@ -381,14 +439,17 @@ class AsyncClient:
         ]
 
     async def get_all_asma(self):
-        """|coro|
-
+        """
         Returns all 1-99 asma (allah names).
 
         Returns
         -------
             :class:`list` of :class:`Ism`
                 A list of all asma.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.InternalServerError`
 
         *New in v0.1.3*
         """

@@ -6,7 +6,7 @@ from functools import partial
 
 from .methods import all_methods, Method, ISNA
 from .exceptions import *
-from .enums_classes import *
+from .enums import *
 
 __all__ = (
     "Data",
@@ -23,7 +23,7 @@ __all__ = (
     "Ism",
     "Method",
 )
-# TODO: docs (errors)
+# TODO: rename args to params, (also rename defaultargs to parameters)
 
 
 class Tune:
@@ -104,9 +104,16 @@ class Tune:
         -------
             :class:`Tune`
                 The created obj.
+
+        Raises
+        ------
+            :exc:`AsserationError`
+                Invalid string format.
         """
         args = s.split(",")
-        assert len(args) == 9, "Not valid string format"
+        assert (
+            len(args) == 9
+        ), "Invalid string format, must be in Tune.value format."
         return cls(*map(int, args))
 
     def __iter__(self):
@@ -282,6 +289,11 @@ class CalendarDateArg:
 
         hijri: :class:`bool`
             Whether `year` given is a hijri year or not.
+
+    Raises
+    ------
+        :exc:`ValueError`
+            Month passed is not in 1-12 range.
     """
 
     __slots__ = ("year", "month", "hijri", "annual")
@@ -331,6 +343,10 @@ class TimingsDateArg:
         date: :class:`str`
             A date string in DD-MM-YYYY format.
 
+    Raises
+    ------
+        :exc:`AsserationError`
+            Invalid date string format.
     """
 
     __slots__ = "date"
@@ -387,6 +403,8 @@ class DefaultArgs:
             Example: Europe/London. Calculated using the
             co-ordinates provided by default. *This should be used only in
             getters that uses co-ordinates or it will be ignored.*
+            
+            *New in v0.2.*
 
         latitudeAdjustmentMethod: :class:`int`
             Method for adjusting times higher latitudes.
@@ -407,7 +425,9 @@ class DefaultArgs:
 
         method_params: Optional[dict[str, int or "null"]]
             Method's parameters. ``None`` if method wasn't custom.
-
+            
+            *New in v0.2.*
+        
         tune: :class:`str`
             Tune Value.
 
@@ -416,12 +436,31 @@ class DefaultArgs:
         midnightMode: :class:`int`
 
         timezonestring: :class:`str`
+            *New in v0.2.*
 
         latitudeAdjustmentMethod: :class:`int`
 
         adjustment: :class:`int`
+    
+    Raises
+    ------
+        :exc:`~aladhan.exceptions.InvalidMethod`
+            Method id passed was not in 0-15, 
+            Or passed an integer (99) instead of Method obj for a custom 
+            method use.
+            
+        :exc:`~aladhan.exceptions.InvalidTune`
+            Tune with a bad value was passed.
+            
+        :exc:`~aladhan.exceptions.InvalidSchool`
+            
+        :exc:`~aladhan.exceptions.InvalidMidnightMode`
 
-    *New in v0.2 method_params, timezonestring*
+        :exc:`~aladhan.exceptions.InvalidTimezone`
+        
+        :exc:`~aladhan.exceptions.InvalidLatAdjMethod`
+        
+        :exc:`~aladhan.exceptions.InvalidAdjustment`
     """
 
     __slots__ = (

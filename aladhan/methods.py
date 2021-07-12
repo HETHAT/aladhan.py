@@ -1,33 +1,22 @@
-"""
-Available Methods
------------------
-
-.. csv-table::
-    :header: "Method", "ID", "Name"
-    :widths: 10, 3, 50
-
-    "JAFARI", 0, "Shia Ithna-Ashari, Leva Institute, Qum"
-    "KARACHI", 1, "University of Islamic Sciences, Karachi"
-    "ISNA", 2, "Islamic Society of North America (ISNA)"
-    "MWL", 3, "Muslim World League"
-    "MAKKAH", 4, "Umm Al-Qura University Makkah"
-    "EGYPT", 5, "Egyptian General Authority of Survey"
-    "TEHRAN", 7, "Institute of Geophysics, University of Tehran"
-    "GULF", 8, "Gulf Region"
-    "KUWAIT", 9, "Kuwait"
-    "QATAR", 10, "Qatar"
-    "SINGAPORE", 11, "Majlis Ugama Islam Singapura, Singapore"
-    "FRANCE", 12, "Union Organization Islamic de France"
-    "TURKEY", 13, "Diyanet \u0130\u015fleri Ba\u015fkanl\u0131\u011f\u0131, Turkey"
-    "RUSSIA", 14, "Spiritual Administration of Muslims of Russia"
-    "MOONSIGHTING", 15, "Moonsighting Committee Worldwide (Moonsighting.com)"
-
-.. note::
-    There is no 6 (method 6 is apparently same as 2).
-
-all_methods: dict[:class:`int`, :class:`Method`]
-    A dict of each id and its method.
-"""
+__all__ = (
+    "Method",
+    "JAFARI",
+    "KARACHI",
+    "ISNA",
+    "MWL",
+    "MAKKAH",
+    "EGYPT",
+    "THERAN",
+    "GULF",
+    "KUWAIT",
+    "QATAR",
+    "SINGAPORE",
+    "FRANCE",
+    "TURKEY",
+    "RUSSIA",
+    "MOONSIGHTING",
+    "all_methods",
+)
 
 
 class Method:
