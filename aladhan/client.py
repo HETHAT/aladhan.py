@@ -9,7 +9,7 @@ from .base_types import (
     Timings,
     Data,
     TimingsDateArg,
-    DefaultArgs,
+    Parameters,
     CalendarDateArg,
     Qibla,
     Ism,
@@ -66,7 +66,7 @@ class AsyncClient:
         longitude: Union[int, float],
         latitude: Union[int, float],
         date: Optional[TimingsDateArg] = None,
-        defaults: Optional[DefaultArgs] = None,
+        params: Optional[Parameters] = None,
     ):
         """
         Get prayer times from coordinates (longitude, latitude).
@@ -83,9 +83,8 @@ class AsyncClient:
                 Date for the prayer times.
                 Default: Current date.
 
-            defaults: Optional[:class:`DefaultArgs`]
-                Default params.
-                Default: ``DefaultArgs()``
+            params: Optional[:class:`Parameters`]
+                Default: ``Parameters()``
 
         Returns
         -------
@@ -99,21 +98,21 @@ class AsyncClient:
 
             :exc:`~aladhan.exceptions.InternalServerError`
         """
-        params = {
+        parameters = {
             "longitude": str(longitude),
             "latitude": str(latitude),
         }
-        date, defaults = date or TimingsDateArg(), defaults or DefaultArgs()
-        params.update(defaults.as_dict)
+        date, params = date or TimingsDateArg(), params or Parameters()
+        parameters.update(params.as_dict)
         return await self._get_timings(
-            EndPoints.TIMINGS + "/" + date.date, params
+            EndPoints.TIMINGS + "/" + date.date, parameters
         )
 
     async def get_timings_by_address(
         self,
         address: str,
         date: Optional[TimingsDateArg] = None,
-        defaults: Optional[DefaultArgs] = None,
+        params: Optional[Parameters] = None,
     ):
         """
         Get prayer times from address.
@@ -128,9 +127,8 @@ class AsyncClient:
                 Date for the prayer times.
                 Default: Current date.
 
-            defaults: Optional[:class:`DefaultArgs`]
-                Default params.
-                Default: ``DefaultArgs()``
+            params: Optional[:class:`Parameters`]
+                Default: ``Parameters()``
 
         Returns
         -------
@@ -144,13 +142,13 @@ class AsyncClient:
 
             :exc:`~aladhan.exceptions.InternalServerError`
         """
-        params = {
+        parameters = {
             "address": address,
         }
-        date, defaults = date or TimingsDateArg(), defaults or DefaultArgs()
-        params.update(defaults.as_dict)
+        date, params = date or TimingsDateArg(), params or Parameters()
+        parameters.update(params.as_dict)
         return await self._get_timings(
-            EndPoints.TIMINGS_BY_ADDRESS + "/" + date.date, params
+            EndPoints.TIMINGS_BY_ADDRESS + "/" + date.date, parameters
         )
 
     async def get_timings_by_city(
@@ -159,7 +157,7 @@ class AsyncClient:
         country: str,
         state: Optional[str] = None,
         date: Optional[TimingsDateArg] = None,
-        defaults: Optional[DefaultArgs] = None,
+        params: Optional[Parameters] = None,
     ):
         """
         Get prayer times from city, country and state.
@@ -182,9 +180,8 @@ class AsyncClient:
                 Date for the prayer times.
                 Default: Current date.
 
-            defaults: Optional[:class:`DefaultArgs`]
-                Default params.
-                Default: ``DefaultArgs()``
+            params: Optional[:class:`Parameters`]
+                Default: ``Parameters()``
 
         Returns
         -------
@@ -198,17 +195,17 @@ class AsyncClient:
 
             :exc:`~aladhan.exceptions.InternalServerError`
         """
-        params = {
+        parameters = {
             "city": city,
             "country": country,
             "state": state,
         }
         if state is None:
-            del params["state"]
-        date, defaults = date or TimingsDateArg(), defaults or DefaultArgs()
-        params.update(defaults.as_dict)
+            del parameters["state"]
+        date, params = date or TimingsDateArg(), params or Parameters()
+        parameters.update(params.as_dict)
         return await self._get_timings(
-            EndPoints.TIMINGS_BY_CITY + "/" + date.date, params
+            EndPoints.TIMINGS_BY_CITY + "/" + date.date, parameters
         )
 
     async def get_calendar(
@@ -216,7 +213,7 @@ class AsyncClient:
         longitude: Union[int, float],
         latitude: Union[int, float],
         date: CalendarDateArg,
-        defaults: Optional[DefaultArgs] = None,
+        params: Optional[Parameters] = None,
     ):
         """
         Get all prayer times for a specific calendar month/year from \
@@ -233,9 +230,8 @@ class AsyncClient:
             date: :class:`CalendarDateArg`
                 Date for the prayer times.
 
-            defaults: Optional[:class:`DefaultArgs`]
-                Default params.
-                Default: ``DefaultArgs()``
+            params: Optional[:class:`Parameters`]
+                Default: ``Parameters()``
 
         Returns
         -------
@@ -251,22 +247,22 @@ class AsyncClient:
 
             :exc:`~aladhan.exceptions.InternalServerError`
         """
-        params = {
+        parameters = {
             "longitude": str(longitude),
             "latitude": str(latitude),
         }
-        defaults = defaults or DefaultArgs()
-        params.update(defaults.as_dict)
-        params.update(date.as_dict)
+        params = params or Parameters()
+        parameters.update(params.as_dict)
+        parameters.update(date.as_dict)
         return await self._get_timings(
-            getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR"), params
+            getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR"), parameters
         )
 
     async def get_calendar_by_address(
         self,
         address: str,
         date: CalendarDateArg,
-        defaults: Optional[DefaultArgs] = None,
+        params: Optional[Parameters] = None,
     ):
         """
         Get all prayer times for a specific calendar month/year from address.
@@ -280,9 +276,8 @@ class AsyncClient:
             date: :class:`CalendarDateArg`
                 Date for the prayer times.
 
-            defaults: Optional[:class:`DefaultArgs`]
-                Default params.
-                Default: ``DefaultArgs()``
+            params: Optional[:class:`Parameters`]
+                Default: ``Parameters()``
 
         Returns
         -------
@@ -298,13 +293,13 @@ class AsyncClient:
 
             :exc:`~aladhan.exceptions.InternalServerError`
         """
-        params = {"address": address}
-        defaults = defaults or DefaultArgs()
-        params.update(defaults.as_dict)
-        params.update(date.as_dict)
+        parameters = {"address": address}
+        params = params or Parameters()
+        parameters.update(params.as_dict)
+        parameters.update(date.as_dict)
         return await self._get_timings(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_ADDRESS"),
-            params,
+            parameters,
         )
 
     async def get_calendar_by_city(
@@ -313,7 +308,7 @@ class AsyncClient:
         country: str,
         date: CalendarDateArg,
         state: Optional[str] = None,
-        defaults: Optional[DefaultArgs] = None,
+        params: Optional[Parameters] = None,
     ):
         """
         Get all prayer times for a specific calendar month/year from address.
@@ -335,9 +330,8 @@ class AsyncClient:
                 State or province. The state name or abbreviation..
                 Example: "Bexley"
 
-            defaults: Optional[:class:`DefaultArgs`]
-                Default params.
-                Default: ``DefaultArgs()``
+            params: Optional[:class:`Parameters`]
+                Default: ``Parameters()``
 
         Returns
         -------
@@ -353,19 +347,19 @@ class AsyncClient:
 
             :exc:`~aladhan.exceptions.InternalServerError`
         """
-        params = {
+        parameters = {
             "city": city,
             "country": country,
             "state": state,
         }
         if state is None:
-            del params["state"]
-        defaults = defaults or DefaultArgs()
-        params.update(defaults.as_dict)
-        params.update(date.as_dict)
+            del parameters["state"]
+        params = params or Parameters()
+        parameters.update(params.as_dict)
+        parameters.update(date.as_dict)
         return await self._get_timings(
             getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_CITY"),
-            params,
+            parameters,
         )
 
     @staticmethod

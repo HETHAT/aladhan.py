@@ -3,7 +3,7 @@ import asyncio
 from aladhan import (
     AsyncClient,
     TimingsDateArg,
-    DefaultArgs,
+    Parameters,
     methods,
     Tune,
     Schools,
@@ -24,7 +24,7 @@ async def main():
         date=TimingsDateArg(
             "23-04-2021"  # it also accepts an int (unix time) and datetime() obj
         ),
-        defaults=DefaultArgs(
+        defaults=Parameters(
             method=methods.ISNA,  # methods.all_methods to see all available methods
             tune=Tune(
                 Asr=+10,

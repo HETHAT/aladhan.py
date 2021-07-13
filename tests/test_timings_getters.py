@@ -14,9 +14,9 @@ async def client():
     ["args", "kwargs"],
     [
         [(34, 4), {}],
-        [(34.694, 3.5869), {"date": None, "defaults": None}],
+        [(34.694, 3.5869), {"date": None, "params": None}],
         [(34, 4), {"date": aladhan.TimingsDateArg("01-05-2021")}],
-        [(34, 4), {"defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1))}],
+        [(34, 4), {"params": aladhan.Parameters(tune=aladhan.Tune(1))}],
     ],
 )
 async def test_timings(client, args, kwargs):
@@ -32,7 +32,7 @@ async def test_timings(client, args, kwargs):
         [("London",), {"date": aladhan.TimingsDateArg("01-05-2021")}],
         [
             ("London",),
-            {"defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1))},
+            {"params": aladhan.Parameters(tune=aladhan.Tune(1))},
         ],
     ],
 )
@@ -67,7 +67,7 @@ async def test_error_timings_by_address(args, kwargs, expected):
         ],
         [
             ("London", "GB"),
-            {"defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1))},
+            {"params": aladhan.Parameters(tune=aladhan.Tune(1))},
         ],
     ],
 )

@@ -65,7 +65,7 @@ Parameters Related
 Default Parameters
 ++++++++++++++++++
 
-.. autoclass:: DefaultArgs()
+.. autoclass:: Parameters()
     :members:
 
 

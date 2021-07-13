@@ -68,7 +68,7 @@ class Method:
         """
         Method parameters.
 
-        *Changed in v0.3.0 to a property.*
+        *Changed in v1.0.0 to a property.*
         """
         return self.__params
 
@@ -77,7 +77,7 @@ class Method:
         """
         A string in "fajr,maghrib,isha" format.
 
-        *New in v0.3.0*
+        *New in v1.0.0*
         """
         return self.__params_str
 

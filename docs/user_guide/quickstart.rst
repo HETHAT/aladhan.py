@@ -87,7 +87,7 @@ or use :meth:`AsyncClient.get_timings_by_city`
 
     timings: aladhan.Timings = await client.get_timings_by_city(country="United Kingdom", city="London")
 
-You can configure more using :class:`DefaultArgs`, look into :ref:`ref-conf`.
+You can configure more using :class:`Parameters`, look into :ref:`ref-conf`.
 
 Calendar Timings
 ----------------
@@ -148,8 +148,8 @@ Configuring
 -----------
 
 All previous getters (day timings and calendar timings getters) have a optional
-``defaults`` argument, it takes a :class:`DefaultArgs` object and it is set to an
-empty one (``DefaultArgs()`` no arguments passed to it so it is set to its defaults)
+``params`` argument, it takes a :class:`Parameters` object and it is set to an
+empty one (``Parameters()`` no arguments passed to it so it is set to its params)
 by default.
 
 It is used to adjust prayer times calculation or when prayer times is lil bit off ..etc
@@ -157,7 +157,7 @@ It is used to adjust prayer times calculation or when prayer times is lil bit of
 .. code-block:: py
 
     tune = aladhan.Tune(asr=20, isha=-15)
-    dft = aladhan.DefaultArgs(
+    dft = aladhan.Parameters(
         method=aladhan.methods.EGYPT,  # calculation method
         tune=tune, # to offset returned timings.
         school=aladhan.Schools.SHAFI,
@@ -165,7 +165,7 @@ It is used to adjust prayer times calculation or when prayer times is lil bit of
         latitudeAdjustmentMethod=aladhan.LatitudeAdjustmentMethod.ONE_SEVENTH,
         adjustment=2
     )
-    timings = await client.get_timings(latitude=34, longitude=3, defaults=dft)
+    timings = await client.get_timings(latitude=34, longitude=3, params=dft)
 
 Other Data
 ----------

@@ -22,7 +22,7 @@ async def client():
             (34.69, 4.420),
             {
                 "date": aladhan.CalendarDateArg(2021, 5),
-                "defaults": None,
+                "params": None,
             },
             list,
         ],
@@ -30,7 +30,7 @@ async def client():
             (34, 4),
             {
                 "date": aladhan.CalendarDateArg(2021, 5),
-                "defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1)),
+                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
             },
             list,
         ],
@@ -38,7 +38,7 @@ async def client():
             (34, 4),
             {
                 "date": aladhan.CalendarDateArg(1442, 9, hijri=True),
-                "defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1)),
+                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
             },
             list,
         ],
@@ -69,7 +69,7 @@ async def test_calendar(client, args, kwargs, expected):
             ("London",),
             {
                 "date": aladhan.CalendarDateArg(2021, 5),
-                "defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1)),
+                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
             },
             list,
         ],
@@ -77,7 +77,7 @@ async def test_calendar(client, args, kwargs, expected):
             ("London",),
             {
                 "date": aladhan.CalendarDateArg(1442, 9, hijri=True),
-                "defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1)),
+                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
             },
             list,
         ],
@@ -120,7 +120,7 @@ async def test_error_calendar_by_address(client, args, kwargs, expected):
             {
                 "date": aladhan.CalendarDateArg(2021),
                 "state": None,
-                "defaults": None,
+                "params": None,
             },
             dict,
         ],
@@ -139,7 +139,7 @@ async def test_error_calendar_by_address(client, args, kwargs, expected):
             ("London", "GB"),
             {
                 "date": aladhan.CalendarDateArg(2021, 5),
-                "defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1)),
+                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
             },
             list,
         ],
@@ -147,7 +147,7 @@ async def test_error_calendar_by_address(client, args, kwargs, expected):
             ("London", "GB"),
             {
                 "date": aladhan.CalendarDateArg(1442, 9, hijri=True),
-                "defaults": aladhan.DefaultArgs(tune=aladhan.Tune(1)),
+                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
             },
             list,
         ],

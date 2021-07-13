@@ -3,6 +3,14 @@
 Changelog
 =========
 
+v1.0.0
+------
+
+- Implement ``__all__`` and ``__slots__`` for better performance.
+- Rename ``DefaultArgs`` to ``Parameters``
+    - Rename ``Meta.default_args`` to ``Meta.Parameters``
+    - Rename ``defaults`` parameter in all getters to ``params``
+
 v0.2.0
 ------
 

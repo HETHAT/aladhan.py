@@ -122,8 +122,8 @@ def test_error_calendar_date(kwargs, expected):
         [dict(adjustment=17), 17],
     ],
 )
-def test_default_args(kwargs, expected):
-    dct = aladhan.DefaultArgs(**kwargs).as_dict
+def test_parameters(kwargs, expected):
+    dct = aladhan.Parameters(**kwargs).as_dict
     kwargs = kwargs.keys()
     assert dct.get(kwargs and tuple(kwargs)[0] or None, dct) == expected
 
@@ -143,16 +143,16 @@ def test_default_args(kwargs, expected):
         [dict(adjustment=""), InvalidAdjustment],
     ],
 )
-def test_error_default_args(kwargs, expected):
+def test_error_parameters(kwargs, expected):
     try:
-        aladhan.DefaultArgs(**kwargs)
+        aladhan.Parameters(**kwargs)
     except expected:
         return
     raise RuntimeError()
 
 
 def test_meta(data):
-    assert isinstance(data.meta.default_args, aladhan.DefaultArgs)
+    assert isinstance(data.meta.parameters, aladhan.Parameters)
 
 
 @pytest.mark.asyncio

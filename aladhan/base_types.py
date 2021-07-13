@@ -18,7 +18,7 @@ __all__ = (
     "Prayer",
     "TimingsDateArg",
     "CalendarDateArg",
-    "DefaultArgs",
+    "Parameters",
     "Qibla",
     "Ism",
     "Method",
@@ -30,7 +30,7 @@ class Tune:
     """
     Represents a Tune obj that is returned from API.
     Can be used to make an obj that will be used as a tune param in \
-    :class:`DefaultArgs`
+    :class:`Parameters`
 
     Attributes
     ----------
@@ -374,7 +374,7 @@ class TimingsDateArg:
         return hash(self.date)
 
 
-class DefaultArgs:
+class Parameters:
     """
     Class to make an obj that will be used as a defaults param in getters.
 
@@ -656,14 +656,14 @@ class Meta:
         self.offset = Tune(**offset)
 
     @property
-    def default_args(self):
-        """:class:`DefaultArgs`: returns a default args obj
+    def parameters(self):
+        """:class:`Parameters`: returns a Parameters obj
 
         .. warning::
             This will set method to ISNA if method was custom, and it will
             always set adjustment to 0.
         """
-        return DefaultArgs(  # TODO: testing
+        return Parameters(  # TODO: testing
             self.method or 2,
             self.offset,
             getattr(Schools, self.school.upper()),
@@ -957,7 +957,7 @@ class Timings:
                     )
                     + timedelta(1)
                 ),
-                meta.default_args,
+                meta.parameters,
             )
         ).next_prayer()
 
