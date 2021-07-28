@@ -27,6 +27,8 @@ class AladhanException(Exception):
             Exception's message.
     """
 
+    __slots__ = ("message",)
+
     def __init__(self, message: str = ""):
         self.message = message
         super().__init__(message)
@@ -42,6 +44,8 @@ class HTTPException(AladhanException):
         code: int
             Response's code.
     """
+
+    __slots__ = "response", "code"
 
     def __init__(self, response, message: str = None):
         self.response = response

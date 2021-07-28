@@ -1,6 +1,6 @@
 import pytz
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, Union, List, Optional, Iterable
 from functools import partial
 
@@ -23,7 +23,6 @@ __all__ = (
     "Ism",
     "Method",
 )
-# TODO: rename args to params, (also rename defaultargs to parameters)
 
 
 class Tune:
@@ -310,10 +309,10 @@ class CalendarDateArg:
                     "month argument expected to be in range 1-12"
                     " got {}".format(month)
                 )
-            self.month = month
+            self.month: int = month
             self.annual = "false"
         else:
-            self.month = 0
+            self.month: int = 0
             self.annual = "true"
 
         self.year = year
@@ -368,7 +367,7 @@ class TimingsDateArg:
                     "Expected DD-MM-YYYY date format got {!r} ".format(date)
                 )
 
-        self.date = date  # noqa
+        self.date: str = date  # noqa
 
     def __hash__(self):  # pragma: no cover
         return hash(self.date)
@@ -503,7 +502,7 @@ class Parameters:
             raise InvalidMethod(
                 "Expected method in 0-15 range or 99 got {!r}".format(method)
             )
-        self.method = method
+        self.method: int = method
 
         # tune
         if tune is None:
@@ -520,7 +519,7 @@ class Parameters:
                 "'tune' argument must be `Tune` object."
                 " got `%s` instead." % type(tune).__name__
             )
-        self.tune = tune
+        self.tune: str = tune
 
         # school
         if isinstance(school, Schools):
@@ -549,7 +548,7 @@ class Parameters:
                 "Invalid timezone ({!r}).".format(timezonestring)
                 + " https://www.php.net/manual/en/timezones.php for valid timezones."
             )
-        self.timezonestring = timezonestring
+        self.timezonestring: str = timezonestring
 
         # lat adj methods
         if isinstance(latitudeAdjustmentMethod, LatitudeAdjustmentMethods):
@@ -930,15 +929,18 @@ class Timings:
             "Isha": self.isha,
         }
 
-    async def next_prayer(self) -> Prayer:
+    def next_prayer(self) -> Optional[Prayer]:
         """
         Get the next upcoming prayer.
-        Don't use this for old dates.
+        Returns ``None`` if the upcoming wasn't in the date,
+        so this will return ``None`` if it was from an old date.
 
         Returns
         -------
-            :class:`Prayer`
+            Optional[:class:`Prayer`]
                 The upcoming prayer.
+
+        *Changed in v1.0.: Returns None instead of recursive calls, and no longer awaitable.*
         """
         meta = self.data.meta
         now = datetime.utcnow()
@@ -947,19 +949,7 @@ class Timings:
             if now < val.time:
                 return val
 
-        return await (
-            await self.data.client.get_timings(
-                meta.longitude,
-                meta.latitude,
-                TimingsDateArg(
-                    datetime(
-                        val.time.year, val.time.month, val.time.day  # noqa
-                    )
-                    + timedelta(1)
-                ),
-                meta.parameters,
-            )
-        ).next_prayer()
+        return None
 
     def __iter__(self) -> Iterable[Prayer]:
         yield from self.as_dict.values()

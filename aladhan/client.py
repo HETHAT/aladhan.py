@@ -1,10 +1,4 @@
-import aiohttp
-
-from typing import Union, Dict, List, Optional
-
-from .methods import all_methods
-from .endpoints import EndPoints
-from .exceptions import HTTPException
+from .methods import all_methods, Method
 from .base_types import (
     Timings,
     Data,
@@ -14,60 +8,76 @@ from .base_types import (
     Qibla,
     Ism,
 )
+from .http import HTTPClient
+
+from typing import (
+    Awaitable,
+    Optional,
+    Union,
+    List,
+    Dict,
+)
+
+TimingsR = Union[Timings, Awaitable[Timings]]
+_Calendar = Union[List[Timings], Dict[str, Timings]]
+CalendarR = Union[_Calendar, Awaitable[_Calendar]]
+QiblaR = Union[Qibla, Awaitable[Qibla]]
+AsmaR = Union[List[Ism], Awaitable[List[Ism]]]
+
+__all__ = ("Client",)
 
 
-class AsyncClient:
-    """Asynchronous al-adhan API client.
+class Client:
+    """
+    Al-adhan API client
 
     .. note::
-        You need to initialize this class in a |coroutine_link|_.
+        For Asynchronous usage you need to initialize this class in a |coroutine_link|_.
     """
 
-    def __init__(self, session: Optional[aiohttp.ClientSession] = None):
-        self.__session = session or aiohttp.ClientSession()
+    __slots__ = "converter", "http"
 
-    async def __aenter__(self):
+    def __init__(self, is_async: bool = False):
+        self.converter = is_async and _AsyncConverter or _SyncConverter
+        self.http = HTTPClient(is_async=is_async)
+
+    def close(self):
+        """Closes the connection."""
+        return self.http.close()  # this can be a coroutine
+
+    @property
+    def is_async(self) -> bool:
+        return self.http.is_async
+
+    def __enter__(self):
+        if self.is_async:
+            raise TypeError(
+                "Asynchronous client must be used in an asynchronous context"
+                "manager (async with) not in a synchronous one (with)."
+            )
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, *_):
+        self.close()
+
+    async def __aenter__(self):
+        if not self.is_async:
+            raise TypeError(
+                "Synchronous client must be used in a synchronous context"
+                "manager (with) not in an asynchronous one (async with)."
+            )
+        return self
+
+    async def __aexit__(self, *_):
         await self.close()
-        return exc_type is None
 
-    async def close(self):
-        """Closes the connection."""
-        await self.__session.close()
-
-    async def _get_res(self, endpoint: str, params: dict) -> dict:
-        async with self.__session.get(endpoint, params=params) as res:
-            res = await res.json()
-
-        if res["code"] != 200:  # something wrong
-            raise HTTPException.from_res(res)
-        return res
-
-    async def _get_timings(
-        self, endpoint: str, params: dict
-    ) -> Union[Timings, List[Timings], Dict[str, List[Timings]]]:
-
-        data = (await self._get_res(endpoint, params))["data"]
-
-        if isinstance(data, list):  # it is a month calendar
-            return [Data(**day, client=self).timings for day in data]
-        # it is a dict
-        if "1" in data:  # it is a year calendar
-            return {
-                month: [Data(**day, client=self).timings for day in days]
-                for month, days in data.items()
-            }
-        return Data(**data, client=self).timings  # it is just a day timings
-
-    async def get_timings(
+    def get_timings(
         self,
         longitude: Union[int, float],
         latitude: Union[int, float],
         date: Optional[TimingsDateArg] = None,
         params: Optional[Parameters] = None,
-    ):
+    ) -> TimingsR:
         """
         Get prayer times from coordinates (longitude, latitude).
 
@@ -104,16 +114,16 @@ class AsyncClient:
         }
         date, params = date or TimingsDateArg(), params or Parameters()
         parameters.update(params.as_dict)
-        return await self._get_timings(
-            EndPoints.TIMINGS + "/" + date.date, parameters
+        return self.converter.to_timings(
+            self, self.http.get_timings(date.date, parameters)
         )
 
-    async def get_timings_by_address(
+    def get_timings_by_address(
         self,
         address: str,
         date: Optional[TimingsDateArg] = None,
         params: Optional[Parameters] = None,
-    ):
+    ) -> TimingsR:
         """
         Get prayer times from address.
 
@@ -147,18 +157,18 @@ class AsyncClient:
         }
         date, params = date or TimingsDateArg(), params or Parameters()
         parameters.update(params.as_dict)
-        return await self._get_timings(
-            EndPoints.TIMINGS_BY_ADDRESS + "/" + date.date, parameters
+        return self.converter.to_timings(
+            self, self.http.get_timings_by_address(date.date, parameters)
         )
 
-    async def get_timings_by_city(
+    def get_timings_by_city(
         self,
         city: str,
         country: str,
         state: Optional[str] = None,
         date: Optional[TimingsDateArg] = None,
         params: Optional[Parameters] = None,
-    ):
+    ) -> TimingsR:
         """
         Get prayer times from city, country and state.
 
@@ -204,17 +214,17 @@ class AsyncClient:
             del parameters["state"]
         date, params = date or TimingsDateArg(), params or Parameters()
         parameters.update(params.as_dict)
-        return await self._get_timings(
-            EndPoints.TIMINGS_BY_CITY + "/" + date.date, parameters
+        return self.converter.to_timings(
+            self, self.http.get_timings_by_city(date.date, parameters)
         )
 
-    async def get_calendar(
+    def get_calendar(
         self,
         longitude: Union[int, float],
         latitude: Union[int, float],
         date: CalendarDateArg,
         params: Optional[Parameters] = None,
-    ):
+    ) -> CalendarR:
         """
         Get all prayer times for a specific calendar month/year from \
         coordinates (longitude, latitudes).
@@ -254,16 +264,16 @@ class AsyncClient:
         params = params or Parameters()
         parameters.update(params.as_dict)
         parameters.update(date.as_dict)
-        return await self._get_timings(
-            getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR"), parameters
+        return self.converter.to_timings(
+            self, self.http.get_calendar(parameters, date.hijri)
         )
 
-    async def get_calendar_by_address(
+    def get_calendar_by_address(
         self,
         address: str,
         date: CalendarDateArg,
         params: Optional[Parameters] = None,
-    ):
+    ) -> CalendarR:
         """
         Get all prayer times for a specific calendar month/year from address.
 
@@ -297,19 +307,19 @@ class AsyncClient:
         params = params or Parameters()
         parameters.update(params.as_dict)
         parameters.update(date.as_dict)
-        return await self._get_timings(
-            getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_ADDRESS"),
-            parameters,
+        return self.converter.to_timings(
+            self,
+            self.http.get_calendar_by_address(parameters, date.hijri),
         )
 
-    async def get_calendar_by_city(
+    def get_calendar_by_city(
         self,
         city: str,
         country: str,
         date: CalendarDateArg,
         state: Optional[str] = None,
         params: Optional[Parameters] = None,
-    ):
+    ) -> CalendarR:
         """
         Get all prayer times for a specific calendar month/year from address.
 
@@ -357,13 +367,12 @@ class AsyncClient:
         params = params or Parameters()
         parameters.update(params.as_dict)
         parameters.update(date.as_dict)
-        return await self._get_timings(
-            getattr(EndPoints, "HIJRI_" * date.hijri + "CALENDAR_BY_CITY"),
-            parameters,
+        return self.converter.to_timings(
+            self, self.http.get_calendar_by_city(parameters, date.hijri)
         )
 
     @staticmethod
-    def get_all_methods():
+    def get_all_methods() -> Dict[int, Method]:
         """
         Gives all available prayer times calculation method.
 
@@ -374,9 +383,9 @@ class AsyncClient:
         """
         return all_methods
 
-    async def get_qibla(
+    def get_qibla(
         self, longitude: Union[int, float], latitude: Union[int, float]
-    ):
+    ) -> QiblaR:
         """
         Get the Qibla direction from a pair of coordinates.
 
@@ -394,15 +403,11 @@ class AsyncClient:
 
         *New in v0.1.3*
         """
-        return Qibla(
-            **(
-                await self._get_res(
-                    EndPoints.QIBLA + "/{}/{}".format(latitude, longitude), {}
-                )
-            )["data"]
+        return self.converter.to_qibla(
+            self.http.get_qibla(str(latitude), str(longitude))
         )
 
-    async def get_asma(self, *n: int):
+    def get_asma(self, *n: int) -> AsmaR:
         """
         Returns a list of asma from giving numbers.
 
@@ -422,17 +427,9 @@ class AsyncClient:
         """
 
         assert n, "No arguments was passed."
+        return self.converter.to_asma(self.http.get_asma(",".join(map(str, n))))
 
-        return [
-            Ism(**d)
-            for d in (
-                await self._get_res(
-                    EndPoints.ASMA_AL_HUSNA + "/" + ",".join(map(str, n)), {}
-                )
-            )["data"]
-        ]
-
-    async def get_all_asma(self):
+    def get_all_asma(self) -> AsmaR:
         """
         Returns all 1-99 asma (allah names).
 
@@ -447,4 +444,52 @@ class AsyncClient:
 
         *New in v0.1.3*
         """
-        return await self.get_asma(*range(1, 100))
+        return self.get_asma(*range(1, 100))
+
+
+class _SyncConverter:
+    @staticmethod
+    def to_timings(client, o):
+
+        data = o
+        if isinstance(data, list):  # it is a month calendar
+            return [Data(**day, client=client).timings for day in data]
+        # it is a dict
+        if "1" in data:  # it is a year calendar
+            return {
+                month: [Data(**day, client=client).timings for day in days]
+                for month, days in data.items()
+            }
+        return Data(**data, client=client).timings  # it is just a day timings
+
+    @staticmethod
+    def to_qibla(o):
+        return Qibla(**o)
+
+    @staticmethod
+    def to_asma(o):
+        return [Ism(**d) for d in o]
+
+
+class _AsyncConverter:
+    @staticmethod
+    async def to_timings(client, o):
+
+        data = await o
+        if isinstance(data, list):  # it is a month calendar
+            return [Data(**day, client=client).timings for day in data]
+        # it is a dict
+        if "1" in data:  # it is a year calendar
+            return {
+                month: [Data(**day, client=client).timings for day in days]
+                for month, days in data.items()
+            }
+        return Data(**data, client=client).timings  # it is just a day timings
+
+    @staticmethod
+    async def to_qibla(o):
+        return Qibla(**(await o))
+
+    @staticmethod
+    async def to_asma(o):
+        return [Ism(**d) for d in await o]

@@ -7,7 +7,7 @@ from aladhan.exceptions import *
 @pytest.mark.asyncio
 @pytest.fixture
 async def data():
-    data = (await aladhan.AsyncClient().get_timings(34, 4)).data
+    data = (aladhan.Client().get_timings(34, 4)).data
     assert (
         isinstance(data.meta, aladhan.Meta)
         and isinstance(data.timings, aladhan.Timings)
@@ -165,8 +165,8 @@ async def test_timings(data):
                 and isinstance(prayer.remaining_utc, (datetime.timedelta, None))
             )
 
-    np = await data.timings.next_prayer()
-    assert isinstance(np, aladhan.Prayer)
+    np = data.timings.next_prayer()
+    assert np is None or isinstance(np, aladhan.Prayer)
     #  you should not do this
     assert isinstance(
         aladhan.Prayer("Test", "11:11", data.timings).remaining,

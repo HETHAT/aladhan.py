@@ -3,49 +3,80 @@
 Changelog
 =========
 
-v1.0.0
-------
+v1.0.0 (Unreleased)
+-------------------
 
-- Implement ``__all__`` and ``__slots__`` for better performance.
-- Rename ``DefaultArgs`` to ``Parameters``
-    - Rename ``Meta.default_args`` to ``Meta.Parameters``
-    - Rename ``defaults`` parameter in all getters to ``params``
+**Added**
+
+- Synchronous usage for the module !
+- ``__all__`` and ``__slots__`` for better performance.
+
+**Changed**
+
+- Renamed ``DefaultArgs`` to ``Parameters``
+    - Renamed ``Meta.default_args`` to ``Meta.Parameters``
+    - Renamed ``defaults`` parameter in all getters to ``params``
+- ``Timings.next_prayer`` now returns ``None`` instead if upcoming prayer wasn't in date. and Its no longer awaitable.
+
+**Removed**
+
+- ``AsyncClient``. Replaced with ``Client(is_async=True)`` instead.
 
 v0.2.0
 ------
 
-- Add method ``close`` for ``AsyncClient``
-- Add custom method.
-- Add timezone param for :class:`DefaultArgs`
-- Add async context manager for ``AsyncClient``
-- Remove beartype.
+**Added**
+
+- method ``close`` for ``AsyncClient``
+- custom method.
+- timezone param for :class:`DefaultArgs`
+- async context manager for ``AsyncClient``
+
+**Removed**
+
+- beartype.
 
 v0.1.4
 ------
 
-- Add :attr:`Timings.as_dict`
-- Add ``__hash__`` for the rest of base types.
-- Rename ``AsyncClient.__get_res`` to ``AsyncClient._get_res``
-- Rename ``AsyncClient.__get_timings`` to ``AsyncClient._get_timings``
+**Added**
+
+- :attr:`Timings.as_dict`
+- ``__hash__`` for the rest of base types.
+
+**Changed**
+
+- Renamed ``AsyncClient.__get_res`` to ``AsyncClient._get_res``
+- Renamed ``AsyncClient.__get_timings`` to ``AsyncClient._get_timings``
 
 v0.1.3
 ------
 
-- Add :meth:`AsyncClient.get_qibla`
-- Add :meth:`AsyncClient.get_asma`
-- Add :meth:`AsyncClient.get_all_asma`
-- Add :class:`Qibla`
-- Add :class:`Ism`
+**Added**
+
+- :meth:`AsyncClient.get_qibla`
+- :meth:`AsyncClient.get_asma`
+- :meth:`AsyncClient.get_all_asma`
+- :class:`Qibla`
+- :class:`Ism`
 
 v0.1.2
 ------
 
-- Add :attr:`Prayer.time_utc` Prayer time in utc.
-- Add :attr:`Prayer.remaining_utc` Remaining time for prayer for utc.
-- Add :attr:`Prayer.timings` Original :class:`Timings` obj.
-- Remove Caching
-- Remove ``AsyncClient.close``
-- Fix :exc:`RuntimeError` Saying event loop is closed.
+**Added**
+
+- :attr:`Prayer.time_utc` Prayer time in utc.
+- :attr:`Prayer.remaining_utc` Remaining time for prayer for utc.
+- :attr:`Prayer.timings` Original :class:`Timings` obj.
+
+**Changed**
+
+- Fixed :exc:`RuntimeError` Saying event loop is closed.
+
+**Removed**
+
+- Removed Caching
+- Removed ``AsyncClient.close``
 
 v0.1.1
 ------
@@ -55,18 +86,26 @@ v0.1.1
 v0.1.0
 ------
 
+**Added**
+
+- forgotten requirement.
+- ``__hash__`` to some classes.
+
+**Changed**
+
 - :class:`AsyncClient` getters no longer return :class:`Data` object the return now :class:`Timings` instead, you can still get the :class:`Data` object using :attr:`Timings.data`.
-- Edi docsstrings to make it more readable.
-- Remove all ``__str__`` methods and replaced it with ``__repr__``.
-- implement ``__hash__`` to some classes.
-- Add a forgotten requirement.
-- Edit examples so they work for the new release.
+- Edited docsstrings to make it more readable.
+- Edited examples so they work for the new release.
+
+**Removed**
+
+- all ``__str__`` methods and replaced it with ``__repr__``.
 
 v0.0.2
 ------
 
-- Add examples.
-- Fix imports.
+- Added examples.
+- Fixed imports.
 
 v0.0.1
 ------

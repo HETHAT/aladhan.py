@@ -24,19 +24,11 @@ There are two main ways to query version information about the library.
     A string representation of the version. e.g. ``'1.0.0rc1'``. This is based
     off of :pep:`440`.
 
-Clients
+Client
 -------
 
-Asynchronous Client
-+++++++++++++++++++
-
-.. autoclass:: AsyncClient()
+.. autoclass:: Client()
     :members:
-
-Synchronous Client
-++++++++++++++++++
-
-Soon ...
 
 Timings Related
 ---------------
