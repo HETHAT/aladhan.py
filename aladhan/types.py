@@ -1,4 +1,9 @@
-from typing import Literal, TypedDict, List, Dict, Union
+from typing import List, Dict, Union
+
+try:
+    from typing import Literal, TypedDict
+except ImportError:
+    from typing_extensions import Literal, TypedDict
 
 __all__ = (
     "TimingsRes",
