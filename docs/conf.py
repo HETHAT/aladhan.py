@@ -17,7 +17,6 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.append(os.path.abspath("extensions"))
-autodoc_mock_imports = ["pytz", "aiohttp", "requests"]
 
 # -- Project information -----------------------------------------------------
 
@@ -56,8 +55,10 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
     "sphinx_inline_tabs",
     "sphinx_copybutton",
     "resourcelinks",
