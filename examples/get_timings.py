@@ -1,7 +1,7 @@
 import asyncio
 
 from aladhan import (
-    AsyncClient,
+    Client,
     TimingsDateArg,
     Parameters,
     methods,
@@ -14,7 +14,7 @@ from aladhan import (
 
 
 async def main():
-    client = AsyncClient()
+    client = Client(is_async=True)
 
     timings: Timings = await client.get_timings(longitude=69, latitude=42)
     # or even specify more
@@ -24,7 +24,7 @@ async def main():
         date=TimingsDateArg(
             "23-04-2021"  # it also accepts an int (unix time) and datetime() obj
         ),
-        defaults=Parameters(
+        params=Parameters(
             method=methods.ISNA,  # methods.all_methods to see all available methods
             tune=Tune(
                 Asr=+10,

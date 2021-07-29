@@ -1,11 +1,11 @@
 import asyncio
 
-from aladhan import AsyncClient, Timings, CalendarDateArg
+from aladhan import Timings, CalendarDateArg, Client
 from typing import List, Dict
 
 
 async def main():
-    client = AsyncClient()
+    client = Client(is_async=True)
 
     # getting a year calendar
     year_calendar: Dict[str, List[Timings]] = await client.get_calendar(
