@@ -3,3 +3,4 @@ furo
 sphinx-inline-tabs
 sphinx-copybutton
 sphinxext-opengraph
+typing_extensions
