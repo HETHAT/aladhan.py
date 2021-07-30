@@ -49,6 +49,8 @@ class Tune:
             The tune value for isha.
         midnight: :class:`int`
             The tune value for midnight.
+
+    *New in v1.0.: __iter__*
     """
 
     __slots__ = (

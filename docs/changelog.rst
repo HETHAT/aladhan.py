@@ -5,20 +5,24 @@
 Changelog
 =========
 
-v1.0.0 (Unreleased)
--------------------
+v1.0.0
+------
 
 **Added**
 
 - Synchronous usage for the module !
 - ``__all__`` and ``__slots__`` for better performance.
+- :ref:`Module exceptions <ref-exceptions>`.
 
 **Changed**
 
 - Renamed ``DefaultArgs`` to ``Parameters``
-    - Renamed ``Meta.default_args`` to ``Meta.Parameters``
+    - Renamed ``Meta.default_args`` to ``Meta.parameters``
     - Renamed ``defaults`` parameter in all getters to ``params``
 - ``Timings.next_prayer`` now returns ``None`` instead if upcoming prayer wasn't in date. and Its no longer awaitable.
+- :meth:`Method.params` changed to be a property
+- :meth:`Method.params_str`
+- :class:`Schools`, :class:`MidnightModes`, :class:`LatitudeAdjustmentMethods` are now enums.
 
 **Removed**
 

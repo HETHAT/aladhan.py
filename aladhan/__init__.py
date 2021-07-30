@@ -9,12 +9,12 @@ from collections import namedtuple
 VersionInfo = namedtuple("VersionInfo", "major minor micro releaselevel serial")
 
 version_info = VersionInfo(
-    major=1, minor=0, micro=0, releaselevel="alpha", serial=0
+    major=1, minor=0, micro=0, releaselevel="", serial=0
 )
 
 __title__ = "aladhan.py"
 __author__ = "HETHAT"
-__version__ = "1.0.0a"
+__version__ = "1.0.0"
 
 
 from .client import Client

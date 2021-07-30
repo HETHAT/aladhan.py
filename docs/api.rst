@@ -167,36 +167,16 @@ Enums
     :undoc-members:
     :member-order: bysource
 
+.. _ref-exceptions:
+
 Exceptions
 ----------
 
 The following exceptions are thrown by the library.
 
-.. autoexception:: aladhan.exceptions.AladhanException
+.. automodule:: aladhan.exceptions
     :members:
-
-.. autoexception:: aladhan.exceptions.HTTPException
-    :members:
-
-.. autoexception:: aladhan.exceptions.BadRequest
-
-.. autoexception:: aladhan.exceptions.InternalServerError
-
-.. autoexception:: aladhan.exceptions.InvalidArgument
-
-.. autoexception:: aladhan.exceptions.InvalidMethod
-
-.. autoexception:: aladhan.exceptions.InvalidTune
-
-.. autoexception:: aladhan.exceptions.InvalidSchool
-
-.. autoexception:: aladhan.exceptions.InvalidMidnightMode
-
-.. autoexception:: aladhan.exceptions.InvalidTimezone
-
-.. autoexception:: aladhan.exceptions.InvalidLatAdjMethod
-
-.. autoexception:: aladhan.exceptions.InvalidAdjustment
+    :member-order: bysource
 
 Exception Hierarchy
 +++++++++++++++++++
