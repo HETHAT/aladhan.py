@@ -7,15 +7,19 @@ from .types import (
     AsmaRes,
 )
 
+import logging
+log = logging.getLogger(__name__)
+
 
 def missing_lib(msg):
     def _():
-        raise TypeError(msg)
+        raise ImportError(msg)
     return _
 
 try:
     from aiohttp import ClientSession
 except ImportError:
+    log.warn("aiohttp library is not installed.")
     ClientSession = missing_lib(
         "`aiohttp` is a required library that is missing for asynchronous usage."
     )
@@ -23,15 +27,12 @@ except ImportError:
 try:
     from requests import Session
 except ImportError:
+    log.warn("requests library is not installed.")
     Session = missing_lib(
         "`request` is a required library that is missing for synchronous usage."
     )
 
 from typing import Awaitable, Union
-
-import logging
-
-log = logging.getLogger(__name__)
 
 TimingsR = Union[TimingsRes, Awaitable[TimingsRes]]
 CalendarR = Union[CalendarRes, Awaitable[CalendarRes]]
