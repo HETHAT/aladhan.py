@@ -8,13 +8,16 @@ from .types import (
 )
 
 import logging
+
 log = logging.getLogger(__name__)
 
 
 def missing_lib(msg):
     def _():
         raise ImportError(msg)
+
     return _
+
 
 try:
     from aiohttp import ClientSession
@@ -103,7 +106,12 @@ class _AsyncRequester:
 
     async def request(self, endpoint: str, params: dict):
         async with self.session.get(endpoint, params=params) as res:
-            log.debug("(GET)[%s status code] request to %s with %s", res.status, endpoint, params)
+            log.debug(
+                "(GET)[%s status code] request to %s with %s",
+                res.status,
+                endpoint,
+                params,
+            )
             res = await res.json()
 
         if res["code"] != 200:  # something wrong
@@ -124,7 +132,12 @@ class _SyncRequester:
 
     def request(self, endpoint: str, params: dict):
         with self.session.get(endpoint, params=params) as res:
-            log.debug("(GET)[%s status code] request to %s with %s", res.status_code, endpoint, params)
+            log.debug(
+                "(GET)[%s status code] request to %s with %s",
+                res.status_code,
+                endpoint,
+                params,
+            )
             res = res.json()
 
         if res["code"] != 200:  # something wrong

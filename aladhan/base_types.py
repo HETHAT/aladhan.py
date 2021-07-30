@@ -381,7 +381,7 @@ class Parameters:
     ----------
         method: :class:`methods.Method` or :class:`int`
             A prayer time calculation method, you can look into all methods \
-            from :meth:`AsyncClient.get_all_methods()`.
+            from :meth:`Client.get_all_methods()`.
             Default: ISNA (Islamic Society of North America).
 
         tune: Optional[:class:`Tune`]
@@ -981,7 +981,7 @@ class Data:
         timings: :class:`Timings`
             Represents the timings part.
 
-        client: :class:`AsyncClient`
+        client: :class:`Client`
             Represents the client that the Data were fetched from.
     """
 

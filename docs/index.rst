@@ -1,6 +1,6 @@
 aladhan.py
 ==========
-aladhan.py is an asynchronous pythonic wrapper for the `Aladhan prayer times <https://aladhan.com/prayer-times-api>`_ API.
+aladhan.py is a pythonic wrapper for the `Aladhan prayer times <https://aladhan.com/prayer-times-api>`_ API.
 
 Getting started
 ---------------

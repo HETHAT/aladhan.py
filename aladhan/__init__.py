@@ -1,7 +1,7 @@
 """
 Aladhan prayer times API Wrapper
 ~~~~~~~~~~~~~~~~~~~~~
-Basic async wrapper for the Aladhan prayer times API.
+Basic wrapper for the Aladhan prayer times API.
 """
 
 from collections import namedtuple

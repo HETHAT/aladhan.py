@@ -29,7 +29,40 @@ __all__ = ("Client",)
 
 class Client:
     """
-    Al-adhan API client
+    Al-adhan API client.
+
+    Set to synchronous usage by default, set is_async to True if asynchronous usage wanted.
+
+    Synchronous example
+
+    .. code:: py
+
+        import aladhan
+
+        client = aladhan.Client()
+        times = client.get_timings_by_address("New York")
+        print(times)
+
+    Asynchronous example
+
+    .. code:: py
+
+        import aladhan, asyncio
+
+        async def main():
+            # --- manual closing session
+            client = aladhan.Client(is_async=True)
+            times = await client.get_timings_by_address("New York")
+            print(times)
+            await client.close()
+
+            # --- using context
+            async with aladhan.Client(is_async=True) as client:
+                times = await client.get_timings_by_address("New York")
+                print(times)
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
 
     .. note::
         For Asynchronous usage you need to initialize this class in a |coroutine_link|_.

@@ -1,4 +1,4 @@
-``aladhan.py`` is an asynchronous pythonic wrapper for the `Aladhan prayer times <https://aladhan.com/prayer-times-api>`_ API.
+``aladhan.py`` is a pythonic wrapper for the `Aladhan prayer times <https://aladhan.com/prayer-times-api>`_ API.
 
 .. image:: https://img.shields.io/pypi/v/aladhan.py?color=blue
     :target: https://pypi.python.org/pypi/aladhan.py
@@ -18,13 +18,37 @@ Installation
 
 **Python 3.6 or higher is required.**
 
-Install ``aladhan.py`` with pip:
+To Install ``aladhan.py`` with pip:
 
 .. code:: sh
 
     pip install aladhan.py
 
-*You can look into some examples* `here <https://github.com/HETHAT/aladhan.py/tree/main/examples>`_
+To install only with synchronous requirements
+
+.. code:: sh
+
+    pip install aladhan.py[sync]
+
+To install only with asynchronous requirements
+
+.. code:: sh
+
+    pip install aladhan.py[async]
+
+Quick Example
+-------------
+
+.. code:: py
+
+    import aladhan
+
+    client = aladhan.client()
+    prayer_times = client.get_timings_by_address("London")
+    for prayer_time in prayer_times:
+        print(prayer_time)
+
+*You can look into more examples* `here <https://github.com/HETHAT/aladhan.py/tree/main/examples>`_
 
 Contribute
 ----------

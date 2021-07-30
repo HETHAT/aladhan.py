@@ -1,5 +1,7 @@
 .. currentmodule:: aladhan
 
+.. _change_log:
+
 Changelog
 =========
 

@@ -29,6 +29,7 @@ Client
 
 .. autoclass:: Client()
     :members:
+    :member-order: bysource
 
 Timings Related
 ---------------
@@ -54,8 +55,8 @@ Tune
 Parameters Related
 ------------------
 
-Default Parameters
-++++++++++++++++++
+Parameters
+++++++++++
 
 .. autoclass:: Parameters()
     :members:
