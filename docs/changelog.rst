@@ -13,6 +13,8 @@ v1.0.0
 - Synchronous usage for the module !
 - ``__all__`` and ``__slots__`` for better performance.
 - :ref:`Module exceptions <ref-exceptions>`.
+- ``logging`` is now implemented.
+- :meth:`Method.params_str` a string in ``"fajr,maghrib,isha"`` format.
 
 **Changed**
 
@@ -21,7 +23,6 @@ v1.0.0
     - Renamed ``defaults`` parameter in all getters to ``params``
 - ``Timings.next_prayer`` now returns ``None`` instead if upcoming prayer wasn't in date. and Its no longer awaitable.
 - :meth:`Method.params` changed to be a property
-- :meth:`Method.params_str`
 - :class:`Schools`, :class:`MidnightModes`, :class:`LatitudeAdjustmentMethods` are now enums.
 
 **Removed**

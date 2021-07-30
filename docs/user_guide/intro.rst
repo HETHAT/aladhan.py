@@ -24,13 +24,23 @@ Install ``aladhan.py`` with pip:
 
     .. code:: sh
 
+        # fully install
         python3 -m pip install -U aladhan.py
+        # only async requirements
+        python3 -m pip install -U aladhan.py[async]
+        # only sync requirements
+        python3 -m pip install -U aladhan.py[sync]
 
 .. tab:: Windows
 
     .. code:: sh
 
+        # fully install
         py -3 -m pip install -U aladhan.py
+        # only async requirements
+        py -3 -m pip install -U aladhan.py[async]
+        # only sync requirements
+        py -3 -m pip install -U aladhan.py[sync]
 
 .. _venv:
 
@@ -94,13 +104,23 @@ However, for the quick and dirty:
 
         .. code:: sh
 
+            # fully install
             pip install -U aladhan.py
+            # sync only
+            pip install -U aladhan.py[sync]
+            # async only
+            pip install -U aladhan.py[async]
 
     .. tab:: Windows
 
         .. code:: sh
 
+            # fully install
             pip install -U aladhan.py
+            # sync only
+            pip install -U aladhan.py[sync]
+            # async only
+            pip install -U aladhan.py[async]
 
 Congratulations. You now have a virtual environment all set up.
 You can start to code, learn more in :doc:`quickstart`.
