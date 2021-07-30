@@ -10,7 +10,8 @@ def main():
         longitude=69,
         latitude=42,
         date=CalendarDateArg(  # date arg in here is required
-            year=2021,  # if month was not given then return a year calendar
+            # if month was not given then return a year calendar
+            year=2021,
         ),
     )
 

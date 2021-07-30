@@ -22,10 +22,12 @@ async def main():
         longitude=69,
         latitude=42,
         date=TimingsDateArg(
-            "23-04-2021"  # it also accepts an int (unix time) and datetime() obj
+            # it also accepts an int (unix time) and datetime() obj
+            "23-04-2021"
         ),
         params=Parameters(
-            method=methods.ISNA,  # methods.all_methods to see all available methods
+            # methods.all_methods to see all available methods
+            method=methods.ISNA,
             tune=Tune(
                 Asr=+10,
                 # and other params ...

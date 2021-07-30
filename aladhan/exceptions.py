@@ -18,7 +18,8 @@ class AladhanException(Exception):
     """
     Base exception class for aladhan.py
 
-    Ideally speaking, this could be caught to handle any exceptions thrown from this library.
+    Ideally speaking, this could be caught to handle any exceptions
+        thrown from this library.
 
     Attributes
     ----------
@@ -68,8 +69,8 @@ class InternalServerError(HTTPException):
 
 
 class InvalidArgument(AladhanException, ValueError):
-    """Exception that’s thrown when an argument to a function is invalid some
-    way (e.g. wrong value or wrong type)."""
+    """Exception that’s thrown when an argument to a function is invalid
+     some way (e.g. wrong value or wrong type)."""
 
 
 class InvalidMethod(InvalidArgument):
@@ -93,7 +94,8 @@ class InvalidTimezone(InvalidArgument):
 
 
 class InvalidLatAdjMethod(InvalidArgument):
-    """Exception that’s thrown when latitude adjustment method argument is invalid."""
+    """Exception that’s thrown when latitude adjustment method argument
+        is invalid."""
 
 
 class InvalidAdjustment(InvalidArgument):

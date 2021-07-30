@@ -31,7 +31,8 @@ class Client:
     """
     Al-adhan API client.
 
-    Set to synchronous usage by default, set is_async to True if asynchronous usage wanted.
+    Set to synchronous usage by default, set is_async to True
+        if asynchronous usage wanted.
 
     Synchronous example
 
@@ -65,7 +66,8 @@ class Client:
         loop.run_until_complete(main())
 
     .. note::
-        For Asynchronous usage you need to initialize this class in a |coroutine_link|_.
+        For Asynchronous usage you need to initialize
+            this class in a |coroutine_link|_.
     """
 
     __slots__ = "converter", "http"
@@ -280,8 +282,8 @@ class Client:
         -------
             :class:`list` of :class:`Timings` or dict[:class:`str`, \
             :class:`list` of :class:`Timings`]
-                A month calendar if month parameter was given in date argument \
-                otherwise a year calendar.
+                A month calendar if month parameter was given in date
+                 argument otherwise a year calendar.
 
         Raises
         ------
@@ -308,7 +310,8 @@ class Client:
         params: Optional[Parameters] = None,
     ) -> CalendarR:
         """
-        Get all prayer times for a specific calendar month/year from address.
+        Get all prayer times for a specific calendar month/year
+            from address.
 
         Parameters
         -----------
@@ -326,8 +329,8 @@ class Client:
         -------
             :class:`list` of :class:`Timings` or dict[:class:`str`, \
             :class:`list` of :class:`Timings`]
-                A month calendar if month parameter was given in date argument \
-                otherwise a year calendar.
+                A month calendar if month parameter was given in date
+                 argument otherwise a year calendar.
 
         Raises
         ------
@@ -354,7 +357,8 @@ class Client:
         params: Optional[Parameters] = None,
     ) -> CalendarR:
         """
-        Get all prayer times for a specific calendar month/year from address.
+        Get all prayer times for a specific calendar month/year
+            from address.
 
         Parameters
         -----------
@@ -380,8 +384,8 @@ class Client:
         -------
             :class:`list` of :class:`Timings` or dict[:class:`str`, \
             :class:`list` of :class:`Timings`]
-                A month calendar if month parameter was given in date argument \
-                otherwise a year calendar.
+                A month calendar if month parameter was given in date
+                    argument otherwise a year calendar.
 
         Raises
         ------
@@ -493,7 +497,9 @@ class _SyncConverter:
                 month: [Data(**day, client=client).timings for day in days]
                 for month, days in data.items()
             }
-        return Data(**data, client=client).timings  # it is just a day timings
+
+        # it is just a day timings
+        return Data(**data, client=client).timings
 
     @staticmethod
     def to_qibla(o):
@@ -517,7 +523,9 @@ class _AsyncConverter:
                 month: [Data(**day, client=client).timings for day in days]
                 for month, days in data.items()
             }
-        return Data(**data, client=client).timings  # it is just a day timings
+
+        # it is just a day timings
+        return Data(**data, client=client).timings
 
     @staticmethod
     async def to_qibla(o):
