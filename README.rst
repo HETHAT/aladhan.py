@@ -43,7 +43,7 @@ Quick Example
 
     import aladhan
 
-    client = aladhan.client()
+    client = aladhan.Client()
     prayer_times = client.get_timings_by_address("London")
     for prayer_time in prayer_times:
         print(prayer_time)
