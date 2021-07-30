@@ -89,9 +89,12 @@ class Tune:
 
     @property
     def value(self):
-        """:class:`str`: The string value that will be used to get response.
+        """:class:`str`: The string value that will be used to
+            get response.
 
-        Format: imsak,fajr,sunrise,dhuhr,asr,maghrib,sunset,isha,midnight"""
+        Format:
+            imsak,fajr,sunrise,dhuhr,asr,maghrib,sunset,isha,midnight
+        """
         return (
             "{0.imsak},{0.fajr},{0.sunrise},{0.dhuhr},{0.asr},"
             "{0.maghrib},{0.sunset},{0.isha},{0.midnight}".format(self)
@@ -246,7 +249,8 @@ class Prayer:
 
     @property
     def remaining_utc(self):
-        """Optional[:class:`datetime.timedelta`]: remaining time for prayer for utc.
+        """Optional[:class:`datetime.timedelta`]:
+         remaining time for prayer for utc.
 
         *New in v0.1.2*
         """
@@ -261,7 +265,8 @@ class Prayer:
 
 class CalendarDateArg:
     """
-    Class to make an obj that will be used as a date param in calendar getters
+    Class to make an obj that will be used as a date param in calendar
+        getters
 
     Parameters
     ----------
@@ -269,8 +274,9 @@ class CalendarDateArg:
             Required argument for calendar's year.
 
         month: Optional[:class:`int`]
-            If this was not giving, or 0 was giving instead it will return
-            a whole year calendar instead which is set to by default
+            If this was not giving, or 0 was giving instead it will
+            return a whole year calendar instead which is set to by
+            default
 
         hijri: :class:`bool`
             whether `year` is a hijri year or not.
@@ -334,7 +340,9 @@ class TimingsDateArg:
 
     Parameters
     ----------
-        date: Optional[:class:`int` or :class:`str` or :class:`datetime.datetime`]
+        date: Optional[:class:`int` or :class:`str`
+            or :class:`datetime.datetime`]
+
             Can be either int representing the UNIX format or a str in
             DD-MM-YYYY format or a datetime obj.
             Default: current date.
@@ -377,13 +385,15 @@ class TimingsDateArg:
 
 class Parameters:
     """
-    Class to make an obj that will be used as a defaults param in getters.
+    Class to make an obj that will be used as a defaults param in
+        getters.
 
     Parameters
     ----------
         method: :class:`methods.Method` or :class:`int`
-            A prayer time calculation method, you can look into all methods \
-            from :meth:`Client.get_all_methods()`.
+            A prayer time calculation method, you can look into all
+                methods from :meth:`Client.get_all_methods()`.
+
             Default: ISNA (Islamic Society of North America).
 
         tune: Optional[:class:`Tune`]
@@ -395,21 +405,28 @@ class Parameters:
             Default: Shafi
 
         midnightMode: :class:`int`
-            0 for Standard (Mid Sunset to Sunrise), 1 for Jafari (Mid Sunset \
-            to Fajr).
+            0 for Standard (Mid Sunset to Sunrise), 1 for Jafari
+                (Mid Sunset to Fajr).
             Default: Standard
 
         timezonestring: Optional[:class:`str`]
-            A valid timezone name as specified on https://www.php.net/manual/en/timezones.php
-            Example: Europe/London. Calculated using the
-            co-ordinates provided by default. *This should be used only in
-            getters that uses co-ordinates or it will be ignored.*
+            A valid timezone name as specified on
+             https://www.php.net/manual/en/timezones.php
+
+            Example: Europe/London.
+
+            Calculated using the co-ordinates provided by default.
+
+            *This should be used only in getters that uses co-ordinates
+                or it will be ignored.*
             
             *New in v0.2.*
 
         latitudeAdjustmentMethod: :class:`int`
             Method for adjusting times higher latitudes.
-            For instance, if you are checking timings in the UK or Sweden.
+            For instance,
+                if you are checking timings in the UK or Sweden.
+
             1 - Middle of the Night
             2 - One Seventh
             3 - Angle Based
@@ -498,8 +515,10 @@ class Parameters:
         elif method == 99:
             raise InvalidMethod(
                 "Pass Method object instead if you want to use custom method."
-                " for more info https://aladhanpy.readthedocs.io/en/latest/api.html#aladhan.methods.Method"
+                " for more info https://aladhanpy.readthedocs.io/en/latest/"
+                "api.html#aladhan.methods.Method"
             )
+
         if method not in range(16) and method != 99:  # pragma: no cover
             raise InvalidMethod(
                 "Expected method in 0-15 range or 99 got {!r}".format(method)
@@ -548,8 +567,10 @@ class Parameters:
         if timezonestring and timezonestring not in pytz.all_timezones_set:
             raise InvalidTimezone(
                 "Invalid timezone ({!r}).".format(timezonestring)
-                + " https://www.php.net/manual/en/timezones.php for valid timezones."
+                + " https://www.php.net/manual/en/timezones.php "
+                "for valid timezones."
             )
+
         self.timezonestring: str = timezonestring
 
         # lat adj methods
@@ -661,8 +682,8 @@ class Meta:
         """:class:`Parameters`: returns a Parameters obj
 
         .. warning::
-            This will set method to ISNA if method was custom, and it will
-            always set adjustment to 0.
+            This will set method to ISNA if method was custom,
+             and it will always set adjustment to 0.
         """
         return Parameters(  # TODO: testing
             self.method or 2,
@@ -720,10 +741,12 @@ class DateType:
             Date's day.
 
         weekday: dict[:class:`str`, :class:`str`]
-            A dict with 2 keys, "en" and "ar" for hijri and only 1 key "en" for gregorian.
+            A dict with 2 keys, "en" and "ar" for hijri
+            and only 1 key "en" for gregorian.
 
         month: dict[:class:`str`, :class:`int` or :class:`str`]
-            A dict with 3 keys "number", "en", "ar" for hijri and 2 keys "number", "en" for gregorian.
+            A dict with 3 keys "number", "en", "ar" for hijri
+            and 2 keys "number", "en" for gregorian.
 
         year: :class:`int`
             Date's year.
@@ -732,7 +755,8 @@ class DateType:
             A dict with 2 keys, "abbreviated" and "expanded".
 
         holidays: Optional[:class:`list` of :class:`str`]
-            A list of holidays might be empty for hijri, always None for gregorian.
+            A list of holidays might be empty for hijri,
+            always None for gregorian.
     """
 
     __slots__ = (
@@ -905,7 +929,8 @@ class Timings:
 
     @property
     def as_dict(self) -> Dict[str, Prayer]:
-        """dict[:class:`str`, :class:`Prayer`]: A dict of all 5 prayers and the other times
+        """dict[:class:`str`, :class:`Prayer`]:
+            A dict of all 5 prayers and the other times
 
         *New in v0.1.4*"""
         return {
@@ -922,7 +947,8 @@ class Timings:
 
     @property
     def prayers_only(self) -> Dict[str, Prayer]:
-        """dict[:class:`str`, :class:`Prayer`]: A dict of the 5 prayers."""
+        """dict[:class:`str`, :class:`Prayer`]:
+            A dict of the 5 prayers."""
         return {
             "Fajr": self.fajr,
             "Dhuhr": self.dhuhr,
@@ -942,7 +968,8 @@ class Timings:
             Optional[:class:`Prayer`]
                 The upcoming prayer.
 
-        *Changed in v1.0.: Returns None instead of recursive calls, and no longer awaitable.*
+        *Changed in v1.0.: Returns None instead of recursive calls,
+            and no longer awaitable.*
         """
         meta = self.data.meta
         now = datetime.utcnow()
@@ -959,8 +986,8 @@ class Timings:
     def __repr__(self):  # pragma: no cover
         return (
             "<Timings imsak={0.imsak}, fajr={0.fajr}, sunrise={0.sunrise}, "
-            "dhuhr={0.dhuhr}, asr={0.asr}, sunset={0.sunset}, maghrib={0.maghrib}, "
-            "isha={0.isha}, midnight={0.midnight}>"
+            "dhuhr={0.dhuhr}, asr={0.asr}, sunset={0.sunset}, "
+            "maghrib={0.maghrib}, isha={0.isha}, midnight={0.midnight}>"
         ).format(self)
 
     def __hash__(self):  # pragma: no cover

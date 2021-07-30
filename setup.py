@@ -5,7 +5,8 @@ from setuptools import setup
 
 
 def get_version(package):
-    """Return package version as listed in `__version__` in `init.py`."""
+    """Return package version as listed in `__version__`
+        in `init.py`."""
     path = os.path.join(package, "__init__.py")
     version = ""
     with open(path, "r", encoding="utf8") as init_py:

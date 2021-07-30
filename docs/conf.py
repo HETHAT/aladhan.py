@@ -1,16 +1,17 @@
 # Configuration file for the Sphinx documentation builder.
 #
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
+# This file only contains a selection of the most common options.
+# For a full list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-# -- Path setup --------------------------------------------------------------
+# -- Path setup --------------------------------------------------------
 
 import os
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
+# If extensions (or modules to document with autodoc) are in another
+# directory, add these directories to sys.path here.
+# If the directory is relative to the documentation root,
+# use os.path.abspath to make it absolute, like shown here.
 #
 import re
 import sys
@@ -19,14 +20,15 @@ sys.path.insert(0, os.path.abspath(".."))
 sys.path.append(os.path.abspath("extensions"))
 autodoc_mock_imports = ["pytz", "aiohttp", "requests", "typing_extensions"]
 
-# -- Project information -----------------------------------------------------
+# -- Project information -----------------------------------------------
 
 project = "aladhan.py"
 copyright = "2021, HETHAT"
 author = "HETHAT"
 
-# The version info for the project you're documenting, acts as replacement for
-# |version| and |release|, also used in various other places throughout the
+# The version info for the project you're documenting,
+# acts as replacement for |version| and |release|,
+# also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
@@ -42,7 +44,7 @@ release = version
 
 branch = "master" if version.endswith("a") else "v" + version
 
-# -- General configuration ---------------------------------------------------
+# -- General configuration ---------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = "3.0"
@@ -73,7 +75,8 @@ intersphinx_mapping = {
 rst_prolog = """
 .. |coro| replace:: This function is a |coroutine_link|_.
 .. |coroutine_link| replace:: *coroutine*
-.. _coroutine_link: https://docs.python.org/3/library/asyncio-task.html#coroutine
+.. _coroutine_link: 
+    https://docs.python.org/3/library/asyncio-task.html#coroutine
 """
 
 # Add any paths that contain templates here, relative to this directory.
@@ -88,10 +91,10 @@ master_doc = "index"
 exclude_patterns = ["_build"]
 
 
-# -- Options for HTML output -------------------------------------------------
+# -- Options for HTML output -------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
+# The theme to use for HTML and HTML Help pages.  See the documentation
+# for a list of builtin themes.
 #
 html_title = "Aladhan.py"
 html_theme = "furo"
@@ -99,15 +102,20 @@ html_theme_options = {
     "navigation_with_keys": True,
 }
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
+# Add any paths that contain custom static files (such as style sheets)
+# here, relative to this directory.
+#
+# They are copied after the builtin static files,
+# so a file named "default.css"
+# will overwrite the builtin "default.css".
+
 html_static_path = ["_static"]
 
 resource_links = {
     "discord": "https://discord.gg/jeBGF8Veud",
     "issues": "https://github.com/HETHAT/aladhan.py/issues",
-    "examples": f"https://github.com/HETHAT/aladhan.py/tree/{branch}/examples",
+    "examples":
+        f"https://github.com/HETHAT/aladhan.py/tree/{branch}/examples",
 }
 
 # remove type hints in docs

@@ -27,7 +27,8 @@ class Method:
     .. code:: py
 
         params = {
-            "fajr": ...,  # can be either an `int` or "null", if it was not giving it will be set to "null".
+            "fajr": ...,  # can be either an `int` or "null", \
+                if it was not giving it will be set to "null".
             "maghrib": ...,
             "isha": ...
         }
