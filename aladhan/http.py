@@ -7,10 +7,31 @@ from .types import (
     AsmaRes,
 )
 
-from aiohttp import ClientSession
-from requests import Session
+
+def missing_lib(msg):
+    def _():
+        raise TypeError(msg)
+    return _
+
+try:
+    from aiohttp import ClientSession
+except ImportError:
+    ClientSession = missing_lib(
+        "`aiohttp` is a required library that is missing for asynchronous usage."
+    )
+
+try:
+    from requests import Session
+except ImportError:
+    Session = missing_lib(
+        "`request` is a required library that is missing for synchronous usage."
+    )
 
 from typing import Awaitable, Union
+
+import logging
+
+log = logging.getLogger(__name__)
 
 TimingsR = Union[TimingsRes, Awaitable[TimingsRes]]
 CalendarR = Union[CalendarRes, Awaitable[CalendarRes]]
@@ -32,6 +53,7 @@ class HTTPClient:
         return self.requester.is_async
 
     def close(self):
+        log.debug("Closing session ...")
         return self.requester.session.close()  # this can be a coroutine
 
     def get_timings(self, date: str, params: dict) -> TimingsR:
@@ -80,6 +102,7 @@ class _AsyncRequester:
 
     async def request(self, endpoint: str, params: dict):
         async with self.session.get(endpoint, params=params) as res:
+            log.debug("(GET)[%s status code] request to %s with %s", res.status, endpoint, params)
             res = await res.json()
 
         if res["code"] != 200:  # something wrong
@@ -100,6 +123,7 @@ class _SyncRequester:
 
     def request(self, endpoint: str, params: dict):
         with self.session.get(endpoint, params=params) as res:
+            log.debug("(GET)[%s status code] request to %s with %s", res.status_code, endpoint, params)
             res = res.json()
 
         if res["code"] != 200:  # something wrong
