@@ -45,6 +45,11 @@ def get_requirements(filename: str = "requirements.txt"):
     return requirements
 
 
+extras_require = {
+    "async": get_requirements("reqs/async-requirements.txt"),
+    "sync": get_requirements("reqs/sync-requirements.txt"),
+}
+
 setup(
     name="aladhan.py",
     version=get_version("aladhan"),
@@ -58,6 +63,7 @@ setup(
     packages=get_packages("aladhan"),
     python_requires=">=3.6",
     install_requires=get_requirements(),
+    extras_require=extras_require,
     project_urls={
         # "Documentation": "",
         "Issue tracker": "https://github.com/HETHAT/aladhan.py/issues"
