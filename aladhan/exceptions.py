@@ -70,7 +70,7 @@ class InternalServerError(HTTPException):
 
 class InvalidArgument(AladhanException, ValueError):
     """Exception that’s thrown when an argument to a function is invalid
-     some way (e.g. wrong value or wrong type)."""
+    some way (e.g. wrong value or wrong type)."""
 
 
 class InvalidMethod(InvalidArgument):
@@ -95,7 +95,7 @@ class InvalidTimezone(InvalidArgument):
 
 class InvalidLatAdjMethod(InvalidArgument):
     """Exception that’s thrown when latitude adjustment method argument
-        is invalid."""
+    is invalid."""
 
 
 class InvalidAdjustment(InvalidArgument):

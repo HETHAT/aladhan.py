@@ -121,7 +121,9 @@ TEHRAN = Method(
     id=7,
     params={"Fajr": 17.7, "Isha": 14, "Maghrib": 4.5, "Midnight": "JAFARI"},
 )
-GULF = Method(name="Gulf Region", id=8, params={"Fajr": 19.5, "Isha": "90 min"})
+GULF = Method(
+    name="Gulf Region", id=8, params={"Fajr": 19.5, "Isha": "90 min"}
+)
 KUWAIT = Method(name="Kuwait", id=9, params={"Fajr": 18, "Isha": 17.5})
 QATAR = Method(name="Qatar", id=10, params={"Fajr": 18, "Isha": "90 min"})
 SINGAPORE = Method(

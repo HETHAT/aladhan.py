@@ -114,8 +114,7 @@ html_static_path = ["_static"]
 resource_links = {
     "discord": "https://discord.gg/jeBGF8Veud",
     "issues": "https://github.com/HETHAT/aladhan.py/issues",
-    "examples":
-        f"https://github.com/HETHAT/aladhan.py/tree/{branch}/examples",
+    "examples": f"https://github.com/HETHAT/aladhan.py/tree/{branch}/examples",
 }
 
 # remove type hints in docs

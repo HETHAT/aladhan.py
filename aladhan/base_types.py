@@ -419,7 +419,7 @@ class Parameters:
 
             *This should be used only in getters that uses co-ordinates
                 or it will be ignored.*
-            
+
             *New in v0.2.*
 
         latitudeAdjustmentMethod: :class:`int`
@@ -443,9 +443,9 @@ class Parameters:
 
         method_params: Optional[dict[str, int or "null"]]
             Method's parameters. ``None`` if method wasn't custom.
-            
+
             *New in v0.2.*
-        
+
         tune: :class:`str`
             Tune Value.
 
@@ -459,25 +459,25 @@ class Parameters:
         latitudeAdjustmentMethod: :class:`int`
 
         adjustment: :class:`int`
-    
+
     Raises
     ------
         :exc:`~aladhan.exceptions.InvalidMethod`
-            Method id passed was not in 0-15, 
-            Or passed an integer (99) instead of Method obj for a custom 
+            Method id passed was not in 0-15,
+            Or passed an integer (99) instead of Method obj for a custom
             method use.
-            
+
         :exc:`~aladhan.exceptions.InvalidTune`
             Tune with a bad value was passed.
-            
+
         :exc:`~aladhan.exceptions.InvalidSchool`
-            
+
         :exc:`~aladhan.exceptions.InvalidMidnightMode`
 
         :exc:`~aladhan.exceptions.InvalidTimezone`
-        
+
         :exc:`~aladhan.exceptions.InvalidLatAdjMethod`
-        
+
         :exc:`~aladhan.exceptions.InvalidAdjustment`
     """
 
@@ -533,7 +533,8 @@ class Parameters:
             ts = tune.split(",")
             if len(ts) != 9 or not all(x.isdigit() for x in ts):
                 raise InvalidTune(
-                    "Invalid tune argument was passed. (tune.value = %s)" % tune
+                    "Invalid tune argument was passed. (tune.value = %s)"
+                    % tune
                 )
         else:
             raise InvalidTune(
@@ -692,7 +693,8 @@ class Meta:
             getattr(MidnightModes, self.midnightMode.upper()),
             self.timezone.zone,
             getattr(
-                LatitudeAdjustmentMethods, self.latitudeAdjustmentMethod.upper()
+                LatitudeAdjustmentMethods,
+                self.latitudeAdjustmentMethod.upper(),
             )
             # can't get adjustment ...
         )
@@ -948,7 +950,7 @@ class Timings:
     @property
     def prayers_only(self) -> Dict[str, Prayer]:
         """dict[:class:`str`, :class:`Prayer`]:
-            A dict of the 5 prayers."""
+        A dict of the 5 prayers."""
         return {
             "Fajr": self.fajr,
             "Dhuhr": self.dhuhr,
