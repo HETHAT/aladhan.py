@@ -6,12 +6,15 @@ except ImportError:
     from typing_extensions import Literal, TypedDict
 
 __all__ = (
-    "TimingsRes",
-    "QiblaRes",
     "AsmaRes",
-    "MonthCalendarRes",
-    "YearCalendarRes",
     "CalendarRes",
+    "Date",
+    "MonthCalendarRes",
+    "QiblaRes",
+    "TimingsRes",
+    "YearCalendarRes",
+    "DateToCalendarRes",
+    "DateToDateRes",
 )
 
 
@@ -58,9 +61,12 @@ class _DateType(_DateTypeOptional):
     designation: _Designation
 
 
-class _Date(TypedDict):
+class _DateOptional(TypedDict, total=False):
     readable: str
     timestamp: str
+
+
+class Date(_DateOptional):
     gregorian: _DateType
     hijri: _DateType
 
@@ -104,7 +110,7 @@ class _Meta(TypedDict):
 
 class TimingsRes(TypedDict):
     timings: _Timings
-    date: _Date
+    date: Date
     meta: _Meta
 
 
@@ -132,3 +138,5 @@ YearCalendarRes = Dict[
     MonthCalendarRes,
 ]
 CalendarRes = Union[MonthCalendarRes, YearCalendarRes]
+DateToCalendarRes = List[Date]
+DateToDateRes = Date

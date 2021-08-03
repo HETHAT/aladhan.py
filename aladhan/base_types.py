@@ -813,10 +813,10 @@ class Date:
         data: :class:`Data`
             Original fetched Data.
 
-        readable: :class:`str`
+        readable: Optional[:class:`str`]
             Date in readable format.
 
-        timestamp: :class:`int`
+        timestamp: Optional[:class:`int`]
             Date in UNIX format.
 
         gregorian:  :class:`DateType`
@@ -831,14 +831,14 @@ class Date:
     def __init__(
         self,
         data: "Data",
-        readable: str,
-        timestamp: str,
         gregorian: dict,
         hijri: dict,
+        readable: Optional[str] = None,
+        timestamp: Optional[str] = None,
     ):
         self.data = data
         self.readable = readable
-        self.timestamp = int(timestamp)
+        self.timestamp = timestamp and int(timestamp)
         self.gregorian = DateType("Gregorian", **gregorian)
         self.hijri = DateType("Hijri", **hijri)
 

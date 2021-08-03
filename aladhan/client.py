@@ -7,6 +7,7 @@ from .base_types import (
     CalendarDateArg,
     Qibla,
     Ism,
+    Date,
 )
 from .http import HTTPClient
 
@@ -441,7 +442,7 @@ class Client:
         *New in v0.1.3*
         """
         return self.converter.to_qibla(
-            self.http.get_qibla(str(latitude), str(longitude))
+            self.http.get_qibla((latitude, longitude))
         )
 
     def get_asma(self, *n: int) -> AsmaR:
@@ -464,7 +465,9 @@ class Client:
         """
 
         assert n, "No arguments was passed."
-        return self.converter.to_asma(self.http.get_asma(",".join(map(str, n))))
+        return self.converter.to_asma(
+            self.http.get_asma(",".join(map(str, n)))
+        )
 
     def get_all_asma(self) -> AsmaR:
         """
@@ -482,6 +485,54 @@ class Client:
         *New in v0.1.3*
         """
         return self.get_asma(*range(1, 100))
+
+    def get_hijri_from_gregorian(
+        self, date: TimingsDateArg, adjustment: int = 0
+    ):
+        """
+        Convert a Gregorian date to a Hijri date.
+
+        Returns
+        -------
+            :class:`list` of :class:`Ism`
+                A list of all asma.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.InternalServerError`
+
+        *New in v1.1.0*
+        """
+        params = dict(date=date.date, adjustment=adjustment)
+        return self.converter.to_date(
+            self.http.get_hijri_from_gregorian(params)
+        )
+
+    def get_gregorian_from_hijri(
+        self, date: TimingsDateArg, adjustment: int = 0
+    ):
+        params = dict(date=date.date, adjustment=adjustment)
+        return self.converter.to_date(
+            self.http.get_gregorian_from_hijri(params)
+        )
+
+    def get_hijri_calendar_from_gregorian(
+        self, month: int, year: int, adjustment: int = 0
+    ):
+        return self.converter.to_calendar(
+            self.http.get_hijri_calendar_from_gregorian(
+                (month, year, adjustment)
+            )
+        )
+
+    def get_gregorian_calendar_from_hijri(
+        self, month: int, year: int, adjustment: int = 0
+    ):
+        return self.converter.to_calendar(
+            self.http.get_gregorian_calendar_from_hijri(
+                (month, year, adjustment)
+            )
+        )
 
 
 class _SyncConverter:
@@ -509,6 +560,14 @@ class _SyncConverter:
     def to_asma(o):
         return [Ism(**d) for d in o]
 
+    @staticmethod
+    def to_date(o):
+        return Date(**o)
+
+    @staticmethod
+    def to_calendar(o):
+        return [Date(**d) for d in o]
+
 
 class _AsyncConverter:
     @staticmethod
@@ -534,3 +593,11 @@ class _AsyncConverter:
     @staticmethod
     async def to_asma(o):
         return [Ism(**d) for d in await o]
+
+    @staticmethod
+    async def to_date(o):
+        return Date(**(await o))
+
+    @staticmethod
+    def to_calendar(o):
+        return [Date(**d) for d in await o]
