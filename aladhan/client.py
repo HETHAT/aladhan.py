@@ -271,7 +271,7 @@ class Client:
             :class:`list` of :class:`Timings` or dict[:class:`str`, \
             :class:`list` of :class:`Timings`]
                 A month calendar if month parameter was given in date
-                 argument otherwise a year calendar.
+                argument otherwise a year calendar.
 
         Raises
         ------
@@ -312,7 +312,7 @@ class Client:
             :class:`list` of :class:`Timings` or dict[:class:`str`, \
             :class:`list` of :class:`Timings`]
                 A month calendar if month parameter was given in date
-                 argument otherwise a year calendar.
+                argument otherwise a year calendar.
 
         Raises
         ------
@@ -364,7 +364,7 @@ class Client:
             :class:`list` of :class:`Timings` or dict[:class:`str`, \
             :class:`list` of :class:`Timings`]
                 A month calendar if month parameter was given in date
-                    argument otherwise a year calendar.
+                argument otherwise a year calendar.
 
         Raises
         ------
