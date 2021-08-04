@@ -11,12 +11,12 @@ VersionInfo = namedtuple(
 )
 
 version_info = VersionInfo(
-    major=1, minor=1, micro=0, releaselevel="alpha", serial=0
+    major=1, minor=1, micro=0, releaselevel="final", serial=0
 )
 
 __title__ = "aladhan.py"
 __author__ = "HETHAT"
-__version__ = "1.1.0a"
+__version__ = "1.1.0"
 
 
 from .client import Client
