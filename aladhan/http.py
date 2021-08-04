@@ -14,7 +14,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def missing_lib(msg):
+def missing_lib(msg):  # pragma: no cover
     def _():
         raise ImportError(msg)
 
@@ -23,7 +23,7 @@ def missing_lib(msg):
 
 try:
     from aiohttp import ClientSession
-except ImportError:
+except ImportError:  # pragma: no cover
     log.warn("aiohttp library is not installed.")
     ClientSession = missing_lib(
         "`aiohttp` is a required library that is missing "
@@ -32,7 +32,7 @@ except ImportError:
 
 try:
     from requests import Session
-except ImportError:
+except ImportError:  # pragma: no cover
     log.warn("requests library is not installed.")
     Session = missing_lib(
         "`request` is a required library that is missing "
@@ -106,6 +106,9 @@ class HTTPClient:
 
     def get_hijri_calendar_from_gregorian(self, params: tuple) -> DTCR:
         return self.request(H_TO_G_CALENDAR % params)
+
+    def get_islamic_year_from_gregorian_for_ramadan(self, params: int) -> int:
+        return self.request(ISLAMIC_YEAR_FROM_G_FOR_RAMADAN % params)
 
     # Others
     def get_asma(self, params: str) -> AsmaR:

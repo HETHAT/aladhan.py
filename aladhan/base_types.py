@@ -120,7 +120,7 @@ class Tune:
         ), "Invalid string format, must be in Tune.value format."
         return cls(*map(int, args))
 
-    def __iter__(self):
+    def __iter__(self):  # pragma: no cover
         yield from map(int, self.value.split(","))
 
     def __repr__(self):  # pragma: no cover
@@ -392,7 +392,7 @@ class Parameters:
     ----------
         method: :class:`methods.Method` or :class:`int`
             A prayer time calculation method, you can look into all
-                methods from :meth:`Client.get_all_methods()`.
+            methods from :meth:`Client.get_all_methods()`.
 
             Default: ISNA (Islamic Society of North America).
 
@@ -406,26 +406,25 @@ class Parameters:
 
         midnightMode: :class:`int`
             0 for Standard (Mid Sunset to Sunrise), 1 for Jafari
-                (Mid Sunset to Fajr).
+            (Mid Sunset to Fajr).
             Default: Standard
 
         timezonestring: Optional[:class:`str`]
             A valid timezone name as specified on
-             https://www.php.net/manual/en/timezones.php
+            https://www.php.net/manual/en/timezones.php
 
             Example: Europe/London.
 
             Calculated using the co-ordinates provided by default.
 
             *This should be used only in getters that uses co-ordinates
-                or it will be ignored.*
+            or it will be ignored.*
 
             *New in v0.2.*
 
         latitudeAdjustmentMethod: :class:`int`
             Method for adjusting times higher latitudes.
-            For instance,
-                if you are checking timings in the UK or Sweden.
+            For instance, if you are checking timings in the UK or Sweden.
 
             1 - Middle of the Night
             2 - One Seventh
@@ -812,19 +811,25 @@ class Date:
 
     Attributes
     ----------
-        data: :class:`Data`
-            Original fetched Data.
+        data: Optional[:class:`Data`]
+            Original fetched Data. None if it wasn't from a timings getter.
+
+            *Changed in v1.1.0: changed to Optional*
 
         readable: Optional[:class:`str`]
-            Date in readable format.
+            Date in readable format. None if it wasn't from a timings getter.
+
+            *Changed in v1.1.0: changed to Optional*
 
         timestamp: Optional[:class:`int`]
-            Date in UNIX format.
+            Date in UNIX format. None if it wasn't from a timings getter.
 
-        gregorian:  :class:`DateType`
+            *Changed in v1.1.0: changed to Optional*
+
+        gregorian: :class:`DateType`
             Gregorian date.
 
-        hijri:  :class:`DateType`
+        hijri: :class:`DateType`
             Hijri date.
     """
 
@@ -832,9 +837,9 @@ class Date:
 
     def __init__(
         self,
-        data: "Data",
         gregorian: dict,
         hijri: dict,
+        data: Optional["Data"] = None,
         readable: Optional[str] = None,
         timestamp: Optional[str] = None,
     ):
@@ -845,10 +850,7 @@ class Date:
         self.hijri = DateType("Hijri", **hijri)
 
     def __repr__(self):  # pragma: no cover
-        return (
-            "<Date readable={0.readable!r}, timestamp={0.timestamp!r}, "
-            "gregorian={0.gregorian!r}, hijri={0.hijri!r}>".format(self)
-        )
+        return "gregorian={0.gregorian!r}, hijri={0.hijri!r}>".format(self)
 
     def __hash__(self):  # pragma: no cover
         return hash(self.timestamp)
@@ -971,7 +973,7 @@ class Timings:
                 The upcoming prayer.
 
         *Changed in v1.0.: Returns None instead of recursive calls,
-            and no longer awaitable.*
+        and no longer awaitable.*
         """
         meta = self.data.meta
         now = datetime.utcnow()
@@ -1019,9 +1021,9 @@ class Data:
     __slots__ = ("meta", "date", "timings", "client")
 
     def __init__(self, timings: dict, date: dict, meta: dict, client):
-        self.meta = Meta(self, **meta)
-        self.date = Date(self, **date)
-        self.timings = Timings(self, **timings)
+        self.meta = Meta(**meta, data=self)
+        self.date = Date(**date, data=self)
+        self.timings = Timings(**timings, data=self)
         self.client = client
 
     def __repr__(self):  # pragma: no cover

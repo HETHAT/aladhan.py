@@ -5,6 +5,25 @@
 Changelog
 =========
 
+v1.1.0 (Unreleased)
+-------------------
+
+**Added**
+
+- Covering more 5 endpoints about date converting
+    - :meth:`Client.get_hijri_from_gregorian`
+    - :meth:`Client.get_gregorian_from_hijri`
+    - :meth:`Client.get_hijri_calendar_from_gregorian`
+    - :meth:`Client.get_gregorian_calendar_from_hijri`
+    - :meth:`Client.get_islamic_year_from_gregorian_for_ramadan`
+
+**Changed**
+
+- The following are now optional
+    - :attr:`Date.data`
+    - :attr:`Date.readable`
+    - :attr:`Date.timestamp`
+
 v1.0.0
 ------
 

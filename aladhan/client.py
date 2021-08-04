@@ -24,6 +24,8 @@ _Calendar = Union[List[Timings], Dict[str, Timings]]
 CalendarR = Union[_Calendar, Awaitable[_Calendar]]
 QiblaR = Union[Qibla, Awaitable[Qibla]]
 AsmaR = Union[List[Ism], Awaitable[List[Ism]]]
+DateR = Union[Date, Awaitable[Date]]
+LDateR = Union[List[Date], Awaitable[List[Date]]]
 
 __all__ = ("Client",)
 
@@ -86,7 +88,7 @@ class Client:
         return self.http.is_async
 
     def __enter__(self):
-        if self.is_async:
+        if self.is_async:  # pragma: no cover
             raise TypeError(
                 "Asynchronous client must be used in an asynchronous context"
                 "manager (async with) not in a synchronous one (with)."
@@ -97,7 +99,7 @@ class Client:
         self.close()
 
     async def __aenter__(self):
-        if not self.is_async:
+        if not self.is_async:  # pragma: no cover
             raise TypeError(
                 "Synchronous client must be used in a synchronous context"
                 "manager (with) not in an asynchronous one (async with)."
@@ -141,17 +143,12 @@ class Client:
         ------
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
-
-            :exc:`~aladhan.exceptions.InternalServerError`
         """
-        parameters = {
-            "longitude": str(longitude),
-            "latitude": str(latitude),
-        }
-        date, params = date or TimingsDateArg(), params or Parameters()
-        parameters.update(params.as_dict)
+        date = (date or TimingsDateArg()).date
+        params = (params or Parameters()).as_dict
+        params.update(dict(longitude=str(longitude), latitude=str(latitude)))
         return self.converter.to_timings(
-            self, self.http.get_timings(date.date, parameters)
+            self, self.http.get_timings(date, params)
         )
 
     def get_timings_by_address(
@@ -185,16 +182,12 @@ class Client:
         ------
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
-
-            :exc:`~aladhan.exceptions.InternalServerError`
         """
-        parameters = {
-            "address": address,
-        }
-        date, params = date or TimingsDateArg(), params or Parameters()
-        parameters.update(params.as_dict)
+        date = (date or TimingsDateArg()).date
+        params = (params or Parameters()).as_dict
+        params.update(dict(address=address))
         return self.converter.to_timings(
-            self, self.http.get_timings_by_address(date.date, parameters)
+            self, self.http.get_timings_by_address(date, params)
         )
 
     def get_timings_by_city(
@@ -238,20 +231,14 @@ class Client:
         ------
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
-
-            :exc:`~aladhan.exceptions.InternalServerError`
         """
-        parameters = {
-            "city": city,
-            "country": country,
-            "state": state,
-        }
+        date = (date or TimingsDateArg()).date
+        params = (params or Parameters()).as_dict
+        params.update(dict(city=city, country=country, state=state))
         if state is None:
-            del parameters["state"]
-        date, params = date or TimingsDateArg(), params or Parameters()
-        parameters.update(params.as_dict)
+            del params["state"]
         return self.converter.to_timings(
-            self, self.http.get_timings_by_city(date.date, parameters)
+            self, self.http.get_timings_by_city(date, params)
         )
 
     def get_calendar(
@@ -290,18 +277,12 @@ class Client:
         ------
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
-
-            :exc:`~aladhan.exceptions.InternalServerError`
         """
-        parameters = {
-            "longitude": str(longitude),
-            "latitude": str(latitude),
-        }
-        params = params or Parameters()
-        parameters.update(params.as_dict)
-        parameters.update(date.as_dict)
+        params = (params or Parameters()).as_dict
+        params.update(longitude=str(longitude), latitude=str(latitude))
+        params.update(date.as_dict)
         return self.converter.to_timings(
-            self, self.http.get_calendar(parameters, date.hijri)
+            self, self.http.get_calendar(params, date.hijri)
         )
 
     def get_calendar_by_address(
@@ -337,16 +318,13 @@ class Client:
         ------
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
-
-            :exc:`~aladhan.exceptions.InternalServerError`
         """
-        parameters = {"address": address}
-        params = params or Parameters()
-        parameters.update(params.as_dict)
-        parameters.update(date.as_dict)
+        params = (params or Parameters()).as_dict
+        params.update(dict(address=address))
+        params.update(date.as_dict)
         return self.converter.to_timings(
             self,
-            self.http.get_calendar_by_address(parameters, date.hijri),
+            self.http.get_calendar_by_address(params, date.hijri),
         )
 
     def get_calendar_by_city(
@@ -362,7 +340,7 @@ class Client:
             from address.
 
         Parameters
-        -----------
+        ----------
             city: :class:`str`
                 The city name.
                 Example: "London"
@@ -392,21 +370,14 @@ class Client:
         ------
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
-
-            :exc:`~aladhan.exceptions.InternalServerError`
         """
-        parameters = {
-            "city": city,
-            "country": country,
-            "state": state,
-        }
+        params = (params or Parameters()).as_dict
+        params.update(dict(city=city, country=country, state=state))
         if state is None:
-            del parameters["state"]
-        params = params or Parameters()
-        parameters.update(params.as_dict)
-        parameters.update(date.as_dict)
+            del params["state"]
+        params.update(date.as_dict)
         return self.converter.to_timings(
-            self, self.http.get_calendar_by_city(parameters, date.hijri)
+            self, self.http.get_calendar_by_city(params, date.hijri)
         )
 
     @staticmethod
@@ -427,6 +398,14 @@ class Client:
         """
         Get the Qibla direction from a pair of coordinates.
 
+        Parameters
+        ----------
+            longitude: :class:`int` or :class:`float`
+                Longitude co-ordinate.
+
+            latitude: :class:`int` or :class:`float`
+                Latitude co-ordinate.
+
         Returns
         -------
             :class:`Qibla`
@@ -436,8 +415,6 @@ class Client:
         ------
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
-
-            :exc:`~aladhan.exceptions.InternalServerError`
 
         *New in v0.1.3*
         """
@@ -449,6 +426,11 @@ class Client:
         """
         Returns a list of asma from giving numbers.
 
+        Parameters
+        ----------
+            n: :class:`int`
+                Numbers from range 1-99.
+
         Returns
         -------
             :class:`list` of :class:`Ism`
@@ -458,8 +440,6 @@ class Client:
         ------
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
-
-            :exc:`~aladhan.exceptions.InternalServerError`
 
         *New in v0.1.3*
         """
@@ -478,28 +458,35 @@ class Client:
             :class:`list` of :class:`Ism`
                 A list of all asma.
 
-        Raises
-        ------
-            :exc:`~aladhan.exceptions.InternalServerError`
-
         *New in v0.1.3*
         """
         return self.get_asma(*range(1, 100))
 
     def get_hijri_from_gregorian(
-        self, date: TimingsDateArg, adjustment: int = 0
-    ):
+        self, date: Optional[TimingsDateArg] = None, adjustment: int = 0
+    ) -> DateR:
         """
-        Convert a Gregorian date to a Hijri date.
+        Convert a gregorian date to a hijri date.
+
+        Parameters
+        ----------
+            date: Optional[:class:`TimingsDateArg`]
+                Gregorian date.
+                Default: Current date
+
+            adjustment: Optional[:class:`int`]
+                Number of days to adjust.
+                Default: 0
 
         Returns
         -------
-            :class:`list` of :class:`Ism`
-                A list of all asma.
+            :class:`Date`
+                Date in hijri.
 
         Raises
         ------
-            :exc:`~aladhan.exceptions.InternalServerError`
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid date or unable to convert it.
 
         *New in v1.1.0*
         """
@@ -510,7 +497,32 @@ class Client:
 
     def get_gregorian_from_hijri(
         self, date: TimingsDateArg, adjustment: int = 0
-    ):
+    ) -> DateR:
+        """
+        Convert a hijri date to a gregorian date.
+
+        Parameters
+        ----------
+            date: Optional[:class:`TimingsDateArg`]
+                Gregorian date.
+                Default: Current date
+
+            adjustment: Optional[:class:`int`]
+                Number of days to adjust.
+                Default: 0
+
+        Returns
+        -------
+            :class:`Date`
+                Date in gregorian.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid date or unable to convert it.
+
+        *New in v1.1.0*
+        """
         params = dict(date=date.date, adjustment=adjustment)
         return self.converter.to_date(
             self.http.get_gregorian_from_hijri(params)
@@ -518,7 +530,29 @@ class Client:
 
     def get_hijri_calendar_from_gregorian(
         self, month: int, year: int, adjustment: int = 0
-    ):
+    ) -> LDateR:
+        """
+        Get a hijri calendar for a gregorian month.
+
+        Parameters
+        ----------
+            month: :class:`int`
+                Gregorian month.
+
+            year: :class:`int`
+                Gregorian year.
+
+            adjustment: Optional[:class:`int`]
+                Number of days to adjust.
+                Default: 0
+
+        Returns
+        -------
+            :class:`list` of :class:`Date`
+                Hijri Calendar.
+
+        *New in v1.1.0*
+        """
         return self.converter.to_calendar(
             self.http.get_hijri_calendar_from_gregorian(
                 (month, year, adjustment)
@@ -527,11 +561,56 @@ class Client:
 
     def get_gregorian_calendar_from_hijri(
         self, month: int, year: int, adjustment: int = 0
-    ):
+    ) -> LDateR:
+        """
+        Get a gregorian calendar for a hijri month.
+
+        Parameters
+        ----------
+            month: :class:`int`
+                Hijri month.
+
+            year: :class:`int`
+                Hijri year.
+
+            adjustment: Optional[:class:`int`]
+                Number of days to adjust.
+                Default: 0
+
+        Returns
+        -------
+            :class:`list` of :class:`Date`
+                Gregorian Calendar.
+
+        *New in v1.1.0*
+        """
         return self.converter.to_calendar(
             self.http.get_gregorian_calendar_from_hijri(
                 (month, year, adjustment)
             )
+        )
+
+    def get_islamic_year_from_gregorian_for_ramadan(self, year: int) -> int:
+        """
+        Get which islamic year for ramadan from a gregorian year.
+
+        Parameters
+        ----------
+            year: :class:`int`
+                Gregorian year.
+
+        Returns
+        -------
+            :class:`int`
+                Hijri year.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Unable to compute year.
+        """
+        return self.converter.to_int(
+            self.http.get_islamic_year_from_gregorian_for_ramadan(year)
         )
 
 
@@ -568,6 +647,10 @@ class _SyncConverter:
     def to_calendar(o):
         return [Date(**d) for d in o]
 
+    @staticmethod
+    def to_int(o):
+        return int(o)
+
 
 class _AsyncConverter:
     @staticmethod
@@ -599,5 +682,9 @@ class _AsyncConverter:
         return Date(**(await o))
 
     @staticmethod
-    def to_calendar(o):
+    async def to_calendar(o):
         return [Date(**d) for d in await o]
+
+    @staticmethod
+    async def to_int(o):
+        return int(await o)
