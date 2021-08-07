@@ -22,8 +22,6 @@ HIJRI_CALENDAR_BY_CITY = HIJRI_CALENDAR + "ByCity"
 # Info
 STATUS = BASE + "status"  # todo
 METHODS = BASE + "methods"
-CITY_INFO = BASE + "addressInfo"  # todo
-ADDRESS_INFO = BASE + "addressInfo"  # todo
 SPECIAL_DAYS = BASE + "specialDays"  # todo
 ISLAMIC_MONTHS = BASE + "islamicMonths"  # todo
 
