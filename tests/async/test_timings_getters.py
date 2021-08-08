@@ -43,19 +43,6 @@ async def test_timings_by_address(client, args, kwargs):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
-    [[("ThisShouldError",), {}, Exception], [("",), {}, Exception]],
-)
-async def test_error_timings_by_address(args, kwargs, expected):
-    try:
-        await client.get_timings_by_address(*args, **kwargs)
-    except expected:
-        return
-    raise RuntimeError()
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize(
     ["args", "kwargs"],
     [
         [("London", "GB"), {}],
@@ -74,16 +61,3 @@ async def test_error_timings_by_address(args, kwargs, expected):
 async def test_timings_by_city(client, args, kwargs):
     ts = await client.get_timings_by_city(*args, **kwargs)
     assert isinstance(ts, aladhan.Timings)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
-    [[("", ""), {}, Exception], [("Doesn't", "Exist"), {}, Exception]],
-)
-async def test_error_timings_by_city(args, kwargs, expected):
-    try:
-        await client.get_timings_by_city(*args, **kwargs)
-    except expected:
-        return
-    raise RuntimeError()

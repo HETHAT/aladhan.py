@@ -100,22 +100,6 @@ async def test_calendar_by_address(client, args, kwargs, expected):
 @pytest.mark.parametrize(
     ["args", "kwargs", "expected"],
     [
-        [("", aladhan.CalendarDateArg(2021, 5)), {}, Exception],
-        [("ThisShouldError", aladhan.CalendarDateArg(2021, 5)), {}, Exception],
-    ],
-)
-async def test_error_calendar_by_address(client, args, kwargs, expected):
-    try:
-        await client.get_calendar_by_address(*args, **kwargs)
-    except expected:
-        return
-    raise RuntimeError()
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
-    [
         [("London", "GB"), {"date": aladhan.CalendarDateArg(2021)}, dict],
         [
             ("London", "GB"),
@@ -166,19 +150,3 @@ async def test_calendar_by_city(client, args, kwargs, expected):
     assert isinstance(
         expected == list and ts[0] or ts["1"][0], aladhan.Timings
     )
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
-    [
-        [("", ""), {"date": aladhan.CalendarDateArg(2021)}, Exception],
-        [("a", "b", "c"), {"date": aladhan.CalendarDateArg(2021)}, Exception],
-    ],
-)
-async def test_error_calendar_by_city(client, args, kwargs, expected):
-    try:
-        await client.get_calendar_by_city(*args, **kwargs)
-    except expected:
-        return
-    raise RuntimeError()

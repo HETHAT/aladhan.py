@@ -39,18 +39,6 @@ def test_timings_by_address(client, args, kwargs):
 
 
 @pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
-    [[("ThisShouldError",), {}, Exception], [("",), {}, Exception]],
-)
-def test_error_timings_by_address(args, kwargs, expected):
-    try:
-        client.get_timings_by_address(*args, **kwargs)
-    except expected:
-        return
-    raise RuntimeError()
-
-
-@pytest.mark.parametrize(
     ["args", "kwargs"],
     [
         [("London", "GB"), {}],
@@ -69,15 +57,3 @@ def test_error_timings_by_address(args, kwargs, expected):
 def test_timings_by_city(client, args, kwargs):
     ts = client.get_timings_by_city(*args, **kwargs)
     assert isinstance(ts, aladhan.Timings)
-
-
-@pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
-    [[("", ""), {}, Exception], [("Doesn't", "Exist"), {}, Exception]],
-)
-def test_error_timings_by_city(args, kwargs, expected):
-    try:
-        client.get_timings_by_city(*args, **kwargs)
-    except expected:
-        return
-    raise RuntimeError()

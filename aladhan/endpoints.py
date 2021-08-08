@@ -40,9 +40,9 @@ HIJRI_HOLIDAYS = BASE + "hijriHolidays"  # todo
 ISLAMIC_HOLIDAYS_BY_H_YEAR = BASE + "islamicHolidaysByHijriYear"  # todo
 
 # Current ...
-CURRENT_TIME = "currentTime"  # todo
-CURRENT_DATE = "currentDate"  # todo
-CURRENT_TIMESTAMP = "currentTimestamp"  # todo
+CURRENT_TIME = BASE + "currentTime"  # todo
+CURRENT_DATE = BASE + "currentDate"  # todo
+CURRENT_TIMESTAMP = BASE + "currentTimestamp"  # todo
 CURRENT_ISLAMIC_YEAR = BASE + "currentIslamicYear"  # todo
 CURRENT_ISLAMIC_MONTH = BASE + "currentIslamicMonth"  # todo
 

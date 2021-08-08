@@ -12,20 +12,22 @@ from .base_types import (
 from .http import HTTPClient
 
 from typing import (
-    Awaitable,
+    Awaitable as A,
+    Union as U,
     Optional,
-    Union,
     List,
     Dict,
 )
 
-TimingsR = Union[Timings, Awaitable[Timings]]
-_Calendar = Union[List[Timings], Dict[str, Timings]]
-CalendarR = Union[_Calendar, Awaitable[_Calendar]]
-QiblaR = Union[Qibla, Awaitable[Qibla]]
-AsmaR = Union[List[Ism], Awaitable[List[Ism]]]
-DateR = Union[Date, Awaitable[Date]]
-LDateR = Union[List[Date], Awaitable[List[Date]]]
+TimingsR = U[Timings, A[Timings]]
+_Calendar = U[List[Timings], Dict[str, Timings]]
+CalendarR = U[_Calendar, A[_Calendar]]
+QiblaR = U[Qibla, A[Qibla]]
+AsmaR = U[List[Ism], A[List[Ism]]]
+DateR = U[Date, A[Date]]
+LDateR = U[List[Date], A[List[Date]]]
+IntR = U[int, A[int]]
+StrR = U[str, A[str]]
 
 __all__ = ("Client",)
 
@@ -111,8 +113,8 @@ class Client:
 
     def get_timings(
         self,
-        longitude: Union[int, float],
-        latitude: Union[int, float],
+        longitude: U[int, float],
+        latitude: U[int, float],
         date: Optional[TimingsDateArg] = None,
         params: Optional[Parameters] = None,
     ) -> TimingsR:
@@ -243,8 +245,8 @@ class Client:
 
     def get_calendar(
         self,
-        longitude: Union[int, float],
-        latitude: Union[int, float],
+        longitude: U[int, float],
+        latitude: U[int, float],
         date: CalendarDateArg,
         params: Optional[Parameters] = None,
     ) -> CalendarR:
@@ -393,7 +395,7 @@ class Client:
         return all_methods
 
     def get_qibla(
-        self, longitude: Union[int, float], latitude: Union[int, float]
+        self, longitude: U[int, float], latitude: U[int, float]
     ) -> QiblaR:
         """
         Get the Qibla direction from a pair of coordinates.
@@ -418,8 +420,8 @@ class Client:
 
         *New in v0.1.3*
         """
-        return self.converter.to_qibla(
-            self.http.get_qibla((latitude, longitude))
+        return self.converter.to_obj_kwa(
+            self.http.get_qibla(latitude, longitude), Qibla
         )
 
     def get_asma(self, *n: int) -> AsmaR:
@@ -445,8 +447,8 @@ class Client:
         """
 
         assert n, "No arguments was passed."
-        return self.converter.to_asma(
-            self.http.get_asma(",".join(map(str, n)))
+        return self.converter.to_list_of_obj(
+            self.http.get_asma(",".join(map(str, n))), Ism
         )
 
     def get_all_asma(self) -> AsmaR:
@@ -490,9 +492,11 @@ class Client:
 
         *New in v1.1.0*
         """
-        params = dict(date=date.date, adjustment=adjustment)
-        return self.converter.to_date(
-            self.http.get_hijri_from_gregorian(params)
+        return self.converter.to_obj_kwa(
+            self.http.get_hijri_from_gregorian(
+                date=date.date, adjustment=adjustment
+            ),
+            Date,
         )
 
     def get_gregorian_from_hijri(
@@ -523,9 +527,11 @@ class Client:
 
         *New in v1.1.0*
         """
-        params = dict(date=date.date, adjustment=adjustment)
-        return self.converter.to_date(
-            self.http.get_gregorian_from_hijri(params)
+        return self.converter.to_obj_kwa(
+            self.http.get_gregorian_from_hijri(
+                date=date.date, adjustment=adjustment
+            ),
+            Date,
         )
 
     def get_hijri_calendar_from_gregorian(
@@ -553,10 +559,11 @@ class Client:
 
         *New in v1.1.0*
         """
-        return self.converter.to_calendar(
+        return self.converter.to_list_of_obj(
             self.http.get_hijri_calendar_from_gregorian(
-                (month, year, adjustment)
-            )
+                month, year, adjustment
+            ),
+            Date,
         )
 
     def get_gregorian_calendar_from_hijri(
@@ -584,10 +591,11 @@ class Client:
 
         *New in v1.1.0*
         """
-        return self.converter.to_calendar(
+        return self.converter.to_list_of_obj(
             self.http.get_gregorian_calendar_from_hijri(
-                (month, year, adjustment)
-            )
+                month, year, adjustment
+            ),
+            Date,
         )
 
     def get_islamic_year_from_gregorian_for_ramadan(self, year: int) -> int:
@@ -609,8 +617,112 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Unable to compute year.
         """
-        return self.converter.to_int(
-            self.http.get_islamic_year_from_gregorian_for_ramadan(year)
+        return self.converter.to_obj_a(
+            self.http.get_islamic_year_from_gregorian_for_ramadan(year), int
+        )
+
+    def get_current_time(self, zone: str) -> StrR:
+        """
+        Parameters
+        ----------
+            zone: :class:`str`
+                Timezone string. ex: `"Europe/London"`
+
+        Returns
+        -------
+            :class:`str`
+                The current time for the specified time zone.
+                ex: `"13:56"`
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid timezone.
+        """
+        return self.http.get_current_time(zone=zone)
+
+    def get_current_date(self, zone: str) -> StrR:
+        """
+        Parameters
+        ----------
+            zone: :class:`str`
+                Timezone string. ex: `"Europe/London"`
+
+        Returns
+        -------
+            :class:`str`
+                The current Date for the specified time zone in DD-MM-YYYY.
+                ex: `"23-02-2021"`
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid timezone.
+        """
+        return self.http.get_current_date(zone=zone)
+
+    def get_current_timestamp(self, zone: str) -> IntR:
+        """
+        Parameters
+        ----------
+            zone: :class:`str`
+                Timezone string. ex: `"Europe/London"`
+
+        Returns
+        -------
+            :class:`int`
+                The current UNIX timestamp for the specified time zone.
+                ex: `1503495668`
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid timezone.
+        """
+        return self.converter.to_obj_a(
+            self.http.get_current_timestamp(zone=zone), int
+        )
+
+    def get_current_islamic_year(self, adjustment: int = 0) -> IntR:
+        """
+        Parameters
+        ----------
+            adjustment: :class:`int`
+                Number of days to adjust hijri date.
+
+        Returns
+        -------
+            :class:`int`
+                The current islamic year.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+               Unable to compute year.
+        """
+        return self.converter.to_obj_a(
+            self.http.get_current_islamic_year(adjustment=adjustment), int
+        )
+
+    def get_current_islamic_month(self, adjustment: int = 0) -> IntR:
+        """
+        Parameters
+        ----------
+            adjustment: :class:`int`
+                Number of days to adjust hijri date.
+
+        Returns
+        -------
+            :class:`int`
+                The current islamic month.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+               Unable to compute month.
+        """
+        return self.converter.to_obj_a(
+            self.http.get_current_islamic_month(adjustment=adjustment), int
         )
 
 
@@ -632,24 +744,16 @@ class _SyncConverter:
         return Data(**data, client=client).timings
 
     @staticmethod
-    def to_qibla(o):
-        return Qibla(**o)
+    def to_obj_a(o, obj):
+        return obj(o)
 
     @staticmethod
-    def to_asma(o):
-        return [Ism(**d) for d in o]
+    def to_obj_kwa(o, obj):
+        return obj(**o)
 
     @staticmethod
-    def to_date(o):
-        return Date(**o)
-
-    @staticmethod
-    def to_calendar(o):
-        return [Date(**d) for d in o]
-
-    @staticmethod
-    def to_int(o):
-        return int(o)
+    def to_list_of_obj(o, obj):
+        return [obj(**d) for d in o]
 
 
 class _AsyncConverter:
@@ -670,21 +774,13 @@ class _AsyncConverter:
         return Data(**data, client=client).timings
 
     @staticmethod
-    async def to_qibla(o):
-        return Qibla(**(await o))
+    async def to_obj_a(o, obj):
+        return obj(await o)
 
     @staticmethod
-    async def to_asma(o):
-        return [Ism(**d) for d in await o]
+    async def to_obj_kwa(o, obj):
+        return obj(**(await o))
 
     @staticmethod
-    async def to_date(o):
-        return Date(**(await o))
-
-    @staticmethod
-    async def to_calendar(o):
-        return [Date(**d) for d in await o]
-
-    @staticmethod
-    async def to_int(o):
-        return int(await o)
+    async def to_list_of_obj(o, obj):
+        return [obj(**d) for d in await o]

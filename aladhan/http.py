@@ -39,14 +39,16 @@ except ImportError:  # pragma: no cover
         "for synchronous usage."
     )
 
-from typing import Awaitable, Union
+from typing import Awaitable as A, Union as U
 
-TimingsR = Union[TimingsRes, Awaitable[TimingsRes]]
-CalendarR = Union[CalendarRes, Awaitable[CalendarRes]]
-QiblaR = Union[QiblaRes, Awaitable[QiblaRes]]
-AsmaR = Union[AsmaRes, Awaitable[AsmaRes]]
-DateR = Union[DateToDateRes, Awaitable[DateToDateRes]]
-DTCR = Union[DateToCalendarRes, Awaitable[DateToCalendarRes]]
+TimingsR = U[TimingsRes, A[TimingsRes]]
+CalendarR = U[CalendarRes, A[CalendarRes]]
+QiblaR = U[QiblaRes, A[QiblaRes]]
+AsmaR = U[AsmaRes, A[AsmaRes]]
+DateR = U[DateToDateRes, A[DateToDateRes]]
+DTCR = U[DateToCalendarRes, A[DateToCalendarRes]]
+IntR = U[int, A[int]]
+StrR = U[str, A[str]]
 
 __all__ = ("HTTPClient",)
 
@@ -95,26 +97,42 @@ class HTTPClient:
         )
 
     # date converters
-    def get_gregorian_from_hijri(self, params: dict) -> DateR:
+    def get_gregorian_from_hijri(self, **params) -> DateR:
         return self.request(G_TO_H, params)
 
-    def get_hijri_from_gregorian(self, params: dict) -> DateR:
+    def get_hijri_from_gregorian(self, **params) -> DateR:
         return self.request(H_TO_G, params)
 
-    def get_gregorian_calendar_from_hijri(self, params: tuple) -> DTCR:
+    def get_gregorian_calendar_from_hijri(self, *params) -> DTCR:
         return self.request(G_TO_H_CALENDAR % params)
 
-    def get_hijri_calendar_from_gregorian(self, params: tuple) -> DTCR:
+    def get_hijri_calendar_from_gregorian(self, *params) -> DTCR:
         return self.request(H_TO_G_CALENDAR % params)
 
-    def get_islamic_year_from_gregorian_for_ramadan(self, params: int) -> int:
+    def get_islamic_year_from_gregorian_for_ramadan(self, params: int) -> StrR:
         return self.request(ISLAMIC_YEAR_FROM_G_FOR_RAMADAN % params)
 
+    # Current ...
+    def get_current_time(self, **params) -> StrR:
+        return self.request(CURRENT_TIME, params)
+
+    def get_current_date(self, **params) -> StrR:
+        return self.request(CURRENT_DATE, params)
+
+    def get_current_timestamp(self, **params) -> StrR:
+        return self.request(CURRENT_TIMESTAMP, params)
+
+    def get_current_islamic_year(self, **params) -> StrR:
+        return self.request(CURRENT_ISLAMIC_YEAR, params)
+
+    def get_current_islamic_month(self, **params) -> IntR:
+        return self.request(CURRENT_ISLAMIC_MONTH, params)
+
     # Others
-    def get_asma(self, params: str) -> AsmaR:
+    def get_asma(self, *params) -> AsmaR:
         return self.request(ASMA_AL_HUSNA % params)
 
-    def get_qibla(self, params: tuple) -> QiblaR:
+    def get_qibla(self, *params) -> QiblaR:
         return self.request(QIBLA % params)
 
 
