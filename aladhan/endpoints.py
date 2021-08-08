@@ -36,15 +36,15 @@ ISLAMIC_YEAR_FROM_G_FOR_RAMADAN = (
 
 # Holidays
 NEXT_HIJRI_HOLIDAY = BASE + "nextHijriHoliday"  # todo
-HIJRI_HOLIDAYS = BASE + "hijriHolidays"  # todo
-ISLAMIC_HOLIDAYS_BY_H_YEAR = BASE + "islamicHolidaysByHijriYear"  # todo
+HIJRI_HOLIDAYS = BASE + "hijriHolidays/%d/%d"  # todo
+ISLAMIC_HOLIDAYS_BY_H_YEAR = BASE + "islamicHolidaysByHijriYear/%d"  # todo
 
 # Current ...
-CURRENT_TIME = BASE + "currentTime"  # todo
-CURRENT_DATE = BASE + "currentDate"  # todo
-CURRENT_TIMESTAMP = BASE + "currentTimestamp"  # todo
-CURRENT_ISLAMIC_YEAR = BASE + "currentIslamicYear"  # todo
-CURRENT_ISLAMIC_MONTH = BASE + "currentIslamicMonth"  # todo
+CURRENT_TIME = BASE + "currentTime"
+CURRENT_DATE = BASE + "currentDate"
+CURRENT_TIMESTAMP = BASE + "currentTimestamp"
+CURRENT_ISLAMIC_YEAR = BASE + "currentIslamicYear"
+CURRENT_ISLAMIC_MONTH = BASE + "currentIslamicMonth"
 
 # Others
 ASMA_AL_HUSNA = BASE + "asmaAlHusna/%s"
