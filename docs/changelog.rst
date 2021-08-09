@@ -5,6 +5,30 @@
 Changelog
 =========
 
+v1.2.0 (Unreleased)
+-------------------
+
+**Added**
+
+- Covered current event endpoints.
+    - :meth:`Client.get_current_time`
+    - :meth:`Client.get_current_date`
+    - :meth:`Client.get_current_timestamp`
+    - :meth:`Client.get_current_islamic_year`
+    - :meth:`Client.get_current_islamic_month`
+- Covered holidays endpoints.
+    - :meth:`Client.get_next_hijri_holiday`
+    - :meth:`Client.get_hijri_holidays`
+    - :meth:`Client.get_islamic_holidays`
+- Covered info endpoints
+    - :meth:`Client.get_status`
+    - :meth:`Client.get_special_days`
+    - :meth:`Client.get_islamic_months`
+
+**Changed**
+
+- Fixed date converters, they were switched around :l
+
 v1.1.0
 ------
 

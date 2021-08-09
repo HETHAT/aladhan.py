@@ -1,5 +1,5 @@
 from .methods import all_methods, Method
-from .base_types import (
+from .data_classes import (
     Timings,
     Data,
     TimingsDateArg,
@@ -18,6 +18,7 @@ from typing import (
     List,
     Dict,
 )
+from .types import StatusR, SDR, IMR
 
 TimingsR = U[Timings, A[Timings]]
 _Calendar = U[List[Timings], Dict[str, Timings]]
@@ -28,6 +29,7 @@ DateR = U[Date, A[Date]]
 LDateR = U[List[Date], A[List[Date]]]
 IntR = U[int, A[int]]
 StrR = U[str, A[str]]
+ListR = U[list, A[list]]
 
 __all__ = ("Client",)
 
@@ -724,6 +726,117 @@ class Client:
         return self.converter.to_obj_a(
             self.http.get_current_islamic_month(adjustment=adjustment), int
         )
+
+    def get_next_hijri_holiday(self, adjustment: int = 0) -> DateR:
+        """
+        Parameters
+        ----------
+            adjustment: :class:`int`
+                Number of days to adjust hijri date.
+
+        Returns
+        -------
+            :class:`~aladhan.Date`
+                The Next upcoming hijri holiday.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+               Unable to compute next holiday.
+        """
+        return self.converter.to_obj_kwa(
+            self.http.get_next_hijri_holiday(adjustment=adjustment), Date
+        )
+
+    def get_hijri_holidays(self, day: int, month: int) -> ListR:
+        """
+        Parameters
+        ----------
+            day: :class:`int`
+                Hijri day.
+            month: :class:`int`
+                Hijri month.
+
+        Returns
+        -------
+            :class:`list` of :class:`str`
+                All day's holidays, can be empty list.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+               Invalid day or month.
+        """
+        return self.http.get_hijri_holidays(day, month)
+
+    def get_islamic_holidays(self, year: int, adjustment: int = 0) -> LDateR:
+        """
+        Parameters
+        ----------
+            year: :class:`int`
+                Hijri year.
+            adjustment: :class:`int`
+                Number of days to adjust hijri date.
+
+        Returns
+        -------
+            :class:`list` of :class:`~aladhan.Date`
+                All year's holidays, 19 in total.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+               Something went wrong.
+        """
+        return self.converter.to_list_of_obj(
+            self.http.get_hijri_holidays(year, adjustment), Date
+        )
+
+    def get_status(self) -> StatusR:
+        """
+        Returns
+        -------
+            :class:`dict`
+                Api's status.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.InternalServerError`
+               Status Check Failed.
+        """
+        return self.http.get_status()
+
+    def get_special_days(self) -> SDR:
+        """
+        Get all islamic special days (holidays).
+
+        Returns
+        -------
+            :class:`list` of :class:`dict`
+                A list of all special days with ``day,month,name`` keys.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+               Something went wrong.
+        """
+        return self.http.get_special_days()
+
+    def get_islamic_months(self) -> IMR:
+        """
+        Get all 12 islamic months.
+
+        Returns
+        -------
+            :class:`list` of :class:`dict`
+                A list of all 12 islamic months with ``number,en,ar`` keys.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+               Something went wrong.
+        """
+        return self.http.get_islamic_months()
 
 
 class _SyncConverter:

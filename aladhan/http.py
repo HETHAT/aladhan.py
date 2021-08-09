@@ -7,6 +7,10 @@ from .types import (
     AsmaRes,
     DateToDateRes,
     DateToCalendarRes,
+    IslamicHolidaysRes,
+    StatusR,
+    SDR,
+    IMR
 )
 
 import logging
@@ -47,8 +51,11 @@ QiblaR = U[QiblaRes, A[QiblaRes]]
 AsmaR = U[AsmaRes, A[AsmaRes]]
 DateR = U[DateToDateRes, A[DateToDateRes]]
 DTCR = U[DateToCalendarRes, A[DateToCalendarRes]]
+IHR = U[IslamicHolidaysRes, A[IslamicHolidaysRes]]
 IntR = U[int, A[int]]
 StrR = U[str, A[str]]
+ListR = U[list, A[list]]
+
 
 __all__ = ("HTTPClient",)
 
@@ -109,8 +116,8 @@ class HTTPClient:
     def get_hijri_calendar_from_gregorian(self, *params) -> DTCR:
         return self.request(G_TO_H_CALENDAR % params)
 
-    def get_islamic_year_from_gregorian_for_ramadan(self, params: int) -> StrR:
-        return self.request(ISLAMIC_YEAR_FROM_G_FOR_RAMADAN % params)
+    def get_islamic_year_from_gregorian_for_ramadan(self, param: int) -> StrR:
+        return self.request(ISLAMIC_YEAR_FROM_G_FOR_RAMADAN % param)
 
     # Current ...
     def get_current_time(self, **params) -> StrR:
@@ -127,6 +134,26 @@ class HTTPClient:
 
     def get_current_islamic_month(self, **params) -> IntR:
         return self.request(CURRENT_ISLAMIC_MONTH, params)
+
+    # Holidays
+    def get_next_hijri_holiday(self, **params) -> DateR:
+        return self.request(NEXT_HIJRI_HOLIDAY, params)
+
+    def get_hijri_holidays(self, *params) -> ListR:
+        return self.request(HIJRI_HOLIDAYS % params)
+
+    def get_islamic_holidays(self, *params) -> IHR:
+        return self.request(ISLAMIC_HOLIDAYS_BY_H_YEAR % params)
+
+    # Info
+    def get_status(self) -> StatusR:
+        return self.request(STATUS)
+
+    def get_special_days(self) -> SDR:
+        return self.request(SPECIAL_DAYS)
+
+    def get_islamic_months(self) -> IMR:
+        return self.request(ISLAMIC_MONTHS)
 
     # Others
     def get_asma(self, *params) -> AsmaR:

@@ -1,4 +1,4 @@
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Awaitable as A
 
 try:
     from typing import Literal, TypedDict
@@ -15,6 +15,14 @@ __all__ = (
     "YearCalendarRes",
     "DateToCalendarRes",
     "DateToDateRes",
+    "IslamicHolidaysRes",
+    "StatusRes",
+    "SpecialDaysRes",
+    "IslamicMonthsRes",
+    # ...
+    "StatusR",
+    "SDR",
+    "IMR"
 )
 
 
@@ -130,13 +138,57 @@ class _Ism(TypedDict):
     number: int
     en: _IsmEn
 
-
+MonthL = Literal["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 AsmaRes = List[_Ism]
 MonthCalendarRes = List[TimingsRes]
 YearCalendarRes = Dict[
-    Literal["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+    MonthL,
     MonthCalendarRes,
 ]
 CalendarRes = Union[MonthCalendarRes, YearCalendarRes]
 DateToCalendarRes = List[Date]
 DateToDateRes = Date
+IslamicHolidaysRes = Dict[
+    Literal[
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+    ],
+    DateToDateRes,
+]
+
+
+class StatusRes(TypedDict):
+    memcached: str
+    database: str
+
+
+class _SpecialDay(TypedDict):
+    month: int
+    day: int
+    name: str
+
+
+SpecialDaysRes = List[_SpecialDay]
+IslamicMonthsRes = Dict[MonthL, _Month]
+
+# ...
+StatusR = Union[StatusRes, A[StatusRes]]
+SDR = Union[SpecialDaysRes, A[SpecialDaysRes]]
+IMR = Union[IslamicMonthsRes, A[IslamicMonthsRes]]

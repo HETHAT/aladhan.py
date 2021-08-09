@@ -20,10 +20,10 @@ HIJRI_CALENDAR_BY_ADDRESS = HIJRI_CALENDAR + "ByAddress"
 HIJRI_CALENDAR_BY_CITY = HIJRI_CALENDAR + "ByCity"
 
 # Info
-STATUS = BASE + "status"  # todo
-METHODS = BASE + "methods"
-SPECIAL_DAYS = BASE + "specialDays"  # todo
-ISLAMIC_MONTHS = BASE + "islamicMonths"  # todo
+STATUS = BASE + "status"
+METHODS = BASE + "methods"  # won't be covered (use aladhan.methods instead)
+SPECIAL_DAYS = BASE + "specialDays"
+ISLAMIC_MONTHS = BASE + "islamicMonths"
 
 # Date Converters
 H_TO_G = BASE + "hToG"
@@ -35,9 +35,11 @@ ISLAMIC_YEAR_FROM_G_FOR_RAMADAN = (
 )
 
 # Holidays
-NEXT_HIJRI_HOLIDAY = BASE + "nextHijriHoliday"  # todo
-HIJRI_HOLIDAYS = BASE + "hijriHolidays/%d/%d"  # todo
-ISLAMIC_HOLIDAYS_BY_H_YEAR = BASE + "islamicHolidaysByHijriYear/%d"  # todo
+NEXT_HIJRI_HOLIDAY = BASE + "nextHijriHoliday"
+HIJRI_HOLIDAYS = BASE + "hijriHolidays/%d/%d"
+ISLAMIC_HOLIDAYS_BY_H_YEAR = (
+    BASE + "islamicHolidaysByHijriYear/%d?adjustment=%d"
+)
 
 # Current ...
 CURRENT_TIME = BASE + "currentTime"
