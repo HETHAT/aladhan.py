@@ -10,7 +10,7 @@ from .types import (
     IslamicHolidaysRes,
     StatusR,
     SDR,
-    IMR
+    IMR,
 )
 
 import logging
@@ -74,6 +74,12 @@ class HTTPClient:
     def close(self):
         log.debug("Closing session ...")
         return self.requester.session.close()  # this can be a coroutine
+
+    # Next Prayer
+    def get_next_prayer_by_address(self, date: str, params: dict):
+        return self.request(
+            NEXT_PRAYER_BY_ADDRESS + (date and "/" + date), params
+        )
 
     # Timings
     def get_timings(self, date: str, params: dict) -> TimingsR:

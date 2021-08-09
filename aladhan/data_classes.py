@@ -804,7 +804,37 @@ class DateType:
         return hash((self.name, self.date))
 
 
-class Date:
+class BaseDate:
+    """
+    Do not create this class yourself. Only get it through a getter.
+
+    *New in v1.2.0*
+
+    Attributes
+    ----------
+        readable: Optional[:class:`str`]
+            Date in readable format. None if it wasn't from a timings getter.
+
+        timestamp: Optional[:class:`int`]
+            Date in UNIX format. None if it wasn't from a timings getter.
+    """
+
+    __slots__ = "readable", "timestamp"
+
+    def __init__(self, readable: Optional[str], timestamp: Optional[str]):
+        self.readable = readable
+        self.timestamp = timestamp and int(timestamp)
+
+    def __hash__(self):  # pragma: no cover
+        return hash((self.readable, self.timestamp))
+
+    def __repr__(self):  # pragma: no cover
+        return (
+            "<BaseDate readable={0.readable!r} timestamp={0.timestamp!r}>"
+        ).format(self)
+
+
+class Date(BaseDate):
     """Represents the date that is in returned :class:`Data`
 
     Do not create this class yourself. Only get it through a getter.
@@ -833,7 +863,7 @@ class Date:
             Hijri date.
     """
 
-    __slots__ = ("data", "readable", "timestamp", "gregorian", "hijri")
+    __slots__ = ("data", "gregorian", "hijri")
 
     def __init__(
         self,
@@ -844,13 +874,12 @@ class Date:
         timestamp: Optional[str] = None,
     ):
         self.data = data
-        self.readable = readable
-        self.timestamp = timestamp and int(timestamp)
         self.gregorian = DateType("Gregorian", **gregorian)
         self.hijri = DateType("Hijri", **hijri)
+        super().__init__(readable, timestamp)
 
     def __repr__(self):  # pragma: no cover
-        return "gregorian={0.gregorian!r}, hijri={0.hijri!r}>".format(self)
+        return "<gregorian={0.gregorian!r}, hijri={0.hijri!r}>".format(self)
 
     def __hash__(self):  # pragma: no cover
         return hash(self.timestamp)

@@ -22,7 +22,7 @@ __all__ = (
     # ...
     "StatusR",
     "SDR",
-    "IMR"
+    "IMR",
 )
 
 
@@ -137,6 +137,7 @@ class _Ism(TypedDict):
     transliteration: str
     number: int
     en: _IsmEn
+
 
 MonthL = Literal["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 AsmaRes = List[_Ism]

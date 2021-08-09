@@ -24,6 +24,7 @@ v1.2.0 (Unreleased)
     - :meth:`Client.get_status`
     - :meth:`Client.get_special_days`
     - :meth:`Client.get_islamic_months`
+- :class:`BaseDate`
 
 **Changed**
 
