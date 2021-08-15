@@ -8,6 +8,7 @@ from .data_classes import (
     Qibla,
     Ism,
     Date,
+    NextPrayerData
 )
 from .http import HTTPClient
 
@@ -27,6 +28,7 @@ QiblaR = U[Qibla, A[Qibla]]
 AsmaR = U[List[Ism], A[List[Ism]]]
 DateR = U[Date, A[Date]]
 LDateR = U[List[Date], A[List[Date]]]
+NPR = U[NextPrayerData, A[NextPrayerData]]
 IntR = U[int, A[int]]
 StrR = U[str, A[str]]
 ListR = U[list, A[list]]
@@ -41,40 +43,42 @@ class Client:
     Set to synchronous usage by default, set is_async to True
         if asynchronous usage wanted.
 
-    Synchronous example
+    Example
 
-    .. code:: py
+    .. tab:: Synchronous
 
-        import aladhan
+        .. code:: py
 
-        client = aladhan.Client()
-        times = client.get_timings_by_address("New York")
-        print(times)
+            import aladhan
 
-    Asynchronous example
-
-    .. code:: py
-
-        import aladhan, asyncio
-
-        async def main():
-            # --- manual closing session
-            client = aladhan.Client(is_async=True)
-            times = await client.get_timings_by_address("New York")
+            client = aladhan.Client()
+            times = client.get_timings_by_address("New York")
             print(times)
-            await client.close()
 
-            # --- using context
-            async with aladhan.Client(is_async=True) as client:
+    .. tab:: Asynchronous
+
+        .. code:: py
+
+            import aladhan, asyncio
+
+            async def main():
+                # --- manual closing session
+                client = aladhan.Client(is_async=True)
                 times = await client.get_timings_by_address("New York")
                 print(times)
+                await client.close()
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(main())
+                # --- using context
+                async with aladhan.Client(is_async=True) as client:
+                    times = await client.get_timings_by_address("New York")
+                    print(times)
+
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(main())
 
     .. note::
-        For Asynchronous usage you need to initialize
-            this class in a |coroutine_link|_.
+        For Asynchronous usage you need to initialize this class in
+        a |coroutine_link|_.
     """
 
     __slots__ = "converter", "http"
@@ -112,6 +116,48 @@ class Client:
 
     async def __aexit__(self, *_):
         await self.close()
+
+    def get_next_prayer_by_address(
+        self,
+        address: str,
+        date: Optional[TimingsDateArg] = None,
+        params: Optional[Parameters] = None
+    ):
+        """
+        Get next upcoming prayer from address.
+
+        Parameters
+        -----------
+            address: :class:`str`
+                An address string.
+                Example: "London, United Kingdom"
+
+            date: Optional[:class:`TimingsDateArg`]
+                Date for the prayer times.
+                Default: Current date.
+
+            params: Optional[:class:`Parameters`]
+                Default: ``Parameters()``
+
+        Returns
+        -------
+            :class:``
+                Timings obj from the API response.
+
+        Raises
+        ------
+            :exc:`~aladhan.exceptions.BadRequest`
+                Invalid parameter was passed.
+
+        *New in v1.2.0*
+        """
+        date = (date or TimingsDateArg()).date
+        params = (params or Parameters()).as_dict
+        params.update(dict(address=address))
+        return self.converter.to_prayer(
+            self,
+            self.http.get_next_prayer_by_address(date, params),
+        )
 
     def get_timings(
         self,
@@ -841,6 +887,10 @@ class Client:
 
 class _SyncConverter:
     @staticmethod
+    def to_prayer(client, o):
+        return NextPrayerData(client=client, **o).prayer
+
+    @staticmethod
     def to_timings(client, o):
 
         data = o
@@ -870,6 +920,10 @@ class _SyncConverter:
 
 
 class _AsyncConverter:
+    @staticmethod
+    async def to_prayer(client, o):
+        return NextPrayerData(client=client, **(await o)).prayer
+
     @staticmethod
     async def to_timings(client, o):
 

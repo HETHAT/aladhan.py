@@ -204,8 +204,8 @@ class Prayer:
 
     Attributes
     ----------
-        timings: :class:`Timings`
-            Original Timings obj.
+        data: :class:`Data` or :class:`NextPrayerData`
+            Source data.
         name: :class:`str`
             Prayer name.
         time: :class:`datetime.datetime`
@@ -217,22 +217,21 @@ class Prayer:
             Better looking string format for prayer's time.
 
     *New in v0.1.2: timings, time_utc*
+    *Changed in v1.2.0*: timings is removed and replaced with data.
     """
 
-    __slots__ = ("timings", "name", "time", "time_utc", "str_time")
+    __slots__ = ("data", "name", "time", "time_utc", "str_time")
 
     def __init__(
-        self, name: str, time: str, timings: "Timings", date: str = None
+        self, name: str, time: str, timestamp: int, data
     ):
-        self.timings = timings
-        self.name = name
-        if date is None:
-            date = datetime.utcnow().strftime("%d-%m-%Y")
-        day, month, year = map(int, date.split("-"))
+        d = datetime.utcfromtimestamp(timestamp)
         time = time.split()[0]
-        self.time = datetime.strptime(time, "%H:%M").replace(year, month, day)
+        self.data = data
+        self.name = name
+        self.time = datetime.strptime(time, "%H:%M").replace(d.year, d.month, d.day)
         try:
-            self.time_utc = self.time + timings.data.meta.timezone.utcoffset(
+            self.time_utc = self.time + data.meta.timezone.utcoffset(
                 self.time
             )
         except pytz.exceptions.NonExistentTimeError:  # pragma: no cover
@@ -618,7 +617,7 @@ class Meta:
 
     Attributes
     ----------
-        data: :class:`Data`
+        data: :class:`Data` or :class:`NextPrayerData`
             Original fetched Data.
 
         longitude: :class:`float`
@@ -657,7 +656,7 @@ class Meta:
 
     def __init__(
         self,
-        data: "Data",
+        data,
         longitude: float,
         latitude: float,
         timezone: str,
@@ -949,7 +948,7 @@ class Timings:
         Midnight: str,
     ):
         self.data = data
-        _Prayer = partial(Prayer, timings=self, date=data.date.gregorian.date)
+        _Prayer = partial(Prayer, timings=self, timestamp=data.date.timestamp)
         self.imsak: Prayer = _Prayer("Imsak", Imsak)
         self.fajr: Prayer = _Prayer("Fajr", Fajr)
         self.sunrise: Prayer = _Prayer("Sunrise", Sunrise)
@@ -1028,7 +1027,8 @@ class Timings:
 
 
 class Data:
-    """Main class Representing the data returned from a request to APi
+    """
+    Main class Representing the data returned from a timings request to API
 
     Do not create this class yourself. Only get it through a getter.
 
@@ -1060,3 +1060,38 @@ class Data:
 
     def __hash__(self):  # pragma: no cover
         return hash((self.meta, self.date))
+
+
+class NextPrayerData:
+    """
+    Main class Representing the data returned from a next prayer request to API
+
+    Do not create this class yourself. Only get it through a getter.
+
+    Attributes
+    ----------
+        meta: :class:`Meta`
+            Represents the meta part.
+
+        date: :class:`Date`
+            Represents the date part.
+
+        prayer: :class:`Prayer`
+            Represents the Prayer part.
+
+        client: :class:`Client`
+            Represents the client that the Data were fetched from.
+    """
+    def __init__(self, meta, date, timings, client):
+        (prayer, time), = timings.items()
+        self.meta = Meta(data=self, **meta)
+        self.date = BaseDate(**date)
+        self.prayer = Prayer(prayer, time, self.date.timestamp, data=self)
+        self.client = client
+
+    def __repr__(self):
+        return f"<NextPrayerData | {self.prayer.name} {self.date.readable}>"
+
+    def __hash__(self):  # pragma: no cover
+        return hash((self.meta, self.date))
+

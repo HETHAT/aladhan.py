@@ -169,8 +169,3 @@ async def test_timings(data):
 
     np = data.timings.next_prayer()
     assert np is None or isinstance(np, aladhan.Prayer)
-    #  you should not do this
-    assert isinstance(
-        aladhan.Prayer("Test", "11:11", data.timings).remaining,
-        datetime.timedelta,
-    )
