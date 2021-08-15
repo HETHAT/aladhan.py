@@ -24,7 +24,12 @@ v1.2.0 (Unreleased)
     - :meth:`Client.get_status`
     - :meth:`Client.get_special_days`
     - :meth:`Client.get_islamic_months`
-- :class:`BaseDate`
+- Covered next prayer endpoints
+    - :meth:`Client.get_next_prayer_by_address`
+- :class:`~aladhan.BaseDate`
+- :class:`~aladhan.enums.Shafaq`
+- Added a ``shafaq`` parameter for :class:`Parameters`
+- :exc:`~aladhan.exceptions.InvalidShafaq`
 
 **Changed**
 

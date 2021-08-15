@@ -1,6 +1,6 @@
 from enum import Enum
 
-__all__ = ("Schools", "MidnightModes", "LatitudeAdjustmentMethods")
+__all__ = ("Schools", "MidnightModes", "LatitudeAdjustmentMethods", "Shafaq")
 
 
 class Schools(Enum):
@@ -23,3 +23,10 @@ class LatitudeAdjustmentMethods(Enum):
     MIDDLE_OF_THE_NIGHT = 1
     ONE_SEVENTH = 2
     ANGLE_BASED = 3
+
+
+class Shafaq(Enum):
+
+    GENERAL = "general"
+    RED = "ahmer"
+    WHITE = "abyad"

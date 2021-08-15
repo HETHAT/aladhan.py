@@ -22,13 +22,14 @@ __all__ = (
     "Qibla",
     "Ism",
     "Method",
+    "BaseDate",
 )
 
 
 class Tune:
     """
     Represents a Tune obj that is returned from API.
-    Can be used to make an obj that will be used as a tune param in \
+    Can be used to make an obj that will be used as a tune param in
     :class:`Parameters`
 
     Attributes
@@ -384,8 +385,7 @@ class TimingsDateArg:
 
 class Parameters:
     """
-    Class to make an obj that will be used as a defaults param in
-        getters.
+    Class to make an obj that will be used as a defaults param in getters.
 
     Parameters
     ----------
@@ -399,11 +399,11 @@ class Parameters:
             To offset returned timings.
             Default: Tune()
 
-        school: :class:`int`
+        school: :class:`int` or :class:`~enums.School`
             0 for Shafi (standard), 1 for Hanafi.
             Default: Shafi
 
-        midnightMode: :class:`int`
+        midnightMode: :class:`int` or :class:`~enums.MidnightMode`
             0 for Standard (Mid Sunset to Sunrise), 1 for Jafari
             (Mid Sunset to Fajr).
             Default: Standard
@@ -421,7 +421,8 @@ class Parameters:
 
             *New in v0.2.*
 
-        latitudeAdjustmentMethod: :class:`int`
+        latitudeAdjustmentMethod: :class:`int` or \
+        :class:`~enums.LatitudeAdjustmentMethod`
             Method for adjusting times higher latitudes.
             For instance, if you are checking timings in the UK or Sweden.
 
@@ -433,6 +434,13 @@ class Parameters:
         adjustment: :class:`int`
             Number of days to adjust hijri date(s)
             Default: 0
+
+        shafaq: :class:`str` or :class:`~aladhan.enums.Shafaq`
+            Which Shafaq to use if the method is Moonsighting Commitee
+            Worldwide.
+            Default: 'general'
+
+            *New in v1.2.0*
 
     Attributes
     ----------
@@ -452,11 +460,14 @@ class Parameters:
         midnightMode: :class:`int`
 
         timezonestring: :class:`str`
-            *New in v0.2.*
+            *New in v0.2.0*
 
         latitudeAdjustmentMethod: :class:`int`
 
         adjustment: :class:`int`
+
+        shafaq: :class:`str`
+            *New in v1.2.0*
 
     Raises
     ------
@@ -477,6 +488,8 @@ class Parameters:
         :exc:`~aladhan.exceptions.InvalidLatAdjMethod`
 
         :exc:`~aladhan.exceptions.InvalidAdjustment`
+
+        :exc:`~aladhan.exceptions.InvalidShafaq`
     """
 
     __slots__ = (
@@ -488,6 +501,7 @@ class Parameters:
         "timezonestring",
         "latitudeAdjustmentMethod",
         "adjustment",
+        "shfaq"
     )
 
     def __init__(
@@ -503,6 +517,9 @@ class Parameters:
             int, LatitudeAdjustmentMethods
         ] = LatitudeAdjustmentMethods.ANGLE_BASED,
         adjustment: int = 0,
+        shafaq: Union[
+            str, Shafaq
+        ] = Shafaq.GENERAL
     ):
         # method
         self.method_params = None
@@ -577,8 +594,8 @@ class Parameters:
             latitudeAdjustmentMethod = latitudeAdjustmentMethod.value
         if latitudeAdjustmentMethod not in (1, 2, 3):  # pragma: no cover
             raise InvalidLatAdjMethod(
-                "latitudeAdjustmentMethod argument can only be either 1, 2 or 3"
-                " got {!r}".format(latitudeAdjustmentMethod)
+                "latitudeAdjustmentMethod argument can only be either 1, 2"
+                " or 3 got {!r}".format(latitudeAdjustmentMethod)
             )
         self.latitudeAdjustmentMethod = latitudeAdjustmentMethod
 
@@ -589,6 +606,15 @@ class Parameters:
                 " `{}`".format(type(adjustment).__name__)
             )
         self.adjustment = adjustment
+        # shafaq
+        if isinstance(shafaq, Shafaq):
+            shafaq = shafaq.value
+        if shafaq not in ("general", "abyad", "ahmer"):
+            raise InvalidShafaq(
+                "Expected Shfaq argument to be in `aladhan.Shafaq` enums"
+                "got `{!r}`".format(shafaq)
+            )
+        self.shfaq = shafaq
 
     @property
     def as_dict(self):
@@ -604,6 +630,8 @@ class Parameters:
             dct["methodSettings"] = self.method_params
         if self.timezonestring:
             dct["timezonestring"] = self.timezonestring
+        if self.method == 15:
+            dct["shafaq"] = self.shfaq
         return dct
 
     def __hash__(self):  # pragma: no cover
@@ -948,7 +976,7 @@ class Timings:
         Midnight: str,
     ):
         self.data = data
-        _Prayer = partial(Prayer, timings=self, timestamp=data.date.timestamp)
+        _Prayer = partial(Prayer, data=data, timestamp=data.date.timestamp)
         self.imsak: Prayer = _Prayer("Imsak", Imsak)
         self.fajr: Prayer = _Prayer("Fajr", Fajr)
         self.sunrise: Prayer = _Prayer("Sunrise", Sunrise)

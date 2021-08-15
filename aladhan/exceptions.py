@@ -11,6 +11,7 @@ __all__ = (
     "InvalidTimezone",
     "InvalidLatAdjMethod",
     "InvalidAdjustment",
+    "InvalidShafaq",
 )
 
 
@@ -100,3 +101,7 @@ class InvalidLatAdjMethod(InvalidArgument):
 
 class InvalidAdjustment(InvalidArgument):
     """Exception that’s thrown when adjustment argument is invalid."""
+
+
+class InvalidShafaq(InvalidArgument):
+    """Exception that’s thrown when shafaq argument is invalid."""

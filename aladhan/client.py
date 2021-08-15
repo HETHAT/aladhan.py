@@ -141,7 +141,7 @@ class Client:
 
         Returns
         -------
-            :class:``
+            :class:`Prayer`
                 Timings obj from the API response.
 
         Raises

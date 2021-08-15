@@ -107,7 +107,8 @@ Available Methods
     "MOONSIGHTING", 15, "Moonsighting Committee Worldwide (Moonsighting.com)"
 
 .. note::
-    There is no 6 (method 6 is apparently same as 2).
+    - There is no 6 (method 6 is apparently same as 2).
+    - Method 15 requires a shafaq parameter.
 
 **all_methods**: dict[:class:`int`, :class:`Method`]
     A dict of each id and its method.
@@ -125,6 +126,12 @@ Meta
 ++++
 
 .. autoclass:: Meta()
+    :members:
+
+Base Date
++++++++++
+
+.. autoclass:: BaseDate()
     :members:
 
 Date
@@ -155,15 +162,8 @@ Qibla
 Enums
 -----
 
-.. autoclass:: Schools()
-    :undoc-members:
-    :member-order: bysource
-
-.. autoclass:: MidnightModes()
-    :undoc-members:
-    :member-order: bysource
-
-.. autoclass:: LatitudeAdjustmentMethods()
+.. automodule:: aladhan.enums
+    :members:
     :undoc-members:
     :member-order: bysource
 
@@ -194,3 +194,4 @@ Exception Hierarchy
                 - :exc:`~aladhan.exceptions.InvalidTimezone`
                 - :exc:`~aladhan.exceptions.InvalidLatAdjMethod`
                 - :exc:`~aladhan.exceptions.InvalidAdjustment`
+                - :exc:`~aladhan.exceptions.InvalidShafaq`
