@@ -151,7 +151,7 @@ class Client:
 
         *New in v1.2.0*
         """
-        date = (date or TimingsDateArg()).date
+        date = date and date.date or ""
         params = (params or Parameters()).as_dict
         params.update(dict(address=address))
         return self.converter.to_prayer(
@@ -194,7 +194,7 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
         """
-        date = (date or TimingsDateArg()).date
+        date = date and date.date or ""
         params = (params or Parameters()).as_dict
         params.update(dict(longitude=str(longitude), latitude=str(latitude)))
         return self.converter.to_timings(
@@ -233,7 +233,7 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
         """
-        date = (date or TimingsDateArg()).date
+        date = date and date.date or ""
         params = (params or Parameters()).as_dict
         params.update(dict(address=address))
         return self.converter.to_timings(
@@ -282,7 +282,7 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
         """
-        date = (date or TimingsDateArg()).date
+        date = date and date.date or ""
         params = (params or Parameters()).as_dict
         params.update(dict(city=city, country=country, state=state))
         if state is None:
