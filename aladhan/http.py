@@ -122,8 +122,8 @@ class HTTPClient:
     def get_hijri_calendar_from_gregorian(self, *params) -> DTCR:
         return self.request(G_TO_H_CALENDAR % params)
 
-    def get_islamic_year_from_gregorian_for_ramadan(self, param: int) -> StrR:
-        return self.request(ISLAMIC_YEAR_FROM_G_FOR_RAMADAN % param)
+    def get_islamic_year_from_gregorian_for_ramadan(self, params: int) -> StrR:
+        return self.request(ISLAMIC_YEAR_FROM_G_FOR_RAMADAN % params)
 
     # Current ...
     def get_current_time(self, **params) -> StrR:

@@ -8,7 +8,7 @@ from .data_classes import (
     Qibla,
     Ism,
     Date,
-    NextPrayerData
+    NextPrayerData,
 )
 from .http import HTTPClient
 
@@ -121,7 +121,7 @@ class Client:
         self,
         address: str,
         date: Optional[TimingsDateArg] = None,
-        params: Optional[Parameters] = None
+        params: Optional[Parameters] = None,
     ):
         """
         Get next upcoming prayer from address.

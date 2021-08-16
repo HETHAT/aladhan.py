@@ -223,18 +223,16 @@ class Prayer:
 
     __slots__ = ("data", "name", "time", "time_utc", "str_time")
 
-    def __init__(
-        self, name: str, time: str, timestamp: int, data
-    ):
+    def __init__(self, name: str, time: str, timestamp: int, data):
         d = datetime.utcfromtimestamp(timestamp)
         time = time.split()[0]
         self.data = data
         self.name = name
-        self.time = datetime.strptime(time, "%H:%M").replace(d.year, d.month, d.day)
+        self.time = datetime.strptime(time, "%H:%M").replace(
+            d.year, d.month, d.day
+        )
         try:
-            self.time_utc = self.time + data.meta.timezone.utcoffset(
-                self.time
-            )
+            self.time_utc = self.time + data.meta.timezone.utcoffset(self.time)
         except pytz.exceptions.NonExistentTimeError:  # pragma: no cover
             self.time_utc = None
         self.str_time = self.time.strftime("%H:%M %d-%m-%Y")
@@ -501,7 +499,7 @@ class Parameters:
         "timezonestring",
         "latitudeAdjustmentMethod",
         "adjustment",
-        "shfaq"
+        "shfaq",
     )
 
     def __init__(
@@ -517,9 +515,7 @@ class Parameters:
             int, LatitudeAdjustmentMethods
         ] = LatitudeAdjustmentMethods.ANGLE_BASED,
         adjustment: int = 0,
-        shafaq: Union[
-            str, Shafaq
-        ] = Shafaq.GENERAL
+        shafaq: Union[str, Shafaq] = Shafaq.GENERAL,
     ):
         # method
         self.method_params = None
@@ -1110,8 +1106,9 @@ class NextPrayerData:
         client: :class:`Client`
             Represents the client that the Data were fetched from.
     """
+
     def __init__(self, meta, date, timings, client):
-        (prayer, time), = timings.items()
+        ((prayer, time),) = timings.items()
         self.meta = Meta(data=self, **meta)
         self.date = BaseDate(**date)
         self.prayer = Prayer(prayer, time, self.date.timestamp, data=self)
@@ -1122,4 +1119,3 @@ class NextPrayerData:
 
     def __hash__(self):  # pragma: no cover
         return hash((self.meta, self.date))
-
