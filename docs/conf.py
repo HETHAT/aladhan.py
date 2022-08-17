@@ -118,7 +118,7 @@ resource_links = {
 }
 
 # remove type hints in docs
-autodoc_typehints = "none"
+autodoc_typehints = "none"  # ('signature', 'description', 'none')
 
 # display TODOs in docs
 todo_include_todos = True

@@ -48,9 +48,7 @@ def client():
 def test_calendar(client, args, kwargs, expected):
     ts = client.get_calendar(*args, **kwargs)
     assert isinstance(ts, expected)
-    assert isinstance(
-        expected == list and ts[0] or ts["1"][0], aladhan.Timings
-    )
+    assert isinstance(expected == list and ts[0] or ts["1"][0], aladhan.Timings)
 
 
 @pytest.mark.parametrize(
@@ -88,9 +86,7 @@ def test_calendar(client, args, kwargs, expected):
 def test_calendar_by_address(client, args, kwargs, expected):
     ts = client.get_calendar_by_address(*args, **kwargs)
     assert isinstance(ts, expected)
-    assert isinstance(
-        expected == list and ts[0] or ts["1"][0], aladhan.Timings
-    )
+    assert isinstance(expected == list and ts[0] or ts["1"][0], aladhan.Timings)
 
 
 @pytest.mark.parametrize(
@@ -143,6 +139,4 @@ def test_calendar_by_address(client, args, kwargs, expected):
 def test_calendar_by_city(client, args, kwargs, expected):
     ts = client.get_calendar_by_city(*args, **kwargs)
     assert isinstance(ts, expected)
-    assert isinstance(
-        expected == list and ts[0] or ts["1"][0], aladhan.Timings
-    )
+    assert isinstance(expected == list and ts[0] or ts["1"][0], aladhan.Timings)

@@ -30,9 +30,7 @@ H_TO_G = BASE + "hToG"
 G_TO_H = BASE + "gToH"
 G_TO_H_CALENDAR = BASE + "gToHCalendar/%d/%d?adjustment=%d"
 H_TO_G_CALENDAR = BASE + "hToGCalendar/%d/%d?adjustment=%d"
-ISLAMIC_YEAR_FROM_G_FOR_RAMADAN = (
-    BASE + "islamicYearFromGregorianForRamadan/%d"
-)
+ISLAMIC_YEAR_FROM_G_FOR_RAMADAN = BASE + "islamicYearFromGregorianForRamadan/%d"
 
 # Holidays
 NEXT_HIJRI_HOLIDAY = BASE + "nextHijriHoliday"

@@ -23,6 +23,7 @@ __all__ = (
     "Ism",
     "Method",
     "BaseDate",
+    "NextPrayerData",
 )
 
 
@@ -427,6 +428,7 @@ class Parameters:
             1 - Middle of the Night
             2 - One Seventh
             3 - Angle Based
+
             Default: Angle Based
 
         adjustment: :class:`int`
@@ -544,8 +546,7 @@ class Parameters:
             ts = tune.split(",")
             if len(ts) != 9 or not all(x.isdigit() for x in ts):
                 raise InvalidTune(
-                    "Invalid tune argument was passed. (tune.value = %s)"
-                    % tune
+                    "Invalid tune argument was passed. (tune.value = %s)" % tune
                 )
         else:
             raise InvalidTune(
@@ -706,7 +707,7 @@ class Meta:
 
         .. warning::
             This will set method to ISNA if method was custom,
-             and it will always set adjustment to 0.
+            and it will always set adjustment to 0.
         """
         return Parameters(  # TODO: testing
             self.method or 2,
@@ -942,6 +943,16 @@ class Timings:
         midnight: :class:`Prayer`
             Midnight time.
 
+        first_third: :class:`Prayer`
+            First third time.
+
+            *New in v1.2.0*
+
+        last_third: :class:`Prayer`
+            Last third time.
+
+            *New in v1.2.0*
+
     *New in v0.1.4: __iter__*
     """
 
@@ -956,6 +967,8 @@ class Timings:
         "sunset",
         "isha",
         "midnight",
+        "first_third",
+        "last_third",
     )
 
     def __init__(
@@ -970,6 +983,8 @@ class Timings:
         Sunset: str,
         Isha: str,
         Midnight: str,
+        Firstthird: str,
+        Lastthird: str,
     ):
         self.data = data
         _Prayer = partial(Prayer, data=data, timestamp=data.date.timestamp)
@@ -982,6 +997,8 @@ class Timings:
         self.maghrib: Prayer = _Prayer("Maghrib", Maghrib)
         self.isha: Prayer = _Prayer("Isha", Isha)
         self.midnight: Prayer = _Prayer("Midnight", Midnight)
+        self.first_third: Prayer = _Prayer("Firstthird", Firstthird)
+        self.last_third: Prayer = _Prayer("Lastthird", Lastthird)
 
     @property
     def as_dict(self) -> Dict[str, Prayer]:
@@ -999,6 +1016,8 @@ class Timings:
             "Maghrib": self.maghrib,
             "Isha": self.isha,
             "Midnight": self.midnight,
+            "Fristthird": self.first_third,
+            "Lastthird": self.last_third,
         }
 
     @property
@@ -1043,7 +1062,8 @@ class Timings:
         return (
             "<Timings imsak={0.imsak}, fajr={0.fajr}, sunrise={0.sunrise}, "
             "dhuhr={0.dhuhr}, asr={0.asr}, sunset={0.sunset}, "
-            "maghrib={0.maghrib}, isha={0.isha}, midnight={0.midnight}>"
+            "maghrib={0.maghrib}, isha={0.isha}, midnight={0.midnight}"
+            "first_third={0.first_third}, last_third={0.last_third}>"
         ).format(self)
 
     def __hash__(self):  # pragma: no cover

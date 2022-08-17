@@ -6,9 +6,7 @@ Basic wrapper for the Aladhan prayer times API.
 
 from collections import namedtuple
 
-VersionInfo = namedtuple(
-    "VersionInfo", "major minor micro releaselevel serial"
-)
+VersionInfo = namedtuple("VersionInfo", "major minor micro releaselevel serial")
 
 version_info = VersionInfo(
     major=1, minor=2, micro=0, releaselevel="alpha", serial=0

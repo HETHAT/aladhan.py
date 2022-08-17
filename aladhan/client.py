@@ -122,7 +122,7 @@ class Client:
         address: str,
         date: Optional[TimingsDateArg] = None,
         params: Optional[Parameters] = None,
-    ):
+    ) -> NPR:
         """
         Get next upcoming prayer from address.
 
@@ -142,7 +142,7 @@ class Client:
         Returns
         -------
             :class:`Prayer`
-                Timings obj from the API response.
+                Prayer obj from the API response.
 
         Raises
         ------
