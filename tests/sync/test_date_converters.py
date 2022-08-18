@@ -42,7 +42,6 @@ def test_g_to_h_calendar(client, args):
     assert isinstance(r, list) and isinstance(r[0], aladhan.Date)
 
 
-@pytest.mark.asyncio
 def test_islamic_year(client):
     r = client.get_islamic_year_from_gregorian_for_ramadan(2021)
     assert r == 1442
