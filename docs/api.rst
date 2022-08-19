@@ -185,6 +185,7 @@ Exception Hierarchy
         - :exc:`~aladhan.exceptions.AladhanException`
             - :exc:`~aladhan.exceptions.HTTPException`
                 - :exc:`~aladhan.exceptions.BadRequest`
+                - :exc:`~aladhan.exceptions.TooManyRequests`
                 - :exc:`~aladhan.exceptions.InternalServerError`
             - :exc:`~aladhan.exceptions.InvalidArgument`
                 - :exc:`~aladhan.exceptions.InvalidMethod`

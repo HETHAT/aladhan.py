@@ -1,7 +1,7 @@
 BASE = "https://api.aladhan.com/v1/"
 
 # Next Prayer
-NEXT_PRAYER_BY_ADDRESS = BASE + "nextPrayerByAddress"  # todo
+NEXT_PRAYER_BY_ADDRESS = BASE + "nextPrayerByAddress"
 # ...
 
 # Timings

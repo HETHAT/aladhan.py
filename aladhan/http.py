@@ -188,11 +188,13 @@ class _AsyncRequester:
                 endpoint,
                 params,
             )
-            res = await res.json()
+            raw = await res.json()
 
-        if res["code"] != 200:  # something wrong
-            raise HTTPException.from_res(res)
-        return res["data"]
+        raw["code"] = res.status
+
+        if res.status != 200:  # something wrong
+            raise HTTPException.from_res(raw)
+        return raw["data"]
 
 
 class _SyncRequester:
@@ -214,8 +216,10 @@ class _SyncRequester:
                 endpoint,
                 params,
             )
-            res = res.json()
+            raw = res.json()
 
-        if res["code"] != 200:  # something wrong
-            raise HTTPException.from_res(res)
-        return res["data"]
+        raw["code"] = res.status_code
+
+        if res.status_code != 200:  # something wrong
+            raise HTTPException.from_res(raw)
+        return raw["data"]

@@ -2,6 +2,7 @@ __all__ = (
     "AladhanException",
     "HTTPException",
     "BadRequest",
+    "TooManyRequests",
     "InternalServerError",
     "InvalidArgument",
     "InvalidMethod",
@@ -52,17 +53,26 @@ class HTTPException(AladhanException):
     def __init__(self, response, message: str = None):
         self.response = response
         self.code = response.get("code", 0)
-        super().__init__(message or response.get("data"))
+        super().__init__(message or response.get("message"))
 
     @classmethod
     def from_res(cls, res):
-        return {400: BadRequest, 500: InternalServerError}.get(
-            res.get("code"), cls
-        )(res)
+        return {
+            400: BadRequest,
+            429: TooManyRequests,
+            500: InternalServerError,
+        }.get(res.get("code"), cls)(res)
 
 
 class BadRequest(HTTPException):
     """Exception that’s thrown for when status code 400 occurs."""
+
+
+class TooManyRequests(HTTPException):
+    """Exception that’s thrown for when status code 429 occurs.
+
+    .. note::
+        Current API's rate limit is 14 requests/s."""
 
 
 class InternalServerError(HTTPException):
