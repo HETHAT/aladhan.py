@@ -30,6 +30,7 @@ v1.2.0 (Unreleased)
 - :class:`~aladhan.enums.Shafaq`
 - Added a ``shafaq`` parameter for :class:`Parameters`
 - :exc:`~aladhan.exceptions.InvalidShafaq`
+- :exc:`~aladhan.exceptions.TooManyRequests`
 - Adding the new changes to the api.
     - :attr:`Timings.first_third`
     - :attr:`Timings.last_third`

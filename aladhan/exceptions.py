@@ -72,7 +72,9 @@ class TooManyRequests(HTTPException):
     """Exception that’s thrown for when status code 429 occurs.
 
     .. note::
-        Current API's rate limit is 14 requests/s."""
+        Current API's rate limit is 14 requests/s.
+
+    *New in v1.2.0*"""
 
 
 class InternalServerError(HTTPException):
