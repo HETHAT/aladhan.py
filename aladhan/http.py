@@ -169,12 +169,15 @@ class HTTPClient:
         return self.request(QIBLA % params)
 
 
+HEADERS = {"User-Agent": "Aladhan API wrapper in Python (https://github.com/HETHAT/aladhan.py)"}
+
+
 class _AsyncRequester:
 
     __slots__ = ("session",)
 
     def __init__(self):
-        self.session: ClientSession = ClientSession()
+        self.session: ClientSession = ClientSession(headers=HEADERS)
 
     @property
     def is_async(self) -> bool:
@@ -209,7 +212,7 @@ class _SyncRequester:
         return False
 
     def request(self, endpoint: str, params: dict = None):
-        with self.session.get(endpoint, params=params) as res:
+        with self.session.get(endpoint, params=params, headers=HEADERS) as res:
             log.debug(
                 "(GET)[%s status code] request to %s with %s",
                 res.status_code,

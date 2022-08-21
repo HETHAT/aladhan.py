@@ -1,7 +1,7 @@
 from typing import List, Dict, Union, Awaitable as A
 
 try:
-    from typing import Literal, TypedDict
+    from typing import Literal, TypedDict  # 3.8 >= only
 except ImportError:
     from typing_extensions import Literal, TypedDict
 

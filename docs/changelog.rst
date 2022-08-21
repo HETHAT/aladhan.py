@@ -39,6 +39,10 @@ v1.2.0 (Unreleased)
 
 - Fixed date converters, they were switched around ...
 
+**Removed**
+
+- No longer supports Python v3.6.
+
 v1.1.0
 ------
 

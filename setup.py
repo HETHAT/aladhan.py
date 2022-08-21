@@ -62,11 +62,11 @@ setup(
     author="HETHAT",
     author_email="zhethat@gmail.com",
     packages=get_packages("aladhan"),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=get_requirements(),
     extras_require=extras_require,
     project_urls={
-        # "Documentation": "",
+        "Documentation": "https://aladhanpy.rtfd.org ",
         "Issue tracker": "https://github.com/HETHAT/aladhan.py/issues"
     },
     classifiers=[
@@ -77,10 +77,10 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Internet",
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
