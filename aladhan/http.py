@@ -211,7 +211,9 @@ class _AsyncRequester(_BaseRequester):
         self.session: ClientSession = ClientSession(headers=self._HEADERS)
         self.auto_manage_rate = auto_manage_rate
 
-    async def request(self, endpoint: str, params: dict = None):
+    async def request(
+        self, endpoint: str, params: dict = None, __retries: int = 5
+    ):
         check = self.check_rate()
         if check > 0:
             await asyncio.sleep(check)
@@ -227,7 +229,9 @@ class _AsyncRequester(_BaseRequester):
 
         raw["code"] = res.status
 
-        if res.status != 200:  # something wrong
+        if res.status != 200:  # Something wrong
+            if res.status == 429 and __retries > 0:  # Rate limited, Retrying.
+                return await self.request(endpoint, params, __retries - 1)
             raise HTTPException.from_res(raw)
 
         self.last_headers_res = res.headers
@@ -240,7 +244,7 @@ class _SyncRequester(_BaseRequester):
         self.session: Session = Session()
         self.auto_manage_rate = auto_manage_rate
 
-    def request(self, endpoint: str, params: dict = None):
+    def request(self, endpoint: str, params: dict = None, __retries: int = 5):
         check = self.check_rate()
         if check > 0:
             time.sleep(check)
@@ -258,7 +262,11 @@ class _SyncRequester(_BaseRequester):
 
         raw["code"] = res.status_code
 
-        if res.status_code != 200:  # something wrong
+        if res.status_code != 200:  # Something wrong
+            if (
+                res.status_code == 429 and __retries > 0
+            ):  # Rate limited, Retrying.
+                return self.request(endpoint, params, __retries - 1)
             raise HTTPException.from_res(raw)
 
         self.last_headers_res = res.headers
