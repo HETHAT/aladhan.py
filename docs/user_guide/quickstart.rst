@@ -294,8 +294,8 @@ then you can do
 Other Data
 ----------
 
-You can also use other data that are given from the API, you can access to it
-using :attr:`Timings.data` a :class:`Data` object. Look into its :class:`docs <Data>`
+For accessing to the whole data returned from the API, You can use
+:attr:`Timings.data` a :class:`Data` object. Look into its :class:`docs <Data>`
 for more info.
 
 

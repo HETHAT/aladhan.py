@@ -16,7 +16,7 @@
 Installation
 ------------
 
-**Python 3.6 or higher is required.**
+**Python 3.7 or higher is required.**
 
 To Install ``aladhan.py`` with pip:
 
