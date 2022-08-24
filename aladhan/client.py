@@ -41,7 +41,10 @@ class Client:
     Al-adhan API client.
 
     Set to synchronous usage by default, set is_async to True
-        if asynchronous usage wanted.
+    if asynchronous usage wanted.
+
+    Auto handles rate limits by default, set auto_manage_rate to False if
+    otherwise is wanted. *New in v1.2.0*
 
     Example
 
@@ -79,13 +82,23 @@ class Client:
     .. note::
         For Asynchronous usage you need to initialize this class in
         a |coroutine_link|_.
+
+    Parameters
+    ----------
+        is_async: :class:`bool`
+            Whether to be used asynchronously or not.
+
+        auto_manage_rate: :class:`bool`
+            Whether to handle rate limits automatically or not.
     """
 
     __slots__ = "converter", "http"
 
-    def __init__(self, is_async: bool = False):
+    def __init__(self, is_async: bool = False, auto_manage_rate: bool = True):
         self.converter = is_async and _AsyncConverter or _SyncConverter
-        self.http = HTTPClient(is_async=is_async)
+        self.http = HTTPClient(
+            is_async=is_async, auto_manage_rate=auto_manage_rate
+        )
 
     def close(self):
         """Closes the connection."""
@@ -127,7 +140,7 @@ class Client:
         Get next upcoming prayer from address.
 
         Parameters
-        -----------
+        ----------
             address: :class:`str`
                 An address string.
                 Example: "London, United Kingdom"
@@ -170,7 +183,7 @@ class Client:
         Get prayer times from coordinates (longitude, latitude).
 
         Parameters
-        -----------
+        ----------
             longitude: :class:`int` or :class:`float`
                 Longitude coordinate of the location.
 
@@ -211,7 +224,7 @@ class Client:
         Get prayer times from address.
 
         Parameters
-        -----------
+        ----------
             address: :class:`str`
                 An address string.
                 Example: "London, United Kingdom"
@@ -252,7 +265,7 @@ class Client:
         Get prayer times from city, country and state.
 
         Parameters
-        -----------
+        ----------
             city: :class:`str`
                 The city name.
                 Example: "London"
@@ -303,7 +316,7 @@ class Client:
         coordinates (longitude, latitudes).
 
         Parameters
-        -----------
+        ----------
             longitude: :class:`int` or :class:`float`
                 Longitude coordinate of the location.
 
@@ -346,7 +359,7 @@ class Client:
             from address.
 
         Parameters
-        -----------
+        ----------
             address: :class:`str`
                 An address string.
                 Example: "London, United Kingdom"

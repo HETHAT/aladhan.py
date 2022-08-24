@@ -34,6 +34,7 @@ v1.2.0 (Unreleased)
 - Adding the new changes to the api.
     - :attr:`Timings.first_third`
     - :attr:`Timings.last_third`
+- Auto management of rate limits.
 
 **Changed**
 

@@ -67,7 +67,7 @@ setup(
     extras_require=extras_require,
     project_urls={
         "Documentation": "https://aladhanpy.rtfd.org ",
-        "Issue tracker": "https://github.com/HETHAT/aladhan.py/issues"
+        "Issue tracker": "https://github.com/HETHAT/aladhan.py/issues",
     },
     classifiers=[
         "License :: OSI Approved :: MIT License",

@@ -13,6 +13,10 @@ from .types import (
     IMR,
 )
 
+import time
+import asyncio
+import datetime
+
 import logging
 
 log = logging.getLogger(__name__)
@@ -63,8 +67,10 @@ __all__ = ("HTTPClient",)
 class HTTPClient:
     __slots__ = "requester", "request"
 
-    def __init__(self, is_async: bool = False):
-        self.requester = is_async and _AsyncRequester() or _SyncRequester()
+    def __init__(self, is_async: bool = False, auto_manage_rate: bool = True):
+        self.requester = (is_async and _AsyncRequester or _SyncRequester)(
+            auto_manage_rate
+        )
         self.request = self.requester.request
 
     @property
@@ -169,21 +175,47 @@ class HTTPClient:
         return self.request(QIBLA % params)
 
 
-HEADERS = {"User-Agent": "Aladhan API wrapper in Python (https://github.com/HETHAT/aladhan.py)"}
+class _BaseRequester:
+    __slots__ = ("session", "auto_manage_rate")
 
+    session: U[ClientSession, Session]
+    auto_manage_rate: bool
 
-class _AsyncRequester:
-
-    __slots__ = ("session",)
-
-    def __init__(self):
-        self.session: ClientSession = ClientSession(headers=HEADERS)
+    _HEADERS = {
+        "User-Agent": "Aladhan API wrapper in Python "
+        "(https://github.com/HETHAT/aladhan.py)"
+    }
+    last_headers_res = {}
 
     @property
     def is_async(self) -> bool:
-        return True
+        return isinstance(self.session, ClientSession)
+
+    def check_rate(self) -> int:
+        if (
+            self.auto_manage_rate
+            and self.last_headers_res.get("RateLimit-Remaining") == "0"
+        ):
+            date = datetime.datetime.strptime(
+                self.last_headers_res["Date"], "%a, %d %b %Y %H:%M:%S GMT"
+            )
+            date += datetime.timedelta(
+                seconds=int(self.last_headers_res["RateLimit-Reset"])
+            )
+            return (date - datetime.datetime.utcnow()).seconds + 1
+        return -1
+
+
+class _AsyncRequester(_BaseRequester):
+    def __init__(self, auto_manage_rate: bool = True):
+        self.session: ClientSession = ClientSession(headers=self._HEADERS)
+        self.auto_manage_rate = auto_manage_rate
 
     async def request(self, endpoint: str, params: dict = None):
+        check = self.check_rate()
+        if check > 0:
+            await asyncio.sleep(check)
+
         async with self.session.get(endpoint, params=params) as res:
             log.debug(
                 "(GET)[%s status code] request to %s with %s",
@@ -197,22 +229,25 @@ class _AsyncRequester:
 
         if res.status != 200:  # something wrong
             raise HTTPException.from_res(raw)
+
+        self.last_headers_res = res.headers
+
         return raw["data"]
 
 
-class _SyncRequester:
-
-    __slots__ = ("session",)
-
-    def __init__(self):
+class _SyncRequester(_BaseRequester):
+    def __init__(self, auto_manage_rate: bool = True):
         self.session: Session = Session()
-
-    @property
-    def is_async(self) -> bool:
-        return False
+        self.auto_manage_rate = auto_manage_rate
 
     def request(self, endpoint: str, params: dict = None):
-        with self.session.get(endpoint, params=params, headers=HEADERS) as res:
+        check = self.check_rate()
+        if check > 0:
+            time.sleep(check)
+
+        with self.session.get(
+            endpoint, params=params, headers=self._HEADERS
+        ) as res:
             log.debug(
                 "(GET)[%s status code] request to %s with %s",
                 res.status_code,
@@ -225,4 +260,7 @@ class _SyncRequester:
 
         if res.status_code != 200:  # something wrong
             raise HTTPException.from_res(raw)
+
+        self.last_headers_res = res.headers
+
         return raw["data"]
