@@ -231,6 +231,14 @@ class _AsyncRequester(_BaseRequester):
 
         if res.status != 200:  # Something wrong
             if res.status == 429 and __retries > 0:  # Rate limited, Retrying.
+                t = res.headers.get("Retry-after", 2)
+                log.debug(
+                    "(GET)[%s status code] retrying after %ss",
+                    res.status,
+                    endpoint,
+                    t,
+                )
+                await asyncio.sleep(t)
                 return await self.request(endpoint, params, __retries - 1)
             raise HTTPException.from_res(raw)
 
@@ -266,6 +274,14 @@ class _SyncRequester(_BaseRequester):
             if (
                 res.status_code == 429 and __retries > 0
             ):  # Rate limited, Retrying.
+                t = res.headers.get("Retry-after", 2)
+                log.debug(
+                    "(GET)[%s status code] retrying after %ss",
+                    res.status_code,
+                    endpoint,
+                    t,
+                )
+                time.sleep(t)
                 return self.request(endpoint, params, __retries - 1)
             raise HTTPException.from_res(raw)
 
