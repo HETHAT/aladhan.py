@@ -231,7 +231,7 @@ class _AsyncRequester(_BaseRequester):
 
         if res.status != 200:  # Something wrong
             if res.status == 429 and __retries > 0:  # Rate limited, Retrying.
-                t = res.headers.get("Retry-after", 2)
+                t = int(res.headers.get("Retry-after", 2))
                 log.debug(
                     "(GET)[%s status code] retrying after %ss",
                     res.status,
@@ -274,7 +274,7 @@ class _SyncRequester(_BaseRequester):
             if (
                 res.status_code == 429 and __retries > 0
             ):  # Rate limited, Retrying.
-                t = res.headers.get("Retry-after", 2)
+                t = int(res.headers.get("Retry-after", 2))
                 log.debug(
                     "(GET)[%s status code] retrying after %ss",
                     res.status_code,
