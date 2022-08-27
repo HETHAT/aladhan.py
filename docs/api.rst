@@ -46,6 +46,12 @@ Prayer
 .. autoclass:: Prayer()
     :members:
 
+NextPrayerData
+++++++++++++++
+
+.. autoclass:: NextPrayerData()
+    :members:
+
 Tune
 ++++
 
