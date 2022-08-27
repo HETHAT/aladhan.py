@@ -5,8 +5,8 @@
 Changelog
 =========
 
-v1.2.0 (Unreleased)
--------------------
+v1.2.0
+------
 
 **Added**
 
@@ -26,6 +26,7 @@ v1.2.0 (Unreleased)
     - :meth:`Client.get_islamic_months`
 - Covered next prayer endpoints
     - :meth:`Client.get_next_prayer_by_address`
+    - :class:`NextPrayerData`
 - :class:`~aladhan.BaseDate`
 - :class:`~aladhan.enums.Shafaq`
 - Added a ``shafaq`` parameter for :class:`Parameters`
@@ -39,10 +40,12 @@ v1.2.0 (Unreleased)
 **Changed**
 
 - Fixed date converters, they were switched around ...
+- :attr:`Prayer.data` is now Union[:class:`Data`, :class:`NextPrayerData`]
 
 **Removed**
 
 - No longer supports Python v3.6.
+- `Prayer.timings`
 
 v1.1.0
 ------

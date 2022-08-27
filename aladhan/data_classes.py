@@ -1125,6 +1125,8 @@ class NextPrayerData:
 
         client: :class:`Client`
             Represents the client that the Data were fetched from.
+
+    *New in v1.2.0*
     """
 
     def __init__(self, meta, date, timings, client):
