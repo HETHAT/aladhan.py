@@ -1,15 +1,16 @@
+# pragma: no cover
 import argparse
-import sys
-
-import aladhan
-import pkg_resources
-import platform
 import json
+import platform
+import sys
 import time
 
+import pkg_resources
 from pygments import highlight
 from pygments.formatters.terminal256 import Terminal256Formatter
 from pygments.lexers.web import JsonLexer
+
+import aladhan
 
 try:
     import aiohttp

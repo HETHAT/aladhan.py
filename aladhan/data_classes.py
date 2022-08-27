@@ -1,12 +1,12 @@
+from datetime import datetime
+from functools import partial
+from typing import Dict, Iterable, List, Optional, Union
+
 import pytz
 
-from datetime import datetime
-from typing import Dict, Union, List, Optional, Iterable
-from functools import partial
-
-from .methods import all_methods, Method, ISNA
-from .exceptions import *
 from .enums import *
+from .exceptions import *
+from .methods import ISNA, Method, all_methods
 
 __all__ = (
     "Data",
@@ -122,13 +122,13 @@ class Tune:
         ), "Invalid string format, must be in Tune.value format."
         return cls(*map(int, args))
 
-    def __iter__(self):  # pragma: no cover
+    def __iter__(self):
         yield from map(int, self.value.split(","))
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return "<Tune = {}>".format(self.value)
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash(self.value)
 
 
@@ -156,12 +156,12 @@ class Qibla:
         self.latitude = latitude
         self.direction = direction
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return "<Qibla longitude={0.longitude} latitude={0.latitude}>".format(
             self
         )
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash((self.longitude, self.latitude, self.direction))
 
 
@@ -192,10 +192,10 @@ class Ism:
         self.number = number
         self.en = en["meaning"]
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return "<Ism name={0.name} en={0.en}>".format(self)
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash(self.name)
 
 
@@ -255,10 +255,10 @@ class Prayer:
         """
         return self.time_utc and self.time_utc - datetime.utcnow()
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return "<Prayer name={0.name!r}, time=D{0.str_time!r}>".format(self)
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash(self.name)
 
 
@@ -311,7 +311,7 @@ class CalendarDateArg:
         hijri: bool = False,
     ):
         if month:
-            if month not in range(1, 13):  # pragma: no cover
+            if month not in range(1, 13):
                 raise ValueError(
                     "month argument expected to be in range 1-12"
                     " got {}".format(month)
@@ -329,7 +329,7 @@ class CalendarDateArg:
     def as_dict(self):
         return {"year": self.year, "annual": self.annual, "month": self.month}
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash((self.year, self.annual, self.month))
 
 
@@ -371,14 +371,14 @@ class TimingsDateArg:
         else:  # it is a str
             try:
                 datetime.strptime(date, "%d-%m-%Y")
-            except ValueError:  # pragma: no cover
+            except ValueError:
                 raise ValueError(
                     "Expected DD-MM-YYYY date format got {!r} ".format(date)
                 )
 
         self.date: str = date  # noqa
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash(self.date)
 
 
@@ -532,7 +532,7 @@ class Parameters:
                 "api.html#aladhan.methods.Method"
             )
 
-        if method not in range(16) and method != 99:  # pragma: no cover
+        if method not in range(16) and method != 99:
             raise InvalidMethod(
                 "Expected method in 0-15 range or 99 got {!r}".format(method)
             )
@@ -558,7 +558,7 @@ class Parameters:
         # school
         if isinstance(school, Schools):
             school = school.value
-        if school not in (0, 1):  # pragma: no cover
+        if school not in (0, 1):
             raise InvalidSchool(
                 "School argument can only be either 0 or 1 got {!r}".format(
                     school
@@ -569,7 +569,7 @@ class Parameters:
         # midnight mode
         if isinstance(midnightMode, MidnightModes):
             midnightMode = midnightMode.value
-        if midnightMode not in (0, 1):  # pragma: no cover
+        if midnightMode not in (0, 1):
             raise InvalidMidnightMode(
                 "midnightMode argument can only be either 0 or 1"
                 " got {!r}".format(midnightMode)
@@ -589,7 +589,7 @@ class Parameters:
         # lat adj methods
         if isinstance(latitudeAdjustmentMethod, LatitudeAdjustmentMethods):
             latitudeAdjustmentMethod = latitudeAdjustmentMethod.value
-        if latitudeAdjustmentMethod not in (1, 2, 3):  # pragma: no cover
+        if latitudeAdjustmentMethod not in (1, 2, 3):
             raise InvalidLatAdjMethod(
                 "latitudeAdjustmentMethod argument can only be either 1, 2"
                 " or 3 got {!r}".format(latitudeAdjustmentMethod)
@@ -631,7 +631,7 @@ class Parameters:
             dct["shafaq"] = self.shfaq
         return dct
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash(tuple(self.as_dict.values()))
 
 
@@ -709,7 +709,7 @@ class Meta:
             This will set method to ISNA if method was custom,
             and it will always set adjustment to 0.
         """
-        return Parameters(  # TODO: testing
+        return Parameters(
             self.method or 2,
             self.offset,
             getattr(Schools, self.school.upper()),
@@ -722,7 +722,7 @@ class Meta:
             # can't get adjustment ...
         )
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return (
             "<Meta longitude={0.longitude!r}, latitude={0.latitude!r}, "
             "method={0.method!r}, latitudeAdjustmentMethod="
@@ -730,7 +730,7 @@ class Meta:
             "school={0.school!r}, offset={0.offset!r}>"
         ).format(self)
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash(
             (
                 self.method,
@@ -818,13 +818,13 @@ class DateType:
         self.designation = designation
         self.holidays = holidays
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return (
             "<DateType name={0.name!r}, date={0.date!r}, "
             "holidays={0.holidays}>"
         ).format(self)
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash((self.name, self.date))
 
 
@@ -849,10 +849,10 @@ class BaseDate:
         self.readable = readable
         self.timestamp = timestamp and int(timestamp)
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash((self.readable, self.timestamp))
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return (
             "<BaseDate readable={0.readable!r} timestamp={0.timestamp!r}>"
         ).format(self)
@@ -902,10 +902,10 @@ class Date(BaseDate):
         self.hijri = DateType("Hijri", **hijri)
         super().__init__(readable, timestamp)
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return "<gregorian={0.gregorian!r}, hijri={0.hijri!r}>".format(self)
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash(self.timestamp)
 
 
@@ -1053,12 +1053,12 @@ class Timings:
             if now < val.time:
                 return val
 
-        return None
+        return None  # pragma: no cover
 
     def __iter__(self) -> Iterable[Prayer]:
         yield from self.as_dict.values()
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return (
             "<Timings imsak={0.imsak}, fajr={0.fajr}, sunrise={0.sunrise}, "
             "dhuhr={0.dhuhr}, asr={0.asr}, sunset={0.sunset}, "
@@ -1066,7 +1066,7 @@ class Timings:
             "first_third={0.first_third}, last_third={0.last_third}>"
         ).format(self)
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash(tuple(self.as_dict.values()))
 
 
@@ -1099,10 +1099,10 @@ class Data:
         self.timings = Timings(**timings, data=self)
         self.client = client
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         return "<Data object | {0.gregorian.date}>".format(self.date)
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash((self.meta, self.date))
 
 
@@ -1137,5 +1137,5 @@ class NextPrayerData:
     def __repr__(self):
         return f"<NextPrayerData | {self.prayer.name} {self.date.readable}>"
 
-    def __hash__(self):  # pragma: no cover
+    def __hash__(self):
         return hash((self.meta, self.date))

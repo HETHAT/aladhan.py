@@ -1,8 +1,9 @@
-from typing import List, Dict, Union, Awaitable as A
+from typing import Awaitable as A
+from typing import Dict, List, Union
 
 try:
     from typing import Literal, TypedDict  # 3.8 >= only
-except ImportError:
+except ImportError:  # pragma: no cover
     from typing_extensions import Literal, TypedDict
 
 __all__ = (

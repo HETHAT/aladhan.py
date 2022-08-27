@@ -1,12 +1,10 @@
 import pytest
-import aladhan
-import datetime
-from aladhan.exceptions import *
+
+from .pms import *  # aladhan is imported from here
 
 
-@pytest.mark.asyncio
 @pytest.fixture
-async def data():
+def data():
     data = (aladhan.Client().get_timings(34, 4)).data
     assert (
         isinstance(data.meta, aladhan.Meta)
@@ -16,147 +14,58 @@ async def data():
     return data
 
 
-@pytest.mark.parametrize("args", [[], [1], [10] * 9])
+@pytest.mark.parametrize(*TUNE)
 def test_tune(args):
     tune = aladhan.Tune(*args)
     assert isinstance(aladhan.Tune.from_str(tune.value), aladhan.Tune)
 
 
-@pytest.mark.parametrize(
-    ["args", "expected"],
-    [
-        [("", 99, {"isha": ""}), TypeError],
-    ],
-)
+@pytest.mark.parametrize(*ERROR_METHOD)
 def test_error_method(args, expected):
-    try:
+    with pytest.raises(expected):
         aladhan.Method(*args)
-    except expected:
-        return
-    raise RuntimeError()
 
 
-@pytest.mark.parametrize(
-    "arg", [datetime.datetime(2021, 5, 1), 1619827200, "01-05-2021"]
-)
-def test_timings_date(arg):
-    assert aladhan.TimingsDateArg(arg).date == "01-05-2021"
+@pytest.mark.parametrize(*TIMINGS_DATE)
+def test_timings_date(arg, expected):
+    assert aladhan.TimingsDateArg(arg).date == expected
 
 
-@pytest.mark.parametrize(
-    ["arg", "expected"],
-    [["ERROR", ValueError]],
-)
+@pytest.mark.parametrize(*ERROR_TIMINGS_DATE)
 def test_error_timings_date(arg, expected):
-    try:
+    with pytest.raises(expected):
         aladhan.TimingsDateArg(arg)
-    except expected:
-        return
-    raise RuntimeError()
 
 
-@pytest.mark.parametrize(
-    ["kwargs", "expected"],
-    [
-        [dict(year=2021), dict(year=2021, month=0, annual="true")],
-        [dict(year=2021, month=None), dict(year=2021, month=0, annual="true")],
-        [dict(year=2021, month=5), dict(year=2021, month=5, annual="false")],
-        [dict(year=1442, hijri=True), dict(year=1442, month=0, annual="true")],
-        [
-            dict(year=1442, month=9, hijri=True),
-            dict(year=1442, month=9, annual="false"),
-        ],
-    ],
-)
+@pytest.mark.parametrize(*CALENDAR_DATE)
 def test_calendar_date(kwargs, expected):
     assert aladhan.CalendarDateArg(**kwargs).as_dict == expected
 
 
-@pytest.mark.parametrize(
-    ["kwargs", "expected"],
-    [[dict(), TypeError], [dict(year=2000, month=13), ValueError]],
-)
+@pytest.mark.parametrize(*ERROR_CALENDAR_DATE)
 def test_error_calendar_date(kwargs, expected):
-    try:
+    with pytest.raises(expected):
         aladhan.CalendarDateArg(**kwargs)
-    except expected:
-        return
-    raise RuntimeError()
 
 
-@pytest.mark.parametrize(
-    ["kwargs", "expected"],
-    [
-        [
-            dict(),
-            {
-                "method": 2,
-                "tune": "0,0,0,0,0,0,0,0,0",
-                "school": 0,
-                "midnightMode": 0,
-                "latitudeAdjustmentMethod": 3,
-                "adjustment": 0,
-            },
-        ],
-        [
-            dict(
-                method=aladhan.Method(
-                    "", 99, params=dict(isha="null", maghrib=17, fajr=0)
-                )
-            ),
-            99,
-        ],
-        [dict(method=aladhan.methods.MWL), 3],
-        [dict(method=3), 3],
-        [dict(tune=aladhan.Tune()), "0,0,0,0,0,0,0,0,0"],
-        [dict(tune=None), "0,0,0,0,0,0,0,0,0"],
-        [dict(tune=aladhan.Tune(1)), "1,0,0,0,0,0,0,0,0"],
-        [dict(school=0), 0],
-        [dict(school=1), 1],
-        [dict(midnightMode=0), 0],
-        [dict(midnightMode=1), 1],
-        [dict(timezonestring="Africa/Algiers"), "Africa/Algiers"],
-        [dict(latitudeAdjustmentMethod=1), 1],
-        [dict(latitudeAdjustmentMethod=2), 2],
-        [dict(latitudeAdjustmentMethod=3), 3],
-        [dict(adjustment=17), 17],
-    ],
-)
+@pytest.mark.parametrize(*PARAMETERS)
 def test_parameters(kwargs, expected):
     dct = aladhan.Parameters(**kwargs).as_dict
     kwargs = kwargs.keys()
     assert dct.get(kwargs and tuple(kwargs)[0] or None, dct) == expected
 
 
-@pytest.mark.parametrize(
-    ["kwargs", "expected"],
-    [
-        [dict(tune=aladhan.Tune("hi")), InvalidTune],
-        [dict(tune=aladhan.Tune("0,0")), InvalidTune],
-        [dict(tune=17), InvalidTune],
-        [dict(method=99), InvalidMethod],
-        [dict(method=17), InvalidMethod],
-        [dict(school=2), InvalidSchool],
-        [dict(midnightMode=3), InvalidMidnightMode],
-        [dict(timezonestring="ta7ya ms3d"), InvalidTimezone],
-        [dict(latitudeAdjustmentMethod=50), InvalidLatAdjMethod],
-        [dict(adjustment=""), InvalidAdjustment],
-    ],
-)
+@pytest.mark.parametrize(*ERROR_PARAMETERS)
 def test_error_parameters(kwargs, expected):
-    try:
+    with pytest.raises(expected):
         aladhan.Parameters(**kwargs)
-    except expected:
-        return
-    raise RuntimeError()
 
 
 def test_meta(data):
     assert isinstance(data.meta.parameters, aladhan.Parameters)
 
 
-@pytest.mark.asyncio
-async def test_timings(data):
+def test_timings(data):
     for _ in (data.timings.prayers_only.values(), data.timings):
         for prayer in _:
             assert (

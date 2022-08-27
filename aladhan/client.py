@@ -1,37 +1,34 @@
-from .methods import all_methods, Method
+from typing import Awaitable as Aw
+from typing import Dict, List, Optional
+from typing import Union as Un
+
 from .data_classes import (
-    Timings,
-    Data,
-    TimingsDateArg,
-    Parameters,
     CalendarDateArg,
-    Qibla,
-    Ism,
+    Data,
     Date,
+    Ism,
     NextPrayerData,
+    Parameters,
+    Prayer,
+    Qibla,
+    Timings,
+    TimingsDateArg,
 )
 from .http import HTTPClient
+from .methods import Method, all_methods
+from .types import IMR, SDR, StatusR
 
-from typing import (
-    Awaitable as A,
-    Union as U,
-    Optional,
-    List,
-    Dict,
-)
-from .types import StatusR, SDR, IMR
-
-TimingsR = U[Timings, A[Timings]]
-_Calendar = U[List[Timings], Dict[str, Timings]]
-CalendarR = U[_Calendar, A[_Calendar]]
-QiblaR = U[Qibla, A[Qibla]]
-AsmaR = U[List[Ism], A[List[Ism]]]
-DateR = U[Date, A[Date]]
-LDateR = U[List[Date], A[List[Date]]]
-NPR = U[NextPrayerData, A[NextPrayerData]]
-IntR = U[int, A[int]]
-StrR = U[str, A[str]]
-ListR = U[list, A[list]]
+TimingsR = Un[Timings, Aw[Timings]]
+_Calendar = Un[List[Timings], Dict[str, Timings]]
+CalendarR = Un[_Calendar, Aw[_Calendar]]
+QiblaR = Un[Qibla, Aw[Qibla]]
+AsmaR = Un[List[Ism], Aw[List[Ism]]]
+DateR = Un[Date, Aw[Date]]
+LDateR = Un[List[Date], Aw[List[Date]]]
+PrayerR = Un[Prayer, Aw[Prayer]]
+IntR = Un[int, Aw[int]]
+StrR = Un[str, Aw[str]]
+ListR = Un[list, Aw[list]]
 
 __all__ = ("Client",)
 
@@ -135,7 +132,7 @@ class Client:
         address: str,
         date: Optional[TimingsDateArg] = None,
         params: Optional[Parameters] = None,
-    ) -> NPR:
+    ) -> PrayerR:
         """
         Get next upcoming prayer from address.
 
@@ -174,8 +171,8 @@ class Client:
 
     def get_timings(
         self,
-        longitude: U[int, float],
-        latitude: U[int, float],
+        longitude: Un[int, float],
+        latitude: Un[int, float],
         date: Optional[TimingsDateArg] = None,
         params: Optional[Parameters] = None,
     ) -> TimingsR:
@@ -306,8 +303,8 @@ class Client:
 
     def get_calendar(
         self,
-        longitude: U[int, float],
-        latitude: U[int, float],
+        longitude: Un[int, float],
+        latitude: Un[int, float],
         date: CalendarDateArg,
         params: Optional[Parameters] = None,
     ) -> CalendarR:
@@ -456,7 +453,7 @@ class Client:
         return all_methods
 
     def get_qibla(
-        self, longitude: U[int, float], latitude: U[int, float]
+        self, longitude: Un[int, float], latitude: Un[int, float]
     ) -> QiblaR:
         """
         Get the Qibla direction from a pair of coordinates.
@@ -887,8 +884,8 @@ class Client:
 
         Returns
         -------
-            :class:`list` of :class:`dict`
-                A list of all 12 islamic months with ``number,en,ar`` keys.
+            :class:`dict` of :class:`str` and :class:`dict`
+                A dict of '1' to '12' as keys and dicts of ``number,en,ar`` keys.
 
         Raises
         ------
@@ -898,6 +895,21 @@ class Client:
         return self.http.get_islamic_months()
 
 
+def _decide_timings(client, data):
+
+    if isinstance(data, list):  # it is a month calendar
+        return [Data(**day, client=client).timings for day in data]
+    # it is a dict
+    if "1" in data:  # it is a year calendar
+        return {
+            month: [Data(**day, client=client).timings for day in days]
+            for month, days in data.items()
+        }
+
+    # it is just a day timings
+    return Data(**data, client=client).timings
+
+
 class _SyncConverter:
     @staticmethod
     def to_prayer(client, o):
@@ -905,19 +917,7 @@ class _SyncConverter:
 
     @staticmethod
     def to_timings(client, o):
-
-        data = o
-        if isinstance(data, list):  # it is a month calendar
-            return [Data(**day, client=client).timings for day in data]
-        # it is a dict
-        if "1" in data:  # it is a year calendar
-            return {
-                month: [Data(**day, client=client).timings for day in days]
-                for month, days in data.items()
-            }
-
-        # it is just a day timings
-        return Data(**data, client=client).timings
+        return _decide_timings(client, o)
 
     @staticmethod
     def to_obj_a(o, obj):
@@ -939,19 +939,7 @@ class _AsyncConverter:
 
     @staticmethod
     async def to_timings(client, o):
-
-        data = await o
-        if isinstance(data, list):  # it is a month calendar
-            return [Data(**day, client=client).timings for day in data]
-        # it is a dict
-        if "1" in data:  # it is a year calendar
-            return {
-                month: [Data(**day, client=client).timings for day in days]
-                for month, days in data.items()
-            }
-
-        # it is just a day timings
-        return Data(**data, client=client).timings
+        return _decide_timings(client, await o)
 
     @staticmethod
     async def to_obj_a(o, obj):

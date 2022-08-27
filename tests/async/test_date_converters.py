@@ -1,5 +1,6 @@
 import pytest
-import aladhan
+
+from ..pms import *  # include aladhan module
 
 
 @pytest.mark.asyncio
@@ -10,13 +11,7 @@ async def client():
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "args",
-    [
-        (aladhan.TimingsDateArg("25-01-1442"),),
-        (aladhan.TimingsDateArg("25-01-1442"), 2),
-    ],
-)
+@pytest.mark.parametrize(*GET_H_TO_G)
 async def test_h_to_g(client, args):
     assert isinstance(
         await client.get_gregorian_from_hijri(*args), aladhan.Date
@@ -24,13 +19,7 @@ async def test_h_to_g(client, args):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "args",
-    [
-        (aladhan.TimingsDateArg("25-01-2021"),),
-        (aladhan.TimingsDateArg("25-01-2021"), 2),
-    ],
-)
+@pytest.mark.parametrize(*GET_G_TO_H)
 async def test_g_to_h(client, args):
     assert isinstance(
         await client.get_hijri_from_gregorian(*args), aladhan.Date
@@ -38,14 +27,14 @@ async def test_g_to_h(client, args):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("args", [(9, 1442), (9, 1442, 2)])
+@pytest.mark.parametrize(*GET_H_TO_G_CALENDAR)
 async def test_h_to_g_calendar(client, args):
     r = await client.get_gregorian_calendar_from_hijri(*args)
     assert isinstance(r, list) and isinstance(r[0], aladhan.Date)
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("args", [(1, 2021), (1, 2021, 2)])
+@pytest.mark.parametrize(*GET_G_TO_H_CALENDAR)
 async def test_g_to_h_calendar(client, args):
     r = await client.get_hijri_calendar_from_gregorian(*args)
     assert isinstance(r, list) and isinstance(r[0], aladhan.Date)

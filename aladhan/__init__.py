@@ -17,8 +17,8 @@ __author__ = "HETHAT"
 __version__ = "1.2.0a"
 
 
+from . import methods
 from .client import Client
 from .data_classes import *
-from . import methods
-from .methods import Method
 from .enums import *
+from .methods import Method

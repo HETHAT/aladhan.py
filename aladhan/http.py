@@ -1,23 +1,22 @@
-from .exceptions import HTTPException
-from .endpoints import *
-from .types import (
-    TimingsRes,
-    CalendarRes,
-    QiblaRes,
-    AsmaRes,
-    DateToDateRes,
-    DateToCalendarRes,
-    IslamicHolidaysRes,
-    StatusR,
-    SDR,
-    IMR,
-)
-
-import time
 import asyncio
 import datetime
-
 import logging
+import time
+
+from .endpoints import *
+from .exceptions import HTTPException
+from .types import (
+    IMR,
+    SDR,
+    AsmaRes,
+    CalendarRes,
+    DateToCalendarRes,
+    DateToDateRes,
+    IslamicHolidaysRes,
+    QiblaRes,
+    StatusR,
+    TimingsRes,
+)
 
 log = logging.getLogger(__name__)
 
@@ -47,7 +46,8 @@ except ImportError:  # pragma: no cover
         "for synchronous usage."
     )
 
-from typing import Awaitable as A, Union as U
+from typing import Awaitable as A
+from typing import Union as U
 
 TimingsR = U[TimingsRes, A[TimingsRes]]
 CalendarR = U[CalendarRes, A[CalendarRes]]

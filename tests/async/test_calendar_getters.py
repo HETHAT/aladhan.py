@@ -1,5 +1,6 @@
 import pytest
-import aladhan
+
+from ..pms import *  # include aladhan module
 
 
 @pytest.mark.asyncio
@@ -10,43 +11,7 @@ async def client():
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
-    [
-        [(34, 4), {"date": aladhan.CalendarDateArg(2021, 5)}, list],
-        [(34, 4), {"date": aladhan.CalendarDateArg(2021)}, dict],
-        [
-            (34, 4),
-            {"date": aladhan.CalendarDateArg(1442, 9, hijri=True)},
-            list,
-        ],
-        [(34, 4), {"date": aladhan.CalendarDateArg(1442, hijri=True)}, dict],
-        [
-            (34.69, 4.420),
-            {
-                "date": aladhan.CalendarDateArg(2021, 5),
-                "params": None,
-            },
-            list,
-        ],
-        [
-            (34, 4),
-            {
-                "date": aladhan.CalendarDateArg(2021, 5),
-                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
-            },
-            list,
-        ],
-        [
-            (34, 4),
-            {
-                "date": aladhan.CalendarDateArg(1442, 9, hijri=True),
-                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
-            },
-            list,
-        ],
-    ],
-)
+@pytest.mark.parametrize(*GET_CALENDAR)
 async def test_calendar(client, args, kwargs, expected):
     ts = await client.get_calendar(*args, **kwargs)
     assert isinstance(ts, expected)
@@ -54,38 +19,7 @@ async def test_calendar(client, args, kwargs, expected):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
-    [
-        [("London",), {"date": aladhan.CalendarDateArg(2021)}, dict],
-        [
-            ("London",),
-            {"date": aladhan.CalendarDateArg(1442, 9, hijri=True)},
-            list,
-        ],
-        [
-            ("London",),
-            {"date": aladhan.CalendarDateArg(1442, hijri=True)},
-            dict,
-        ],
-        [
-            ("London",),
-            {
-                "date": aladhan.CalendarDateArg(2021, 5),
-                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
-            },
-            list,
-        ],
-        [
-            ("London",),
-            {
-                "date": aladhan.CalendarDateArg(1442, 9, hijri=True),
-                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
-            },
-            list,
-        ],
-    ],
-)
+@pytest.mark.parametrize(*GET_CALENDAR_BY_ADDRESS)
 async def test_calendar_by_address(client, args, kwargs, expected):
     ts = await client.get_calendar_by_address(*args, **kwargs)
     assert isinstance(ts, expected)
@@ -93,53 +27,7 @@ async def test_calendar_by_address(client, args, kwargs, expected):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    ["args", "kwargs", "expected"],
-    [
-        [("London", "GB"), {"date": aladhan.CalendarDateArg(2021)}, dict],
-        [
-            ("London", "GB"),
-            {"date": aladhan.CalendarDateArg(2021), "state": "Bexley"},
-            dict,
-        ],
-        [
-            ("London", "GB"),
-            {
-                "date": aladhan.CalendarDateArg(2021),
-                "state": None,
-                "params": None,
-            },
-            dict,
-        ],
-        [("London", "GB"), {"date": aladhan.CalendarDateArg(2021)}, dict],
-        [
-            ("London", "GB"),
-            {"date": aladhan.CalendarDateArg(1442, 9, hijri=True)},
-            list,
-        ],
-        [
-            ("London", "GB"),
-            {"date": aladhan.CalendarDateArg(1442, hijri=True)},
-            dict,
-        ],
-        [
-            ("London", "GB"),
-            {
-                "date": aladhan.CalendarDateArg(2021, 5),
-                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
-            },
-            list,
-        ],
-        [
-            ("London", "GB"),
-            {
-                "date": aladhan.CalendarDateArg(1442, 9, hijri=True),
-                "params": aladhan.Parameters(tune=aladhan.Tune(1)),
-            },
-            list,
-        ],
-    ],
-)
+@pytest.mark.parametrize(*GET_CALENDAR_BY_CITY)
 async def test_calendar_by_city(client, args, kwargs, expected):
     ts = await client.get_calendar_by_city(*args, **kwargs)
     assert isinstance(ts, expected)
