@@ -224,8 +224,8 @@ class Prayer:
 
     __slots__ = ("data", "name", "time", "time_utc", "str_time")
 
-    def __init__(self, name: str, time: str, timestamp: int, data):
-        d = datetime.utcfromtimestamp(timestamp)
+    def __init__(self, name: str, time: str, data):
+        d = datetime.strptime(data.date.readable, "%d %b %Y")
         time = time.split()[0]
         self.data = data
         self.name = name
@@ -987,7 +987,7 @@ class Timings:
         Lastthird: str,
     ):
         self.data = data
-        _Prayer = partial(Prayer, data=data, timestamp=data.date.timestamp)
+        _Prayer = partial(Prayer, data=data)
         self.imsak: Prayer = _Prayer("Imsak", Imsak)
         self.fajr: Prayer = _Prayer("Fajr", Fajr)
         self.sunrise: Prayer = _Prayer("Sunrise", Sunrise)
@@ -1133,7 +1133,7 @@ class NextPrayerData:
         ((prayer, time),) = timings.items()
         self.meta = Meta(data=self, **meta)
         self.date = BaseDate(**date)
-        self.prayer = Prayer(prayer, time, self.date.timestamp, data=self)
+        self.prayer = Prayer(prayer, time, data=self)
         self.client = client
 
     def __repr__(self):
