@@ -6,9 +6,6 @@ import sys
 import time
 
 import pkg_resources
-from pygments import highlight
-from pygments.formatters.terminal256 import Terminal256Formatter
-from pygments.lexers.web import JsonLexer
 
 import aladhan
 
@@ -55,12 +52,8 @@ def core(_, args):
         show_version()
 
 
-def print_json(res, sh, indent):
+def print_json(res, indent):
     res = json.dumps(res, indent=indent)
-    if sh:
-        res = highlight(
-            res, lexer=JsonLexer(), formatter=Terminal256Formatter()
-        )
     print(res)
 
 
@@ -127,7 +120,7 @@ def request(parser, args):
         res = func()
     ts_end = time.perf_counter() - ts_start
     if args.file is None:
-        print_json(res, args.syntax_highlight, args.indent)
+        print_json(res, args.indent)
     else:
         save_json(args.file, res, args.indent)
     print(f"Taken time: {ts_end * 1000:.2f}ms")
@@ -155,15 +148,6 @@ def add_request_args(subparser):
         help="Where to store the json response. "
         "If it wasn't given it will print to console.",
         default=None,
-    )
-    parser.add_argument(
-        "-s",
-        "--syntax_highlight",
-        action="store",
-        help="whither to highlight json syntax "
-        "when outputting to console or not. (default=True)",
-        type=lambda kv: "0" != kv.lower() != "false",
-        default=True,
     )
     parser.add_argument(
         "-i",
