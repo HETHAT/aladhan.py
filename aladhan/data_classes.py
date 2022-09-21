@@ -233,21 +233,13 @@ class Prayer:
             d.year, d.month, d.day
         )
         try:
-            self.time_utc = self.time + data.meta.timezone.utcoffset(self.time)
+            self.time_utc = self.time - data.meta.timezone.utcoffset(self.time)
         except pytz.exceptions.NonExistentTimeError:  # pragma: no cover
             self.time_utc = None
         self.str_time = self.time.strftime("%H:%M %d-%m-%Y")
 
     @property
     def remaining(self):
-        """:class:`datetime.timedelta`: remaining time for prayer.
-
-        *New in v0.1.2*
-        """
-        return self.time - datetime.utcnow()
-
-    @property
-    def remaining_utc(self):
         """Optional[:class:`datetime.timedelta`]:
          remaining time for prayer for utc.
 

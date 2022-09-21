@@ -5,6 +5,20 @@
 Changelog
 =========
 
+v1.2.1a
+-------
+
+**Changed**
+
+- Fix :attr:`Prayer.time_utc`
+- Fix times being one day behind.
+- Remove syntax highlighting
+
+**Removed**
+
+- Remove :attr:`Prayer.remaining_utc`
+
+
 v1.2.0
 ------
 

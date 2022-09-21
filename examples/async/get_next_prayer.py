@@ -7,7 +7,6 @@ async def main():
     client = Client(is_async=True)
     next_prayer = await client.get_next_prayer_by_address(address="London")
     print(next_prayer, "remaining:", next_prayer.remaining)
-    print(next_prayer, "remaining for utc:", next_prayer.remaining_utc)
 
     await client.close()
 

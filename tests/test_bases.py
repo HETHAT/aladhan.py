@@ -71,7 +71,6 @@ def test_timings(data):
             assert (
                 isinstance(prayer, aladhan.Prayer)
                 and isinstance(prayer.remaining, datetime.timedelta)
-                and isinstance(prayer.remaining_utc, (datetime.timedelta, None))
             )
 
     np = data.timings.next_prayer()
