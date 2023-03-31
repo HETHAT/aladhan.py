@@ -1122,6 +1122,8 @@ class NextPrayerData:
     """
 
     def __init__(self, meta, date, timings, client):
+        del date['hijri']
+        del date['gregorian']
         ((prayer, time),) = timings.items()
         self.meta = Meta(data=self, **meta)
         self.date = BaseDate(**date)
