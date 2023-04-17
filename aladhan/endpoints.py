@@ -20,7 +20,7 @@ HIJRI_CALENDAR_BY_ADDRESS = HIJRI_CALENDAR + "ByAddress"
 HIJRI_CALENDAR_BY_CITY = HIJRI_CALENDAR + "ByCity"
 
 # Info
-STATUS = BASE + "status"
+STATUS = "https://api.aladhan.com/status"
 METHODS = BASE + "methods"  # won't be covered (use aladhan.methods instead)
 SPECIAL_DAYS = BASE + "specialDays"
 ISLAMIC_MONTHS = BASE + "islamicMonths"

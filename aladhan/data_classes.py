@@ -1124,7 +1124,7 @@ class NextPrayerData:
     def __init__(self, meta, date, timings, client):
         ((prayer, time),) = timings.items()
         self.meta = Meta(data=self, **meta)
-        self.date = BaseDate(**date)
+        self.date = Date(**date)
         self.prayer = Prayer(prayer, time, data=self)
         self.client = client
 
