@@ -24,18 +24,6 @@ To Install ``aladhan.py`` with pip:
 
     pip install aladhan.py
 
-To install only with synchronous requirements
-
-.. code:: sh
-
-    pip install aladhan.py[sync]
-
-To install only with asynchronous requirements
-
-.. code:: sh
-
-    pip install aladhan.py[async]
-
 Quick Example
 -------------
 

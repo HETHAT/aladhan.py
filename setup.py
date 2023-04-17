@@ -47,8 +47,7 @@ def get_requirements(filename: str = "requirements.txt"):
 
 
 extras_require = {
-    "async": get_requirements("reqs/async-requirements.txt"),
-    "sync": get_requirements("reqs/sync-requirements.txt"),
+    "dev": get_requirements("dev-requirements.txt")
 }
 
 setup(
