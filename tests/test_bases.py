@@ -68,9 +68,8 @@ def test_meta(data):
 def test_timings(data):
     for _ in (data.timings.prayers_only.values(), data.timings):
         for prayer in _:
-            assert (
-                isinstance(prayer, aladhan.Prayer)
-                and isinstance(prayer.remaining, datetime.timedelta)
+            assert isinstance(prayer, aladhan.Prayer) and isinstance(
+                prayer.remaining, datetime.timedelta
             )
 
     np = data.timings.next_prayer()

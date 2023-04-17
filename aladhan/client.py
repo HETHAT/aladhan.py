@@ -845,7 +845,7 @@ class Client:
                Something went wrong.
         """
         return self.converter.to_list_of_obj(
-            self.http.get_hijri_holidays(year, adjustment), Date
+            self.http.get_islamic_holidays(year, adjustment), Date
         )
 
     def get_status(self) -> StatusR:

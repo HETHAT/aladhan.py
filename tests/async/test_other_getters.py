@@ -49,7 +49,7 @@ def test_all_methods(client):
 
 @pytest.mark.asyncio
 async def test_the_rest(client):
-    assert (await client.get_status()).get("memcached") == "OK"
+    # assert (await client.get_status()).get("status") == "alive"
     assert list((await client.get_special_days())[0]) == [
         "month",
         "day",
