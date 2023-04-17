@@ -5,13 +5,15 @@
 Changelog
 =========
 
-v1.2.1a
--------
+v1.2.1
+------
 
 **Changed**
 
 - Fix :attr:`Prayer.time_utc`
 - Fix times being one day behind.
+- Fix :meth:`Client.get_next_prayer`
+- Fix :meth:`Client.get_islamic_holidays`
 - Remove syntax highlighting
 
 **Removed**
