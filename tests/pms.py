@@ -1,7 +1,7 @@
+import datetime
+
 import aladhan
 from aladhan.exceptions import *
-
-import datetime
 
 # -------------- test_bases
 

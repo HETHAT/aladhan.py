@@ -1,5 +1,6 @@
-from aladhan import Timings, CalendarDateArg, Client
-from typing import List, Dict
+from typing import Dict, List
+
+from aladhan import CalendarDateArg, Client, Timings
 
 
 def main():

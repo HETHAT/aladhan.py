@@ -1,7 +1,7 @@
 import asyncio
+from typing import Dict, List
 
-from aladhan import Timings, CalendarDateArg, Client
-from typing import List, Dict
+from aladhan import CalendarDateArg, Client, Timings
 
 
 async def main():

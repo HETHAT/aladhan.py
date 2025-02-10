@@ -1,5 +1,6 @@
-import aladhan
 import pytest
+
+import aladhan
 
 
 @pytest.mark.asyncio

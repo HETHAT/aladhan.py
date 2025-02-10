@@ -4,8 +4,17 @@ from typing import Dict, Iterable, List, Optional, Union
 
 import pytz
 
-from .enums import *
-from .exceptions import *
+from .enums import LatitudeAdjustmentMethods, MidnightModes, Schools, Shafaq
+from .exceptions import (
+    InvalidAdjustment,
+    InvalidLatAdjMethod,
+    InvalidMethod,
+    InvalidMidnightMode,
+    InvalidSchool,
+    InvalidShafaq,
+    InvalidTimezone,
+    InvalidTune,
+)
 from .methods import ISNA, Method, all_methods
 
 __all__ = (
@@ -308,10 +317,10 @@ class CalendarDateArg:
                     "month argument expected to be in range 1-12"
                     " got {}".format(month)
                 )
-            self.month: int = month
+            self.month = month
             self.annual = "false"
         else:
-            self.month: int = 0
+            self.month = 0
             self.annual = "true"
 
         self.year = year
@@ -451,7 +460,7 @@ class Parameters:
 
         midnightMode: :class:`int`
 
-        timezonestring: :class:`str`
+        timezonestring: Optional[:class:`str`]
             *New in v0.2.0*
 
         latitudeAdjustmentMethod: :class:`int`
@@ -532,20 +541,21 @@ class Parameters:
 
         # tune
         if tune is None:
-            tune = Tune().value
+            tune_val = Tune().value
         elif isinstance(tune, Tune):
-            tune = tune.value
-            ts = tune.split(",")
+            tune_val = tune.value
+            ts = tune_val.split(",")
             if len(ts) != 9 or not all(x.isdigit() for x in ts):
                 raise InvalidTune(
-                    "Invalid tune argument was passed. (tune.value = %s)" % tune
+                    "Invalid tune argument was passed. (tune.value = %s)"
+                    % tune_val
                 )
         else:
             raise InvalidTune(
                 "'tune' argument must be `Tune` object."
                 " got `%s` instead." % type(tune).__name__
             )
-        self.tune: str = tune
+        self.tune: str = tune_val
 
         # school
         if isinstance(school, Schools):
@@ -576,7 +586,7 @@ class Parameters:
                 "for valid timezones."
             )
 
-        self.timezonestring: str = timezonestring
+        self.timezonestring: Optional[str] = timezonestring
 
         # lat adj methods
         if isinstance(latitudeAdjustmentMethod, LatitudeAdjustmentMethods):
@@ -798,7 +808,7 @@ class DateType:
         month: Dict[str, Union[int, str]],
         year: str,
         designation: Dict[str, str],
-        holidays: List[str] = None,
+        holidays: Optional[List[str]] = None,
     ):
         self.name = name
         self.date = date

@@ -1,5 +1,5 @@
 from typing import Awaitable as Aw
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Type
 from typing import Union as Un
 
 from .data_classes import (
@@ -92,7 +92,11 @@ class Client:
     __slots__ = "converter", "http"
 
     def __init__(self, is_async: bool = False, auto_manage_rate: bool = True):
-        self.converter = is_async and _AsyncConverter or _SyncConverter
+        self.converter: Un[Type[_AsyncConverter], Type[_SyncConverter]]
+        if is_async:
+            self.converter = _AsyncConverter
+        else:
+            self.converter = _SyncConverter
         self.http = HTTPClient(
             is_async=is_async, auto_manage_rate=auto_manage_rate
         )
@@ -161,12 +165,14 @@ class Client:
 
         *New in v1.2.0*
         """
-        date = date and date.date or ""
-        params = (params or Parameters()).as_dict
-        params.update(dict(address=address))
+        date_str = "" if date is None else date.date
+        if params is None:
+            params = Parameters()
+        params_dict = params.as_dict
+        params_dict.update(dict(address=address))
         return self.converter.to_prayer(
             self,
-            self.http.get_next_prayer_by_address(date, params),
+            self.http.get_next_prayer_by_address(date_str, params_dict),
         )
 
     def get_timings(
@@ -204,11 +210,15 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
         """
-        date = date and date.date or ""
-        params = (params or Parameters()).as_dict
-        params.update(dict(longitude=str(longitude), latitude=str(latitude)))
+        date_str = "" if date is None else date.date
+        if params is None:
+            params = Parameters()
+        params_dict = params.as_dict
+        params_dict.update(
+            dict(longitude=str(longitude), latitude=str(latitude))
+        )
         return self.converter.to_timings(
-            self, self.http.get_timings(date, params)
+            self, self.http.get_timings(date_str, params_dict)
         )
 
     def get_timings_by_address(
@@ -243,11 +253,13 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
         """
-        date = date and date.date or ""
-        params = (params or Parameters()).as_dict
-        params.update(dict(address=address))
+        date_str = "" if date is None else date.date
+        if params is None:
+            params = Parameters()
+        params_dict = params.as_dict
+        params_dict.update(dict(address=address))
         return self.converter.to_timings(
-            self, self.http.get_timings_by_address(date, params)
+            self, self.http.get_timings_by_address(date_str, params_dict)
         )
 
     def get_timings_by_city(
@@ -292,13 +304,15 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
         """
-        date = date and date.date or ""
-        params = (params or Parameters()).as_dict
-        params.update(dict(city=city, country=country, state=state))
+        date_str = "" if date is None else date.date
+        if params is None:
+            params = Parameters()
+        params_dict = params.as_dict
+        params_dict.update(dict(city=city, country=country, state=state))
         if state is None:
-            del params["state"]
+            del params_dict["state"]
         return self.converter.to_timings(
-            self, self.http.get_timings_by_city(date, params)
+            self, self.http.get_timings_by_city(date_str, params_dict)
         )
 
     def get_calendar(
@@ -338,11 +352,13 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
         """
-        params = (params or Parameters()).as_dict
-        params.update(longitude=str(longitude), latitude=str(latitude))
-        params.update(date.as_dict)
+        if params is None:
+            params = Parameters()
+        params_dict = params.as_dict
+        params_dict.update(longitude=str(longitude), latitude=str(latitude))
+        params_dict.update(date.as_dict)
         return self.converter.to_timings(
-            self, self.http.get_calendar(params, date.hijri)
+            self, self.http.get_calendar(params_dict, date.hijri)
         )
 
     def get_calendar_by_address(
@@ -379,12 +395,14 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
         """
-        params = (params or Parameters()).as_dict
-        params.update(dict(address=address))
-        params.update(date.as_dict)
+        if params is None:
+            params = Parameters()
+        params_dict = params.as_dict
+        params_dict.update(dict(address=address))
+        params_dict.update(date.as_dict)
         return self.converter.to_timings(
             self,
-            self.http.get_calendar_by_address(params, date.hijri),
+            self.http.get_calendar_by_address(params_dict, date.hijri),
         )
 
     def get_calendar_by_city(
@@ -431,13 +449,15 @@ class Client:
             :exc:`~aladhan.exceptions.BadRequest`
                 Invalid parameter was passed.
         """
-        params = (params or Parameters()).as_dict
-        params.update(dict(city=city, country=country, state=state))
+        if params is None:
+            params = Parameters()
+        params_dict = params.as_dict
+        params_dict.update(dict(city=city, country=country, state=state))
         if state is None:
-            del params["state"]
-        params.update(date.as_dict)
+            del params_dict["state"]
+        params_dict.update(date.as_dict)
         return self.converter.to_timings(
-            self, self.http.get_calendar_by_city(params, date.hijri)
+            self, self.http.get_calendar_by_city(params_dict, date.hijri)
         )
 
     @staticmethod
@@ -550,6 +570,7 @@ class Client:
 
         *New in v1.1.0*
         """
+        date = TimingsDateArg() if date is None else date
         return self.converter.to_obj_kwa(
             self.http.get_hijri_from_gregorian(
                 date=date.date, adjustment=adjustment
@@ -656,7 +677,7 @@ class Client:
             Date,
         )
 
-    def get_islamic_year_from_gregorian_for_ramadan(self, year: int) -> int:
+    def get_islamic_year_from_gregorian_for_ramadan(self, year: int) -> IntR:
         """
         Get which islamic year for ramadan from a gregorian year.
 
