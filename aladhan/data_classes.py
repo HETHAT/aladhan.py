@@ -784,6 +784,21 @@ class DateType:
         holidays: Optional[:class:`list` of :class:`str`]
             A list of holidays might be empty for hijri,
             always None for gregorian.
+
+        lunarSighting: Optional[:class:`bool`]
+            A boolean for gregorian and None for hijri.
+
+            *New in v1.2.2*
+
+        lunarSighting: Optional[:class:`bool`]
+            A boolean for hijri and None for gregorian.
+
+            *New in v1.2.2*
+
+        method: Optional[:class:`str`]
+            A string for hijri and None for gregorian.
+
+            *New in v1.2.2*
     """
 
     __slots__ = (
@@ -796,6 +811,9 @@ class DateType:
         "year",
         "designation",
         "holidays",
+        "lunarSighting",
+        "adjustedHolidays",
+        "method"
     )
 
     def __init__(
@@ -809,6 +827,9 @@ class DateType:
         year: str,
         designation: Dict[str, str],
         holidays: Optional[List[str]] = None,
+        lunarSighting: Optional[bool] = None,
+        adjustedHolidays: Optional[list] = None,
+        method: Optional[str] = None,
     ):
         self.name = name
         self.date = date
@@ -819,12 +840,12 @@ class DateType:
         self.year = int(year)
         self.designation = designation
         self.holidays = holidays
+        self.lunarSighting = lunarSighting
+        self.adjustedHolidays = adjustedHolidays
+        self.method = method
 
     def __repr__(self):
-        return (
-            "<DateType name={0.name!r}, date={0.date!r}, "
-            "holidays={0.holidays}>"
-        ).format(self)
+        return "<DateType name={0.name!r}, date={0.date!r}>".format(self)
 
     def __hash__(self):
         return hash((self.name, self.date))
