@@ -4,8 +4,17 @@ from typing import Dict, Iterable, List, Optional, Union
 
 import pytz
 
-from .enums import *
-from .exceptions import *
+from .enums import LatitudeAdjustmentMethods, MidnightModes, Schools, Shafaq
+from .exceptions import (
+    InvalidAdjustment,
+    InvalidLatAdjMethod,
+    InvalidMethod,
+    InvalidMidnightMode,
+    InvalidSchool,
+    InvalidShafaq,
+    InvalidTimezone,
+    InvalidTune,
+)
 from .methods import ISNA, Method, all_methods
 
 __all__ = (
@@ -308,10 +317,10 @@ class CalendarDateArg:
                     "month argument expected to be in range 1-12"
                     " got {}".format(month)
                 )
-            self.month: int = month
+            self.month = month
             self.annual = "false"
         else:
-            self.month: int = 0
+            self.month = 0
             self.annual = "true"
 
         self.year = year
@@ -451,7 +460,7 @@ class Parameters:
 
         midnightMode: :class:`int`
 
-        timezonestring: :class:`str`
+        timezonestring: Optional[:class:`str`]
             *New in v0.2.0*
 
         latitudeAdjustmentMethod: :class:`int`
@@ -532,20 +541,21 @@ class Parameters:
 
         # tune
         if tune is None:
-            tune = Tune().value
+            tune_val = Tune().value
         elif isinstance(tune, Tune):
-            tune = tune.value
-            ts = tune.split(",")
+            tune_val = tune.value
+            ts = tune_val.split(",")
             if len(ts) != 9 or not all(x.isdigit() for x in ts):
                 raise InvalidTune(
-                    "Invalid tune argument was passed. (tune.value = %s)" % tune
+                    "Invalid tune argument was passed. (tune.value = %s)"
+                    % tune_val
                 )
         else:
             raise InvalidTune(
                 "'tune' argument must be `Tune` object."
                 " got `%s` instead." % type(tune).__name__
             )
-        self.tune: str = tune
+        self.tune: str = tune_val
 
         # school
         if isinstance(school, Schools):
@@ -576,7 +586,7 @@ class Parameters:
                 "for valid timezones."
             )
 
-        self.timezonestring: str = timezonestring
+        self.timezonestring: Optional[str] = timezonestring
 
         # lat adj methods
         if isinstance(latitudeAdjustmentMethod, LatitudeAdjustmentMethods):
@@ -774,6 +784,21 @@ class DateType:
         holidays: Optional[:class:`list` of :class:`str`]
             A list of holidays might be empty for hijri,
             always None for gregorian.
+
+        lunarSighting: Optional[:class:`bool`]
+            A boolean for gregorian and None for hijri.
+
+            *New in v1.2.2*
+
+        lunarSighting: Optional[:class:`bool`]
+            A boolean for hijri and None for gregorian.
+
+            *New in v1.2.2*
+
+        method: Optional[:class:`str`]
+            A string for hijri and None for gregorian.
+
+            *New in v1.2.2*
     """
 
     __slots__ = (
@@ -786,6 +811,9 @@ class DateType:
         "year",
         "designation",
         "holidays",
+        "lunarSighting",
+        "adjustedHolidays",
+        "method"
     )
 
     def __init__(
@@ -798,7 +826,10 @@ class DateType:
         month: Dict[str, Union[int, str]],
         year: str,
         designation: Dict[str, str],
-        holidays: List[str] = None,
+        holidays: Optional[List[str]] = None,
+        lunarSighting: Optional[bool] = None,
+        adjustedHolidays: Optional[list] = None,
+        method: Optional[str] = None,
     ):
         self.name = name
         self.date = date
@@ -809,12 +840,12 @@ class DateType:
         self.year = int(year)
         self.designation = designation
         self.holidays = holidays
+        self.lunarSighting = lunarSighting
+        self.adjustedHolidays = adjustedHolidays
+        self.method = method
 
     def __repr__(self):
-        return (
-            "<DateType name={0.name!r}, date={0.date!r}, "
-            "holidays={0.holidays}>"
-        ).format(self)
+        return "<DateType name={0.name!r}, date={0.date!r}>".format(self)
 
     def __hash__(self):
         return hash((self.name, self.date))

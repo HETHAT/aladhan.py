@@ -46,9 +46,7 @@ def get_requirements(filename: str = "requirements.txt"):
     return requirements
 
 
-extras_require = {
-    "dev": get_requirements("dev-requirements.txt")
-}
+extras_require = {"dev": get_requirements("dev-requirements.txt")}
 
 setup(
     name="aladhan.py",

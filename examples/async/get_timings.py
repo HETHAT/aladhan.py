@@ -2,14 +2,14 @@ import asyncio
 
 from aladhan import (
     Client,
-    TimingsDateArg,
-    Parameters,
-    methods,
-    Tune,
-    Schools,
-    MidnightModes,
     LatitudeAdjustmentMethods,
+    MidnightModes,
+    Parameters,
+    Schools,
     Timings,
+    TimingsDateArg,
+    Tune,
+    methods,
 )
 
 

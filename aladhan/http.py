@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 
 
 def missing_lib(msg):  # pragma: no cover
-    def _():
+    def _(*args, **kwargs):
         raise ImportError(msg)
 
     return _
@@ -45,8 +45,9 @@ except ImportError:  # pragma: no cover
         "`request` is a required library that is missing "
         "for synchronous usage."
     )
-
+from abc import ABC, abstractmethod
 from typing import Awaitable as A
+from typing import Optional
 from typing import Union as U
 
 TimingsR = U[TimingsRes, A[TimingsRes]]
@@ -68,7 +69,7 @@ class HTTPClient:
     __slots__ = "requester", "request"
 
     def __init__(self, is_async: bool = False, auto_manage_rate: bool = True):
-        self.requester = (is_async and _AsyncRequester or _SyncRequester)(
+        self.requester = (_AsyncRequester if is_async else _SyncRequester)(
             auto_manage_rate
         )
         self.request = self.requester.request
@@ -175,7 +176,7 @@ class HTTPClient:
         return self.request(QIBLA % params)
 
 
-class _BaseRequester:
+class _BaseRequester(ABC):
     __slots__ = ("session", "auto_manage_rate")
 
     session: U[ClientSession, Session]
@@ -185,7 +186,13 @@ class _BaseRequester:
         "User-Agent": "Aladhan API wrapper in Python "
         "(https://github.com/HETHAT/aladhan.py)"
     }
-    last_headers_res = {}
+    last_headers_res: dict = {}
+
+    @abstractmethod
+    def request(
+        self, endpoint: str, params: Optional[dict] = None, __retries: int = 5
+    ):
+        ...
 
     @property
     def is_async(self) -> bool:
@@ -212,7 +219,7 @@ class _AsyncRequester(_BaseRequester):
         self.auto_manage_rate = auto_manage_rate
 
     async def request(
-        self, endpoint: str, params: dict = None, __retries: int = 5
+        self, endpoint: str, params: Optional[dict] = None, __retries: int = 5
     ):
         check = self.check_rate()
         if check > 0:
@@ -252,7 +259,9 @@ class _SyncRequester(_BaseRequester):
         self.session: Session = Session()
         self.auto_manage_rate = auto_manage_rate
 
-    def request(self, endpoint: str, params: dict = None, __retries: int = 5):
+    def request(
+        self, endpoint: str, params: Optional[dict] = None, __retries: int = 5
+    ):
         check = self.check_rate()
         if check > 0:
             time.sleep(check)

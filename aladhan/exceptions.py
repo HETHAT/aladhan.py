@@ -50,10 +50,10 @@ class HTTPException(AladhanException):
 
     __slots__ = "response", "code"
 
-    def __init__(self, response, message: str = None):
+    def __init__(self, response, message: str = ""):
         self.response = response
         self.code = response.get("code", 0)
-        super().__init__(message or response.get("message"))
+        super().__init__(message or response.get("message") or "")
 
     @classmethod
     def from_res(cls, res):

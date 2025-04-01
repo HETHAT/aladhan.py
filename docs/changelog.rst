@@ -5,6 +5,15 @@
 Changelog
 =========
 
+v1.2.2
+------
+
+Fix errors after an api change by adding:
+
+- :attr:`DateType.lunarSighting`
+- :attr:`DateType.adjustedHolidays`
+- :attr:`DateType.method`
+
 v1.2.1
 ------
 

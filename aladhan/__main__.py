@@ -84,7 +84,7 @@ def to_args(params):
     return dict(params=(i for i, in params))
 
 
-def to_params(getter: str, params: list):
+def to_params(getter: str, params):
     if getter.startswith(("timings", "next_prayer")):
         params = to_date_and_params(params)
     elif getter.startswith("calendar"):
@@ -92,7 +92,7 @@ def to_params(getter: str, params: list):
     elif len(params[0]) == 1:
         params = to_args(params)
     else:
-        params = dict(params)
+        params = dict(params)  # type: ignore
     return params
 
 
@@ -104,11 +104,13 @@ def request(parser, args):
             "`requests` library isn't installed which is required to "
             "use this command."
         )
+        return
     if func is None:
         parser.error(
             f"couldn't find a getter with the name of `{args.getter}` "
             "Do `python -m aladhan list` to see all available getters."
         )
+        return
     ts_start = time.perf_counter()
     if args.params:
         params = to_params(args.getter, args.params)
